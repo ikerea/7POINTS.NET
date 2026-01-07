@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # ------------------
+  # Laravel + MySQL
+  # ------------------
+  laravel_app:
+    image: php:8.2-fpm-bullseye
+    build:
+      context: ./laravel
+      dockerfile: Dockerfile
+    container_name: laravel_app
+    working_dir: /var/www/html
+    volumes:
+      - ./laravel:/var/www/html
+    ports:
+      - "8080:8080"
+    command: bash -c "php artisan serve --host=0.0.0.0 --port=8080"
+    networks:
+      - app-network
+
+# Odoo Zerbitzua
+  odoo:
+    image: odoo:17.0
+    depends_on:
+      - postgres
+    ports:
+      - "8069:8069"
+    volumes:
+      # Conecta tu carpeta local con la carpeta de addons de Odoo
+      - ./odoo/addons:/mnt/extra-addons
+      # Guarda los datos de sesión y archivos de Odoo
+      - odoo_data:/var/lib/odoo
+    environment:
+      - HOST=postgres
+      - USER=odoo
+      - PASSWORD=myodoo
+    networks:
+      - app-network
+  postgres:
+    image: postgres:15
+    ports:
+      - 5432:5432
+    volumes:
+      # Guarda la base de datos para que no se borre al reiniciar
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=myodoo
+      - POSTGRES_USER=odoo
+    networks:
+      - app-network
+
+# ------------------
+# Bolumenak eta sareak
+# ------------------
+volumes:
+  postgres_data:
+  # Odoo fitxategien bolumen berria
+  odoo_data:
+
+networks:
+  app-network:
+    driver: bridge

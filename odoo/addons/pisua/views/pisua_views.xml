@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Vista árbol/lista -->
+    <record id="view_pisua_tree" model="ir.ui.view">
+        <field name="name">pisua.tree</field>
+        <field name="model">pisua</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="code" />
+                <field name="coordinator_id" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista formulario -->
+    <record id="view_pisua_form" model="ir.ui.view">
+        <field name="name">pisua.form</field>
+        <field name="model">pisua</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name" />
+                        <field name="code" />
+                        <field name="coordinator_id" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Acción para abrir la vista -->
+    <record id="action_pisua" model="ir.actions.act_window">
+        <field name="name">Pisos</field>
+        <field name="res_model">pisua</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menú -->
+    <menuitem id="menu_pisua_root" name="Pisos" />
+    <menuitem id="menu_pisua" name="Gestión de Pisos" parent="menu_pisua_root" action="action_pisua" />
+</odoo>
