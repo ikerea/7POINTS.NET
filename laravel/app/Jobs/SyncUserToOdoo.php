@@ -26,7 +26,7 @@ class SyncUserToOdoo implements ShouldQueue
     public function handle(OdooService $odoo): void
     {
         try {
-            $internalUserGroup = 2;
+            $internalUserGroup = 1;
             $coordGroupId = 12;
             if ($this->user->mota === 'koordinatzailea') {
                 $userID = $odoo->create('res.users', [
