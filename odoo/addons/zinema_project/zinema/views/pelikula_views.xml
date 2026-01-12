@@ -1,0 +1,49 @@
+<odoo>
+    <odoo>
+        <record id="zinema_pelikula_form" model="ir.ui.view">
+            <field name="name">zinema.pelikula.form</field>
+            <field name="model">zinema.pelikula</field>
+            <field name="arch" type="xml">
+                <form string="Pelikula">
+                    <sheet>
+                        <group>
+                            <field name="name" />
+                            <field name="author" />
+                            <field name="release_date" />
+                            <field name="duration" />
+                            <field name="resume" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="zinema_pelikula_tree" model="ir.ui.view">
+            <field name="name">zinema.pelikula.tree</field>
+            <field name="model">zinema.pelikula</field>
+            <field name="arch" type="xml">
+                <tree string="Pelikula">
+                    <field name="name" />
+                    <field name="author" />
+                    <field name="release_date" />
+                    <field name="duration" />
+                    <field name="resume" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="zinema_pelikula_list" model="ir.actions.act_window">
+            <field name="name">Pelikula</field>
+            <field name="res_model">zinema.pelikula</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="menu_zinema_root" name="Zinema Kudeaketa" sequence="1" />
+
+        <menuitem id="menu_zinema"
+            name="Pelikulak"
+            parent="menu_zinema_root"
+            action="zinema_pelikula_list"
+            sequence="10" />
+    </odoo>
+</odoo>

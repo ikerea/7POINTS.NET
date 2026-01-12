@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="module_category_zinema" model="ir.module.category">
+            <field name="name">Zinema</field>
+        </record>
+
+        <!--GRUPO
+        BASE PRIMERO SIEMPRE-->
+        <record id="group_zinema_pelikula_user" model="res.groups">
+            <field name="name">Zinema User</field>
+            <field name="category_id" ref="module_category_zinema" />
+        </record>
+
+        <record id="group_zinema_pelikula_manager" model="res.groups">
+            <field name="name">Zinema Manager</field>
+            <field name="category_id" ref="module_category_zinema" />
+            <field name="implied_ids" eval="[(4, ref('group_zinema_pelikula_user'))]" />
+        </record>
+    </data>
+</odoo>
