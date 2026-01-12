@@ -24,4 +24,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 });
 
+Route::get('/gastos/{idPisua}/{idErabiltzailea}', [GastoController::class, 'index'])->name('gastuak.ikusi');
+
 require __DIR__ . '/settings.php';
