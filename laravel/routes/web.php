@@ -4,6 +4,7 @@ use App\Http\Controllers\PisoController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
+use App\Http\Controllers\ZereginakController;
 
 Route::get('/', function () {
     return Inertia::render('welcome', [
@@ -21,6 +22,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
+
+
+    Route::get('/zereginak', [ZereginakController::class, 'index'])
+        ->name('zereginak.index');
+
+    Route::get('/zereginak/sortu', [ZereginakController::class, 'create'])
+        ->name('zereginak.create');
+
+    Route::post('/zereginak', [ZereginakController::class, 'store'])
+        ->name('zereginak.store');
+
+    Route::get('/zereginak/{zeregina}/editatu', [ZereginakController::class, 'edit'])
+        ->name('zereginak.edit');
+
+    Route::put('/zereginak/{zeregina}', [ZereginakController::class, 'update'])
+        ->name('zereginak.update');
+
+    Route::delete('/zereginak/{zeregina}', [ZereginakController::class, 'destroy'])
+        ->name('zereginak.destroy');
 
 });
 
