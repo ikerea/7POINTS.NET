@@ -1,69 +1,94 @@
-// Components
-import { login } from '@/routes';
-import { email } from '@/routes/password';
-import { Form, Head } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
-
 import InputError from '@/components/input-error';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import AuthLayout from '@/layouts/auth-layout';
+import { Spinner } from '@/components/ui/spinner'; // Asegúrate de tener este componente, o usa LoaderCircle como tenías
+import { login } from '@/routes';
+import { email } from '@/routes/password';
+import { Form, Head, Link } from '@inertiajs/react';
+
+// Mismo color verde corporativo
+const customGreen = '#00796B';
 
 export default function ForgotPassword({ status }: { status?: string }) {
     return (
-        <AuthLayout
-            title="Forgot password"
-            description="Enter your email to receive a password reset link"
-        >
-            <Head title="Forgot password" />
+        <>
+            <Head title="Pasahitza Berreskuratu" />
 
-            {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
-                    {status}
-                </div>
-            )}
+            {/* --- ESTRUCTURA PRINCIPAL --- */}
+            <div className="min-h-screen flex flex-col font-sans" style={{ backgroundColor: '#f3f4f6' }}>
 
-            <div className="space-y-6">
-                <Form {...email.form()}>
-                    {({ processing, errors }) => (
-                        <>
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    name="email"
-                                    autoComplete="off"
-                                    autoFocus
-                                    placeholder="email@example.com"
-                                />
+                {/* --- HEADER VERDE --- */}
+                <header className="w-full py-5 shadow-md" style={{ backgroundColor: customGreen }}>
+                    <div className="max-w-4xl mx-auto px-6 text-white flex items-center justify-between text-lg font-medium">
+                        <Link href="/" className="font-bold hover:opacity-80 transition">
+                            PISUKIDE
+                        </Link>
+                    </div>
+                </header>
+                <main className="flex-grow flex items-center justify-center p-6">
+                    <div className="bg-white w-full max-w-lg rounded-3xl shadow-xl p-10 md:p-12">
+                        <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-4">
+                            Pasahitza ahaztu duzu?
+                        </h2>
+                        <p className="text-center text-gray-600 mb-8 text-sm md:text-base">
+                            Sartu zure email helbidea eta pasahitza berrezartzeko esteka bat bidaliko dizugu.
+                        </p>
 
-                                <InputError message={errors.email} />
+                        {status && (
+                            <div className="mb-6 text-center text-sm font-medium text-green-600 bg-green-50 p-3 rounded-lg border border-green-200">
+                                {status}
                             </div>
+                        )}
 
-                            <div className="my-6 flex items-center justify-start">
-                                <Button
-                                    className="w-full"
-                                    disabled={processing}
-                                    data-test="email-password-reset-link-button"
-                                >
-                                    {processing && (
-                                        <LoaderCircle className="h-4 w-4 animate-spin" />
-                                    )}
-                                    Email password reset link
-                                </Button>
-                            </div>
-                        </>
-                    )}
-                </Form>
+                        <Form {...email.form()} className="flex flex-col gap-6">
+                            {({ processing, errors }) => (
+                                <>
+                                    <div className="grid gap-6">
 
-                <div className="space-x-1 text-center text-sm text-muted-foreground">
-                    <span>Or, return to</span>
-                    <TextLink href={login()}>log in</TextLink>
-                </div>
+                                        {/* Campo: Email */}
+                                        <div className="grid gap-2">
+                                            <Label htmlFor="email">Email helbidea</Label>
+                                            <Input
+                                                id="email"
+                                                type="email"
+                                                name="email"
+                                                autoComplete="off"
+                                                autoFocus
+                                                required
+                                                placeholder="zure@emaila.com"
+                                                className="rounded-lg py-2 text-black"
+                                            />
+                                            <InputError message={errors.email} />
+                                        </div>
+
+                                        {/* Botón de Acción */}
+                                        <Button
+                                            className="mt-2 w-full text-lg py-6 rounded-xl hover:opacity-90 transition shadow-md"
+                                            style={{ backgroundColor: customGreen, color:'white'}}
+                                            disabled={processing}
+                                            data-test="email-password-reset-link-button"
+                                        >
+                                            {processing && <Spinner className="mr-2 text-white" />}
+                                            Bidali berrezartzeko esteka
+                                        </Button>
+                                    </div>
+                                </>
+                            )}
+                        </Form>
+
+                        {/* Pie de tarjeta con enlace a login (redundante pero útil) */}
+                        <div className="mt-8 text-center text-sm text-gray-500">
+                            Gogoratu duzu?{' '}
+                            <TextLink href={login()} className="font-medium text-teal-700 hover:text-teal-900">
+                                Hasi Saioa
+                            </TextLink>
+                        </div>
+
+                    </div>
+                </main>
             </div>
-        </AuthLayout>
+        </>
     );
 }
