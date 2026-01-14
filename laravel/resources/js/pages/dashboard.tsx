@@ -27,7 +27,7 @@ export default function Dashboard() {
                         style={{ backgroundColor: '#A8D5D5' }}
                     >
                         <h1 className="text-3xl font-bold text-white mb-2 uppercase">
-                            KAIXO {auth.user.name}
+                            KAIXO <span style={{color: '#A89996'}}>{auth.user.name}</span>
                         </h1>
                         <p className="text-gray-700 font-medium text-lg">
                             Kudeatu zure pisuko zereginak modu errazean, eta mantendu dena zure lankideekin antolatuta.
