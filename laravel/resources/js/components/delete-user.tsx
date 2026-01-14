@@ -22,14 +22,14 @@ export default function DeleteUser() {
     return (
         <div className="space-y-6">
             <HeadingSmall
-                title="Delete account"
-                description="Delete your account and all of its resources"
+                title="Kontua ezabatu"
+                description="Zure kontua ezabatu bere datu guztiekin"
             />
             <div className="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10">
                 <div className="relative space-y-0.5 text-red-600 dark:text-red-100">
-                    <p className="font-medium">Warning</p>
-                    <p className="text-sm">
-                        Please proceed with caution, this cannot be undone.
+                    <p className="font-medium text-red-600">Warning</p>
+                    <p className="text-sm text-red-600">
+                        Kontuz ibili mesedez, hau ezin da desegin.
                     </p>
                 </div>
 
@@ -39,7 +39,7 @@ export default function DeleteUser() {
                             variant="destructive"
                             data-test="delete-user-button"
                         >
-                            Delete account
+                            Kontua ezabatu
                         </Button>
                     </DialogTrigger>
                     <DialogContent>
@@ -79,6 +79,7 @@ export default function DeleteUser() {
                                             ref={passwordInput}
                                             placeholder="Password"
                                             autoComplete="current-password"
+                                            className='text-black'
                                         />
 
                                         <InputError message={errors.password} />

@@ -37,12 +37,14 @@ const mediaQuery = () => {
 
 const handleSystemThemeChange = () => {
     const currentAppearance = localStorage.getItem('appearance') as Appearance;
-    applyTheme(currentAppearance || 'system');
+    // CAMBIO 1: Si no hay apariencia guardada, usa 'light' en vez de 'system'
+    applyTheme(currentAppearance || 'light');
 };
 
 export function initializeTheme() {
+    // CAMBIO 2: Default inicial al cargar la página
     const savedAppearance =
-        (localStorage.getItem('appearance') as Appearance) || 'system';
+        (localStorage.getItem('appearance') as Appearance) || 'light';
 
     applyTheme(savedAppearance);
 
@@ -51,7 +53,8 @@ export function initializeTheme() {
 }
 
 export function useAppearance() {
-    const [appearance, setAppearance] = useState<Appearance>('system');
+    // CAMBIO 3: Estado inicial del hook
+    const [appearance, setAppearance] = useState<Appearance>('light');
 
     const updateAppearance = useCallback((mode: Appearance) => {
         setAppearance(mode);
@@ -71,7 +74,8 @@ export function useAppearance() {
         ) as Appearance | null;
 
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        updateAppearance(savedAppearance || 'system');
+        // CAMBIO 4: Si no hay localStorage, fuerza 'light'
+        updateAppearance(savedAppearance || 'light');
 
         return () =>
             mediaQuery()?.removeEventListener(

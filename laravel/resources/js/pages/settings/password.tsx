@@ -31,8 +31,8 @@ export default function Password() {
             <SettingsLayout>
                 <div className="space-y-6">
                     <HeadingSmall
-                        title="Update password"
-                        description="Ensure your account is using a long, random password to stay secure"
+                        title="Pasahitza Eguneratu"
+                        description="Ziurtatu pasahitz luzea eta segurua erabiltzen ari zarela"
                     />
 
                     <Form
@@ -60,8 +60,8 @@ export default function Password() {
                         {({ errors, processing, recentlySuccessful }) => (
                             <>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="current_password">
-                                        Current password
+                                    <Label htmlFor="current_password" className='text-muted-foreground'>
+                                        Oraingo pasahitza
                                     </Label>
 
                                     <Input
@@ -69,9 +69,8 @@ export default function Password() {
                                         ref={currentPasswordInput}
                                         name="current_password"
                                         type="password"
-                                        className="mt-1 block w-full"
+                                        className="mt-1 block w-full text-black"
                                         autoComplete="current-password"
-                                        placeholder="Current password"
                                     />
 
                                     <InputError
@@ -80,8 +79,8 @@ export default function Password() {
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="password">
-                                        New password
+                                    <Label htmlFor="password" className='text-muted-foreground'>
+                                        Pasahitz berria
                                     </Label>
 
                                     <Input
@@ -89,26 +88,24 @@ export default function Password() {
                                         ref={passwordInput}
                                         name="password"
                                         type="password"
-                                        className="mt-1 block w-full"
+                                        className="mt-1 block w-full text-black"
                                         autoComplete="new-password"
-                                        placeholder="New password"
                                     />
 
                                     <InputError message={errors.password} />
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="password_confirmation">
-                                        Confirm password
+                                    <Label htmlFor="password_confirmation" className='text-muted-foreground'>
+                                        Pasahitza baieztatu
                                     </Label>
 
                                     <Input
                                         id="password_confirmation"
                                         name="password_confirmation"
                                         type="password"
-                                        className="mt-1 block w-full"
+                                        className="mt-1 block w-full text-black"
                                         autoComplete="new-password"
-                                        placeholder="Confirm password"
                                     />
 
                                     <InputError
@@ -116,12 +113,12 @@ export default function Password() {
                                     />
                                 </div>
 
-                                <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-4 mt-10">
                                     <Button
                                         disabled={processing}
                                         data-test="update-password-button"
                                     >
-                                        Save password
+                                        Pasahitza gorde
                                     </Button>
 
                                     <Transition

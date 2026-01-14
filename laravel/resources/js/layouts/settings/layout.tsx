@@ -10,31 +10,30 @@ import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { type PropsWithChildren } from 'react';
 
+// Menú traducido y configurado
 const sidebarNavItems: NavItem[] = [
     {
-        title: 'Profile',
+        title: 'Profila', // Profile
         href: edit(),
         icon: null,
     },
     {
-        title: 'Password',
+        title: 'Pasahitza', // Password
         href: editPassword(),
         icon: null,
     },
     {
-        title: 'Two-Factor Auth',
+        title: 'Bi urratsen autentifikazioa', // Two-Factor Auth
         href: show(),
-        icon: null,
-    },
-    {
-        title: 'Appearance',
-        href: editAppearance(),
         icon: null,
     },
 ];
 
+// Color corporativo
+const customGreen = '#00796B';
+
 export default function SettingsLayout({ children }: PropsWithChildren) {
-    // When server-side rendering, we only render the layout on the client...
+    // Evitar renderizado en servidor si no hay ventana (seguridad standard de Inertia)
     if (typeof window === 'undefined') {
         return null;
     }
@@ -42,45 +41,52 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
     const currentPath = window.location.pathname;
 
     return (
-        <div className="px-4 py-6">
-            <Heading
-                title="Settings"
-                description="Manage your profile and account settings"
-            />
+        <div className="min-h-screen w-full p-4 md:p-10" style={{ backgroundColor: '#f3f4f6' }}>
 
-            <div className="flex flex-col lg:flex-row lg:space-x-12">
-                <aside className="w-full max-w-xl lg:w-48">
-                    <nav className="flex flex-col space-y-1 space-x-0">
-                        {sidebarNavItems.map((item, index) => (
-                            <Button
-                                key={`${resolveUrl(item.href)}-${index}`}
-                                size="sm"
-                                variant="ghost"
-                                asChild
-                                className={cn('w-full justify-start', {
-                                    'bg-muted': isSameUrl(
-                                        currentPath,
-                                        item.href,
-                                    ),
-                                })}
-                            >
-                                <Link href={item.href}>
-                                    {item.icon && (
-                                        <item.icon className="h-4 w-4" />
-                                    )}
-                                    {item.title}
-                                </Link>
-                            </Button>
-                        ))}
-                    </nav>
-                </aside>
+            {/* Contenedor Centrado */}
+            <div className="max-w-6xl mx-auto">
 
-                <Separator className="my-6 lg:hidden" />
+                <div className="mb-8 ml-2">
+                    <Heading
+                        title="Ezarpenak" // Settings
+                        description="Kudeatu zure profilaren eta kontuaren ezarpenak" // Manage settings...
+                    />
+                </div>
+                <div className="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row min-h-[500px]">
+                    <aside className="w-full lg:w-72 bg-gray-50 p-6 lg:border-r border-gray-100">
+                        <nav className="flex flex-col space-y-2">
+                            {sidebarNavItems.map((item, index) => {
+                                const isActive = isSameUrl(currentPath, item.href);
+                                return (
+                                    <Button
+                                        key={`${resolveUrl(item.href)}-${index}`}
+                                        variant="ghost"
+                                        asChild
+                                        className={cn(
+                                            'w-full justify-start text-base font-medium transition-all duration-200',
+                                            isActive
+                                                ? 'bg-white text-[#00796B] shadow-sm border border-gray-100'
+                                                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                                        )}
+                                    >
+                                        <Link href={item.href}>
+                                            {item.icon && (
+                                                <item.icon className="mr-2 h-4 w-4" />
+                                            )}
+                                            {item.title}
+                                        </Link>
+                                    </Button>
+                                );
+                            })}
+                        </nav>
+                    </aside>
+                    <Separator className="lg:hidden" />
+                    <div className="flex-1 p-8 lg:p-12">
+                        <div className="max-w-2xl mx-auto lg:mx-0">
+                            {children}
+                        </div>
+                    </div>
 
-                <div className="flex-1 md:max-w-2xl">
-                    <section className="max-w-xl space-y-12">
-                        {children}
-                    </section>
                 </div>
             </div>
         </div>

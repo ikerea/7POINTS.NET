@@ -3,12 +3,12 @@ import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner'; // Asegúrate de tener este componente, o usa LoaderCircle como tenías
+import { Spinner } from '@/components/ui/spinner';
 import { login } from '@/routes';
 import { email } from '@/routes/password';
 import { Form, Head, Link } from '@inertiajs/react';
 
-// Mismo color verde corporativo
+// Color corporativo
 const customGreen = '#00796B';
 
 export default function ForgotPassword({ status }: { status?: string }) {
@@ -16,7 +16,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
         <>
             <Head title="Pasahitza Berreskuratu" />
 
-            {/* --- ESTRUCTURA PRINCIPAL --- */}
+            {/* --- ESTRUCTURA PRINCIPAL (Fondo Gris) --- */}
             <div className="min-h-screen flex flex-col font-sans" style={{ backgroundColor: '#f3f4f6' }}>
 
                 {/* --- HEADER VERDE --- */}
@@ -25,17 +25,32 @@ export default function ForgotPassword({ status }: { status?: string }) {
                         <Link href="/" className="font-bold hover:opacity-80 transition">
                             PISUKIDE
                         </Link>
+
+                        {/* Enlace Header: Volver a Login */}
+                        <div className="text-base">
+                            Atzera itzuli?{' '}
+                            <Link href={login()} className="underline hover:text-gray-200 ml-1">
+                                Hasi Saioa
+                            </Link>
+                        </div>
                     </div>
                 </header>
+
+                {/* --- CONTENIDO PRINCIPAL (Tarjeta Blanca) --- */}
                 <main className="flex-grow flex items-center justify-center p-6">
                     <div className="bg-white w-full max-w-lg rounded-3xl shadow-xl p-10 md:p-12">
+
+                        {/* Título */}
                         <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-4">
                             Pasahitza ahaztu duzu?
                         </h2>
+
+                        {/* Descripción traducida */}
                         <p className="text-center text-gray-600 mb-8 text-sm md:text-base">
                             Sartu zure email helbidea eta pasahitza berrezartzeko esteka bat bidaliko dizugu.
                         </p>
 
+                        {/* Mensaje de estado (éxito al enviar correo) */}
                         {status && (
                             <div className="mb-6 text-center text-sm font-medium text-green-600 bg-green-50 p-3 rounded-lg border border-green-200">
                                 {status}
@@ -62,8 +77,6 @@ export default function ForgotPassword({ status }: { status?: string }) {
                                             />
                                             <InputError message={errors.email} />
                                         </div>
-
-                                        {/* Botón de Acción */}
                                         <Button
                                             className="mt-2 w-full text-lg py-6 rounded-xl hover:opacity-90 transition shadow-md"
                                             style={{ backgroundColor: customGreen, color:'white'}}
@@ -78,7 +91,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                             )}
                         </Form>
 
-                        {/* Pie de tarjeta con enlace a login (redundante pero útil) */}
+                        {/* Pie de tarjeta con enlace a login */}
                         <div className="mt-8 text-center text-sm text-gray-500">
                             Gogoratu duzu?{' '}
                             <TextLink href={login()} className="font-medium text-teal-700 hover:text-teal-900">

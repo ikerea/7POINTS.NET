@@ -37,8 +37,8 @@ export default function Profile({
             <SettingsLayout>
                 <div className="space-y-6">
                     <HeadingSmall
-                        title="Profile information"
-                        description="Update your name and email address"
+                        title="Profilaren Informazioa"
+                        description="Zure izena eta emaila eguneratu"
                     />
 
                     <Form
@@ -51,11 +51,11 @@ export default function Profile({
                         {({ processing, recentlySuccessful, errors }) => (
                             <>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="name">Name</Label>
+                                    <Label htmlFor="name" className='text-muted-foreground'>Izena</Label>
 
                                     <Input
                                         id="name"
-                                        className="mt-1 block w-full"
+                                        className="mt-1 block w-full text-black"
                                         defaultValue={auth.user.name}
                                         name="name"
                                         required
@@ -70,12 +70,12 @@ export default function Profile({
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="email">Email address</Label>
+                                    <Label htmlFor="email" className='text-muted-foreground'>Emaila</Label>
 
                                     <Input
                                         id="email"
                                         type="email"
-                                        className="mt-1 block w-full"
+                                        className="mt-1 block w-full text-black"
                                         defaultValue={auth.user.email}
                                         name="email"
                                         required
@@ -116,7 +116,7 @@ export default function Profile({
                                         </div>
                                     )}
 
-                                <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-4 mb-5">
                                     <Button
                                         disabled={processing}
                                         data-test="update-profile-button"

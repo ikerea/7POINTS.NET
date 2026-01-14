@@ -14,19 +14,13 @@ export default function Register() {
     return (
         <>
             <Head title="Kontua Sortu" />
-
-            {/* --- ESTRUCTURA PRINCIPAL --- */}
             <div className="min-h-screen flex flex-col font-sans" style={{ backgroundColor: '#f3f4f6' }}>
-
-                {/* --- HEADER VERDE --- */}
                 <header className="w-full py-5 shadow-md" style={{ backgroundColor: customGreen }}>
                     <div className="max-w-4xl mx-auto px-6 text-white flex items-center justify-between text-lg font-medium">
                         {/* Enlace a inicio */}
                         <Link href="/" className="font-bold hover:opacity-80 transition">
                             PISUKIDE
                         </Link>
-
-                        {/* Enlace para ir al Login si ya tienes cuenta */}
                         <div className="text-base">
                             Baduzu konturik?{' '}
                             <Link href={login()} className="underline hover:text-gray-200 ml-1">
@@ -35,12 +29,8 @@ export default function Register() {
                         </div>
                     </div>
                 </header>
-
-                {/* --- CONTENIDO PRINCIPAL (TARJETA BLANCA) --- */}
                 <main className="flex-grow flex items-center justify-center p-6">
                     <div className="bg-white w-full max-w-lg rounded-3xl shadow-xl p-10 md:p-12">
-
-                        {/* Título */}
                         <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
                             Kontua Sortu
                         </h2>
@@ -54,10 +44,8 @@ export default function Register() {
                             {({ processing, errors }) => (
                                 <>
                                     <div className="grid gap-6">
-
-                                        {/* Campo: Izena (Nombre) */}
                                         <div className="grid gap-2">
-                                            <Label htmlFor="name">Izena</Label>
+                                            <Label htmlFor="name" className='text-black'>Izena</Label>
                                             <Input
                                                 id="name"
                                                 type="text"
@@ -71,10 +59,8 @@ export default function Register() {
                                             />
                                             <InputError message={errors.name} />
                                         </div>
-
-                                        {/* Campo: Email */}
                                         <div className="grid gap-2">
-                                            <Label htmlFor="email">Email helbidea</Label>
+                                            <Label htmlFor="email" className='text-black'>Email helbidea</Label>
                                             <Input
                                                 id="email"
                                                 type="email"
@@ -87,10 +73,8 @@ export default function Register() {
                                             />
                                             <InputError message={errors.email} />
                                         </div>
-
-                                        {/* Campo: Pasahitza */}
                                         <div className="grid gap-2">
-                                            <Label htmlFor="password">Pasahitza</Label>
+                                            <Label htmlFor="password" className='text-black'>Pasahitza</Label>
                                             <Input
                                                 id="password"
                                                 type="password"
@@ -103,10 +87,8 @@ export default function Register() {
                                             />
                                             <InputError message={errors.password} />
                                         </div>
-
-                                        {/* Campo: Confirmar Pasahitza */}
                                         <div className="grid gap-2">
-                                            <Label htmlFor="password_confirmation">
+                                            <Label htmlFor="password_confirmation" className='text-black'>
                                                 Pasahitza baieztatu
                                             </Label>
                                             <Input
@@ -121,12 +103,10 @@ export default function Register() {
                                             />
                                             <InputError message={errors.password_confirmation} />
                                         </div>
-
-                                        {/* Botón de Acción */}
                                         <Button
                                             type="submit"
                                             className="mt-4 w-full text-lg py-6 rounded-xl hover:opacity-90 transition shadow-md"
-                                            style={{ backgroundColor: customGreen, color:'white' }}
+                                            style={{ backgroundColor: customGreen, color: 'white' }}
                                             tabIndex={5}
                                             disabled={processing}
                                         >
