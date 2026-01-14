@@ -1,4 +1,9 @@
-import AppLayoutTemplate from '@/layouts/app/app-sidebar-layout';
+// CAMBIA ESTA LÍNEA (Línea 1):
+// import AppLayoutTemplate from '@/layouts/app/app-sidebar-layout';
+
+// POR ESTA:
+import AppLayoutTemplate from '@/layouts/app/app-header-layout';
+
 import { type BreadcrumbItem } from '@/types';
 import { type ReactNode } from 'react';
 
