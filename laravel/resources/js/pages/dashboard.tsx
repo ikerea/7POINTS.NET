@@ -41,7 +41,7 @@ export default function Dashboard() {
                     </h2>
                     <div className="flex flex-col items-center justify-center py-12 bg-white rounded-2xl border border-gray-100 shadow-sm">
                         <div className="w-full max-w-sm mb-8 flex justify-center">
-                            <div className="h-48 w-48 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 text-center text-xs p-4">
+                            <div className="h-100 w-100 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 text-center text-xs p-4">
                                 <DashBoardSvgIcon className='w-full h-auto'/>
                             </div>
                         </div>
