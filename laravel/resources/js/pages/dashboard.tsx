@@ -2,7 +2,7 @@ import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import SvgIcon from '@/components/ui/svgIcons'; // Asegúrate de importar tu SvgIcon si ya lo tienes
+import DashBoardSvgIcon from '@/components/ui/dashboardSvgIcon';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -42,7 +42,7 @@ export default function Dashboard() {
                     <div className="flex flex-col items-center justify-center py-12 bg-white rounded-2xl border border-gray-100 shadow-sm">
                         <div className="w-full max-w-sm mb-8 flex justify-center">
                             <div className="h-48 w-48 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 text-center text-xs p-4">
-                                [Zure SVG Hemen]
+                                <DashBoardSvgIcon className='w-full h-auto'/>
                             </div>
                         </div>
                         <p className="text-xl font-bold text-gray-800 uppercase tracking-wide text-center">
