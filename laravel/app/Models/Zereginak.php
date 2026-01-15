@@ -13,7 +13,7 @@ class Zereginak extends Model
 {
     protected $table = 'zereginak';
 
-    protected $fillable = ['izena', 'deskripzioa', 'pisua_id'];
+    protected $fillable = ['izena', 'deskripzioa', 'pisua_id','egoera'];
 
 
     public function pisua(): BelongsTo

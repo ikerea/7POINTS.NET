@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+// IMPORTANTE: Usamos el nombre exacto de tu modelo (Plural según tus imports)
 use App\Models\Zereginak;
 use App\Models\Piso;
+use Illuminate\Support\Facades\Auth;
 
 class ZereginakController extends Controller
 {
@@ -14,11 +16,8 @@ class ZereginakController extends Controller
      */
     public function index()
     {
-        // Traemos todas las tareas y también la info del piso asociado (eager loading)
-        // Usamos 'pisua' porque así llamaste a la relación en el modelo Zereginak
-        $zereginak = Zereginak::with('pisua')->get();
+        $zereginak = Zereginak::with(['pisua', 'erabiltzaileak'])->get();
 
-        // Retornamos la vista (que crearemos ahora) pasándole los datos
         return Inertia::render('Zereginak/Index', [
             'zereginak' => $zereginak
         ]);
@@ -28,32 +27,36 @@ class ZereginakController extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-{
-        // 1. Buscamos todos los pisos para poder elegirlos en el formulario
+    {
         $pisuak = Piso::all();
 
         return Inertia::render('Zereginak/Create', [
-            'pisuak' => $pisuak
+            'pisuak' => $pisuak // Ojo: lo enviamos como 'pisuak' para ser coherentes con el frontend
         ]);
-}
+    }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        // 1. Validamos los datos que vienen del formulario
         $validated = $request->validate([
             'izena' => 'required|string|max:255',
-            'deskripzioa' => 'nullable|string', // Puede estar vacío
-            'pisua_id' => 'required|exists:pisua,id', // Tiene que existir en la tabla 'pisua'
+            'deskripzioa' => 'nullable|string',
+            'pisua_id' => 'required|exists:pisua,id', // Tabla 'pisua' correcta
+            'hasiera_data' => 'required|date',
         ]);
 
-        // 2. Creamos la tarea en la base de datos
-        // Como tienes el $fillable bien puesto en el modelo, esto funciona directo
-        Zereginak::create($validated);
+        $zeregina = Zereginak::create([
+            'izena' => $validated['izena'],
+            'deskripzioa' => $validated['deskripzioa'],
+            'pisua_id' => $validated['pisua_id'],
+        ]);
 
-        // 3. Redirigimos al listado principal
+        $zeregina->erabiltzaileak()->attach(Auth::id(), [
+            'hasiera_data' => $validated['hasiera_data']
+        ]);
+
         return redirect()->route('zereginak.index');
     }
 
@@ -68,15 +71,17 @@ class ZereginakController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
+    // AQUÍ ESTABA EL ERROR: Asegúrate de usar 'Zereginak' (el modelo importado)
     public function edit(Zereginak $zeregina)
     {
-        // 1. Buscamos los pisos para el desplegable (Recuerda: PISO, no Pisua)
+        // Cargamos la relación para que no falle el frontend al buscar la fecha
+        $zeregina->load('erabiltzaileak');
+
         $pisuak = Piso::all();
 
-        // 2. Renderizamos la vista 'Edit' pasando la tarea a editar y los pisos
         return Inertia::render('Zereginak/Edit', [
             'zereginak' => $zeregina,
-            'pisuak' => $pisuak
+            'pisuak' => $pisuak // Lo enviamos como 'pisuak' (plural) al frontend
         ]);
     }
 
@@ -85,29 +90,38 @@ class ZereginakController extends Controller
      */
     public function update(Request $request, Zereginak $zeregina)
     {
-        // 1. Validamos (Igual que en store)
+        // Validamos
         $validated = $request->validate([
             'izena' => 'required|string|max:255',
             'deskripzioa' => 'nullable|string',
+            // CORRECCIÓN IMPORTANTE: Cambiado 'pisuak' por 'pisua' para coincidir con tu tabla
             'pisua_id' => 'required|exists:pisua,id',
+            'egoera' => 'required|in:egiteko,egiten,eginda',
+            'hasiera_data' => 'required|date',
         ]);
 
-        // 2. Actualizamos la tarea existente
-        $zeregina->update($validated);
+        // Actualizamos la tarea
+        $zeregina->update([
+            'izena' => $request->izena,
+            'deskripzioa' => $request->deskripzioa,
+            'pisua_id' => $request->pisua_id,
+            'egoera' => $request->egoera,
+        ]);
 
-        // 3. Volvemos al listado
+        // Actualizamos la fecha en la tabla pivote
+        $zeregina->erabiltzaileak()->sync([
+            auth()->id() => ['hasiera_data' => $request->hasiera_data]
+        ]);
+
         return redirect()->route('zereginak.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-   public function destroy(Zereginak $zeregina)
+    public function destroy(Zereginak $zeregina)
     {
-        // 1. Borramos la tarea
         $zeregina->delete();
-
-        // 2. Volvemos al listado (automáticamente se refrescará la tabla)
         return redirect()->route('zereginak.index');
     }
 }
