@@ -3,16 +3,16 @@ import { Link, Head, router } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 
-// --- IMPORTACIONES DE ICONOS ---
+
 import {
     Calendar as CalendarIcon,
     ArrowRight,
     User,
     Edit,
     Trash2,
-    Clock,        // Ahora para "Egiten"
-    CheckCircle2, // Para "Eginda"
-    XCircle       // NUEVO: Para "Egiteko"
+    Clock,
+    CheckCircle2,
+    XCircle
 } from 'lucide-react';
 
 import { Calendar, momentLocalizer } from 'react-big-calendar';
@@ -23,7 +23,7 @@ import 'moment/locale/es';
 moment.locale('es');
 const localizer = momentLocalizer(moment);
 
-// --- INTERFACES ---
+
 interface Pisua {
     id: number;
     izena: string;

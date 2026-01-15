@@ -41,12 +41,7 @@ export default function Create({ auth, pisuak }: Props) {
             <div className="py-12">
                 <div className="max-w-md mx-auto sm:px-6 lg:px-8">
 
-                    {/* Botón "Volver" opcional (puedes quitarlo si usas los breadcrumbs) */}
-                    <div className="mb-6">
-                        <a href="/zereginak" className="text-sm text-gray-600 hover:text-gray-900 underline">
-                            &larr; Atzera
-                        </a>
-                    </div>
+                    
 
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border border-gray-200">
                         <h2 className="text-xl font-bold mb-4 text-gray-800">Zeregina sortu</h2>
@@ -121,6 +116,12 @@ export default function Create({ auth, pisuak }: Props) {
 
                             {/* BOTONES */}
                             <div className="flex items-center justify-end gap-4">
+                                <a
+                                    href="/zereginak"
+                                    className="text-sm text-gray-500 hover:text-gray-900 transition"
+                                >
+                                    Ezeztatu
+                                </a>
                                 <button
                                     type="submit"
                                     disabled={processing}
