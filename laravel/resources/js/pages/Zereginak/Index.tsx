@@ -18,9 +18,10 @@ import {
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import 'moment/locale/es';
+//import 'moment/locale/eu'
+import 'moment/dist/locale/eu';
 
-moment.locale('es');
+moment.locale('eu');
 const localizer = momentLocalizer(moment);
 
 
@@ -131,6 +132,7 @@ export default function Index({ zereginak }: Props) {
             }
         };
     };
+    const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -142,17 +144,38 @@ export default function Index({ zereginak }: Props) {
                     {/* SECCIÓN CALENDARIO */}
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border">
                         <h2 className="text-xl font-bold mb-4 text-gray-700 flex items-center gap-2">
-                            <CalendarIcon className="w-6 h-6" /> Calendario
+                            <CalendarIcon className="w-6 h-6" /> Egutegia
                         </h2>
                         <div style={{ height: 500 }}>
                            <Calendar
                                 localizer={localizer}
+                                culture="eu"
                                 events={eventosCalendario}
                                 startAccessor="start"
                                 endAccessor="end"
                                 style={{ height: '100%' }}
                                 eventPropGetter={eventStyleGetter}
-                                messages={{ next: "Sig", previous: "Ant", today: "Hoy", month: "Mes", week: "Semana", day: "Día" }}
+                                formats={{
+                                monthHeaderFormat: (date: Date, culture: any, localizer: any) =>
+                                    capitalize(localizer.format(date, 'MMMM YYYY', culture)),
+                                weekdayFormat: (date: Date, culture: any, localizer: any) =>
+                                    capitalize(localizer.format(date, 'dddd', culture)),
+                                dayHeaderFormat: (date: Date, culture: any, localizer: any) =>
+                                    capitalize(localizer.format(date, 'dddd DD', culture)),
+                            }}
+                               messages={{
+                                    next: "Hurrengoa",
+                                    previous: "Aurrekoa",
+                                    today: "Gaur",
+                                    month: "Hilabetea",
+                                    week: "Astea",
+                                    day: "Eguna",
+                                    agenda: "Agenda",
+                                    date: "Data",
+                                    time: "Ordua",
+                                    event: "Ekitaldia",
+                                    noEventsInRange: "Ez dago ekitaldirik tarte honetan."
+                                }}
                                 onSelectEvent={(event: any) => router.get(`/zereginak/${event.id}/editatu`)}
                             />
                         </div>
