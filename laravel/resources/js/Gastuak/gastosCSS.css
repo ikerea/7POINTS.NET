@@ -1,0 +1,58 @@
+.divPadre {
+    border: solid 0.2px black;
+
+    display: flex;
+    flex-direction: column;
+    padding: 4%;
+    width: 30vw;
+    height: 50vh;
+    overflow-y: auto;
+    gap: 2%;
+    overflow-x: hidden;
+}
+
+.divHijos {
+    border: solid 0.2px black;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+}
+
+.divHijos h3 {
+    flex: 1;           /* Ocupa todo el espacio sobrante */
+    text-align: right; /* (Opcional) Alinea el número a la derecha */
+    margin: 0;         /* (Opcional) Quita márgenes por defecto del h3 */
+    display: flex;     /* (Opcional) Para centrar verticalmente si hace falta */
+    align-items: center; 
+    justify-content: flex-end; /* Alinea a la derecha usando flex */
+    margin-right: 5%;
+}
+
+.divNombreYGastoNombre {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 2%;
+}
+
+/* --- ADAPTACIÓN PARA MÓVIL (MEDIA QUERY) --- */
+/* Esto se aplicará SOLO cuando la pantalla sea menor a 768px (tablets y móviles) */
+@media (max-width: 768px) {
+    
+    .divPadre {
+        width: 90vw;   /* Aumentamos de 30% a 90% para usar casi toda la pantalla */
+        height: 70vh;  /* (Opcional) Hacemos la lista más alta en móvil */
+        padding: 4%;   /* Reducimos el padding para no desperdiciar espacio */
+        gap: 2%;
+    }
+
+    .divHijos {
+        min-height: 60px; /* Asegura que cada fila sea fácil de tocar con el dedo */
+    }
+
+    .divNombreYGastoNombre h6, 
+    .divNombreYGastoNombre p {
+        margin: 2px 0; /* Ajustar márgenes de texto para que no se vean muy separados */
+    }
+}

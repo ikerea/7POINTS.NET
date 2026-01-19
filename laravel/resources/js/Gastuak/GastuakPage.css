@@ -1,0 +1,195 @@
+/* Variables basadas en tu imagen */
+:root {
+  --primary-teal: #16655D;
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --border-radius: 10px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f4f4; /* Un fondo gris muy suave fuera del folio */
+}
+
+/* --- HEADER / NAVBAR --- */
+.header {
+  background-color: var(--primary-teal);
+  color: white;
+  padding: 0 40px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo-box {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 10px 20px;
+  font-weight: bold;
+}
+
+.nav-links {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.nav-links .btn-gastos {
+  border: 1px solid white;
+  padding: 8px 20px;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.user-profile {
+  width: 45px;
+  height: 45px;
+  background-color: #ccc;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  overflow: hidden;
+}
+
+/* --- CONTENIDO PRINCIPAL --- */
+.main-container {
+  background-color: white;
+  max-width: 1000px; /* Ancho similar al folio de la imagen */
+  margin: 0 auto;
+  min-height: 100vh;
+  padding: 20px 50px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.page-title {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-top: 20px;
+  margin-bottom: 40px;
+  position: relative;
+  display: inline-block;
+  border-bottom: 3px solid #bfaea8; /* Color beige/tierra del subrayado */
+  padding-bottom: 5px;
+  width: fit-content;
+}
+
+/* --- CONTROLES (Tabs y Filtros) --- */
+.controls-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+/* Tabs: Gastuak | Zergak */
+.tabs-container {
+  display: flex;
+  border: 2px solid black;
+  border-radius: 20px;
+  overflow: hidden;
+  width: 300px;
+}
+
+.tab {
+  flex: 1;
+  padding: 5px 0;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 600;
+  background-color: #fff;
+  transition: background 0.2s;
+}
+
+.tab.active {
+  background-color: #dbecef; /* Azul claro selección */
+  border-right: 2px solid black; /* Línea divisoria si es el primero */
+}
+
+/* Fila de Filtro y Botón Añadir */
+.filter-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.date-filter-btn {
+  border: 2px solid black;
+  background: white;
+  padding: 5px 30px;
+  border-radius: 20px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.add-btn {
+  width: 40px;
+  height: 40px;
+  border: 2px solid black;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: normal;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.add-btn:active {
+  transform: scale(0.95);
+}
+
+/* --- TOTALES --- */
+.totals-section {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  font-size: 1.5rem;
+  font-weight: 500;
+  padding: 0 10px;
+}
+
+/* --- FOOTER --- */
+.footer {
+  background-color: var(--primary-teal);
+  color: white;
+  text-align: center;
+  padding: 20px;
+  margin-top: auto; /* Empuja el footer al final */
+  width: 100%;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+  .header { padding: 0 15px; }
+  .nav-links { display: none; } /* Ocultar menú en móvil simple */
+  .main-container { padding: 10px 15px; width: 100%; }
+  .totals-section { flex-direction: column; gap: 10px; text-align: center; }
+}
+
+.contenido-centrado {
+    width: 100%;
+    max-width: 600px; /* Limita el ancho para que no se estire */
+    margin: 0 auto;   /* ESTO ES LO QUE LO CENTRA (Izquierda/Derecha auto) */
+    display: flex;
+    flex-direction: column;
+}

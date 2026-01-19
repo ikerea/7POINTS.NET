@@ -53,5 +53,20 @@ class GastoController extends Controller {
         return redirect()->route('gastos.index');
     }
 
+    public function cargarPaginaEditar(int $gastoId) {
+
+        $gasto = Gasto::findOrfail($gastoId);
+
+        if(!$gasto) {
+            return redirect()->route('gastos.index');
+        }
+
+        return Inertia::render('Gastos/edit', [
+            'gasto' => $gasto,
+            'flash' => [
+                'message' => session('message')
+            ]
+        ]);
+    }
 
 }

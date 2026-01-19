@@ -24,6 +24,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 });
 
+Route::post('/gastuak/addGastua', [GastoController::class, 'addGasto'])->name('gastuak.gehitu');
 Route::get('/gastos/{idPisua}/{idErabiltzailea}', [GastoController::class, 'index'])->name('gastuak.ikusi');
+Route::delete('/gastos/deleteGasto/{id}', [GastoController::class, 'eliminarGasto'])->name('gastuak.kendu');
+Route::get('/gastos/{idGasto}/edit', [GastoController::class, 'cargarPaginaEditar'])->name('gastuak.cargaEdit');
 
 require __DIR__ . '/settings.php';
