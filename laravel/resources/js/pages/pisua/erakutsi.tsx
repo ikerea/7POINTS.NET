@@ -1,7 +1,7 @@
 import React from 'react';
 import { Head, Link, router } from '@inertiajs/react'; // Importamos router para borrar
 import { FaHouseChimneyMedical } from "react-icons/fa6";
-import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react'; // Iconos nuevos
+import { MoreVertical, Pencil, Trash2 } from 'lucide-react'; // Iconos nuevos
 
 // --- IMPORTAMOS LOS COMPONENTES DE UI ---
 import { Button } from '@/components/ui/button';
@@ -115,7 +115,7 @@ export default function Erakutsi({ pisuak }: ErakutsiProps) {
                                                     <DropdownMenu>
                                                         <DropdownMenuTrigger asChild>
                                                             <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-gray-200">
-                                                                <MoreHorizontal className="h-5 w-5 text-gray-500" />
+                                                                <MoreVertical className="h-5 w-5 text-gray-500" />
                                                             </Button>
                                                         </DropdownMenuTrigger>
                                                         <DropdownMenuContent align="end">
