@@ -38,7 +38,7 @@ const EditGastoForm = ({ gasto }: { gasto: GastoData }) => {
         
         // Usamos router.put y apuntamos a la URL con el ID
         // Asegúrate de que gasto.id coincida con tu base de datos (puede ser gasto.IdGasto)
-        router.put(`/gastuak/${gasto.id}`, values);
+        router.put(`/gastuak/editar/${gasto.id}`, values);
     };
 
     return (

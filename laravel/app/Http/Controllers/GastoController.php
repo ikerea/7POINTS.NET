@@ -8,13 +8,21 @@ use Inertia\Inertia;
 
 class GastoController extends Controller {
     
-    public function index(int $idPisua, int $idErabiltzailea) {
+    public function index() {
 
-        $gastos = Gasto::with('usuario') 
-                    ->where('IdPiso', $idPisua)
-                    ->get();
+        //$gastos = Gasto::with('usuario')->where('IdPiso', 1)->get(); // Ejemplo simplificado
+    
+        // IMPORTANTE: El nombre 'gastos' aquí debe coincidir con el de React
+        //return Inertia::render('Gastuak/GastuakPage', [
+        //    'gastos' => $gastos 
+        //]);
+        // 1. Obtienes los datos de la BD
+        $gastos = Gasto::all(); 
         
-        return Inertia::render('gastos', compact("gastos"));
+        // 2. Renderizas la vista y LE PASAS los datos
+            return Inertia::render('Gastuak/GastuakPage', [ 
+                'gastos' => $gastos 
+            ]);
     }
 
     public function addGasto(Request $request){
@@ -61,12 +69,20 @@ class GastoController extends Controller {
             return redirect()->route('gastos.index');
         }
 
-        return Inertia::render('Gastos/edit', [
+        return Inertia::render('Gastuak/EditGastoForm', [
             'gasto' => $gasto,
             'flash' => [
                 'message' => session('message')
             ]
         ]);
+    }
+
+    public function cargarGasto() {
+        return Inertia::render('Gastuak/GastuakPage');
+    }
+
+    public function gastuakGehituCargar() {
+        return Inertia::render('Gastuak/AddGastoForm');
     }
 
 }
