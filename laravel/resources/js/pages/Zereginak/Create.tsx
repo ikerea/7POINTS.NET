@@ -1,8 +1,10 @@
 import React, { FormEventHandler } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
 
+
+const customGreen = '#00796B';
+const backgroundColor = '#f3f4f6';
 
 interface Pisua {
     id: number;
@@ -19,37 +21,37 @@ export default function Create({ auth, pisuak }: Props) {
         izena: '',
         deskripzioa: '',
         pisua_id: '',
-         hasiera_data: '',
+        hasiera_data: '',
     });
-
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
         post('/zereginak');
     };
 
-    const breadcrumbs: BreadcrumbItem[] = [
-            { title: 'Zereginak', href: '/zereginak' },
-            { title: 'Zereginak sortu', href: '/zereginak/sortu' },
-        ];
+
 
     return (
+        <AppLayout>
+            <Head title="Zeregin Berria" />
+            <div
+                className="py-12 flex justify-center min-h-screen"
+                style={{ backgroundColor: backgroundColor }}
+            >
+                <div className="w-full max-w-lg sm:px-6 lg:px-8">
 
-       <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Nueva Tarea" />
+                    <div className="bg-white overflow-hidden shadow-xl rounded-3xl p-8 md:p-10 border border-gray-100">
 
-            <div className="py-12">
-                <div className="max-w-md mx-auto sm:px-6 lg:px-8">
+                        <h2 className="text-3xl font-bold mb-2 text-center text-gray-800">
+                            Zeregina sortu
+                        </h2>
+                        <div className="w-32 h-[3px] bg-gray-400 mx-auto rounded-full mb-8"></div>
 
-                    
+                        <form onSubmit={submit} className="flex flex-col gap-5">
 
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border border-gray-200">
-                        <h2 className="text-xl font-bold mb-4 text-gray-800">Zeregina sortu</h2>
-
-                        <form onSubmit={submit}>
                             {/* CAMPO: IZENA */}
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="izena">
+                            <div className="grid gap-2">
+                                <label className="block text-gray-600 font-medium ml-1" htmlFor="izena">
                                    Zereginaren izena
                                 </label>
                                 <input
@@ -57,37 +59,38 @@ export default function Create({ auth, pisuak }: Props) {
                                     type="text"
                                     value={data.izena}
                                     onChange={(e) => setData('izena', e.target.value)}
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    placeholder="Adb:Komuna garbitu"
+                                    // Nuevo estilo de inputs
+                                    className="border-gray-300 focus:border-teal-700 focus:ring-teal-700 rounded-xl w-full py-3 px-4 text-gray-800 shadow-sm transition-all"
+                                    placeholder="Adb: Komuna garbitu"
                                 />
-                                {errors.izena && <div className="text-red-500 text-xs italic mt-1">{errors.izena}</div>}
+                                {errors.izena && <div className="text-red-500 text-sm mt-1 ml-1">{errors.izena}</div>}
                             </div>
 
                             {/* CAMPO: DESKRIPZIOA */}
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="deskripzioa">
+                            <div className="grid gap-2">
+                                <label className="block text-gray-600 font-medium ml-1" htmlFor="deskripzioa">
                                     Deskripzioa
                                 </label>
                                 <textarea
                                     id="deskripzioa"
                                     value={data.deskripzioa}
                                     onChange={(e) => setData('deskripzioa', e.target.value)}
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="border-gray-300 focus:border-teal-700 focus:ring-teal-700 rounded-xl w-full py-3 px-4 text-gray-800 shadow-sm min-h-[100px] transition-all"
                                     placeholder="Zereginaren xehetasunak..."
                                 />
-                                {errors.deskripzioa && <div className="text-red-500 text-xs italic mt-1">{errors.deskripzioa}</div>}
+                                {errors.deskripzioa && <div className="text-red-500 text-sm mt-1 ml-1">{errors.deskripzioa}</div>}
                             </div>
 
                             {/* CAMPO: PISUA (SELECT) */}
-                            <div className="mb-6">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="pisua_id">
+                            <div className="grid gap-2">
+                                <label className="block text-gray-600 font-medium ml-1" htmlFor="pisua_id">
                                     Pisua
                                 </label>
                                 <select
                                     id="pisua_id"
                                     value={data.pisua_id}
                                     onChange={(e) => setData('pisua_id', e.target.value)}
-                                    className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                                    className="border-gray-300 focus:border-teal-700 focus:ring-teal-700 rounded-xl w-full py-3 px-4 text-gray-800 shadow-sm bg-white transition-all cursor-pointer"
                                 >
                                     <option value="">-- Pisua aukeratu --</option>
                                     {pisuak.map((piso) => (
@@ -96,12 +99,12 @@ export default function Create({ auth, pisuak }: Props) {
                                         </option>
                                     ))}
                                 </select>
-                                {errors.pisua_id && <div className="text-red-500 text-xs italic mt-1">{errors.pisua_id}</div>}
+                                {errors.pisua_id && <div className="text-red-500 text-sm mt-1 ml-1">{errors.pisua_id}</div>}
                             </div>
 
                             {/* INPUT DE FECHA */}
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="hasiera_data">
+                            <div className="grid gap-2">
+                                <label className="block text-gray-600 font-medium ml-1" htmlFor="hasiera_data">
                                     Hasiera-data
                                 </label>
                                 <input
@@ -109,26 +112,28 @@ export default function Create({ auth, pisuak }: Props) {
                                     type="date"
                                     value={data.hasiera_data}
                                     onChange={(e) => setData('hasiera_data', e.target.value)}
-                                    className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="border-gray-300 focus:border-teal-700 focus:ring-teal-700 rounded-xl w-full py-3 px-4 text-gray-800 shadow-sm transition-all cursor-pointer"
                                 />
-                                {errors.hasiera_data && <div className="text-red-500 text-xs italic mt-1">{errors.hasiera_data}</div>}
+                                {errors.hasiera_data && <div className="text-red-500 text-sm mt-1 ml-1">{errors.hasiera_data}</div>}
                             </div>
 
                             {/* BOTONES */}
-                            <div className="flex items-center justify-end gap-4">
-                                <a
-                                    href="/zereginak"
-                                    className="text-sm text-gray-500 hover:text-gray-900 transition"
-                                >
-                                    Ezeztatu
-                                </a>
+                            <div className="flex flex-col gap-3 mt-6">
                                 <button
                                     type="submit"
                                     disabled={processing}
-                                    className="bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition"
+                                    style={{ backgroundColor: customGreen }}
+                                    className="w-full text-white font-bold py-4 px-6 rounded-xl shadow-md hover:opacity-90 transition transform hover:-translate-y-0.5 text-lg"
                                 >
                                     Zeregina gorde
                                 </button>
+
+                                <a
+                                    href="/zereginak"
+                                    className="text-center text-gray-500 hover:text-gray-800 transition py-2 text-sm"
+                                >
+                                    Ezeztatu eta itzuli
+                                </a>
                             </div>
                         </form>
 
