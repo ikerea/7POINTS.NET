@@ -34,7 +34,7 @@ export default function Edit({ pisua }: EditProps) {
             <div className="min-h-screen flex flex-col font-sans" style={{ backgroundColor: '#f3f4f6' }}>
                 <header className="w-full py-5 shadow-md" style={{ backgroundColor: customGreen }}>
                     <div className="max-w-4xl mx-auto px-6 text-white flex items-center justify-between text-lg font-medium">
-                        <Link href="/" className="font-bold hover:opacity-80 transition">
+                        <Link href="/dashboard" className="font-bold hover:opacity-80 transition">
                             PISUKIDE
                         </Link>
                     </div>
