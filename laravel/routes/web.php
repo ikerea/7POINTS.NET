@@ -19,6 +19,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/pisua/erakutsi', [PisoController::class, 'index'])->name('pisua.show');
     Route::get('/pisua/{pisua}/edit', [PisoController::class, 'edit'])->name('pisua.edit');
     Route::put('/pisua/{pisua}', [PisoController::class, 'update'])->name('pisua.update');
+    Route::delete('/pisua/{pisua}', [PisoController::class, 'destroy'])->name('pisua.destroy');
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');

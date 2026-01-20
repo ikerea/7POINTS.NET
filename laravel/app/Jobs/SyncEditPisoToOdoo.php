@@ -30,7 +30,7 @@ class SyncEditPisoToOdoo implements ShouldQueue
     public function handle(OdooService $odoo): void
     {
         try {
-            $odooId = $odoo->write('pisua', [[$this->piso->odoo_id], [
+            $odooId = $odoo->write('pisua', [[(int)$this->piso->odoo_id], [
                 'name' => $this->piso->izena,
                 'code' => $this->piso->kodigoa,
             ]]);
