@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SyncDeletePisoFrom;
 use App\Jobs\SyncEditPisoToOdoo;
 use Auth;
 use Illuminate\Http\Request;
@@ -11,9 +12,10 @@ use App\Jobs\SyncPisoToOdoo;
 use App\Services\OdooService;
 class PisoController extends Controller
 {
-    public function index(OdooService $odoo)
+    public function index()
     {
-        $pisuak = $odoo->search('pisua', zutabe: ['name', 'code']);
+        $pisuak = Piso::with('user')->get();
+
         return Inertia::render('pisua/erakutsi', ['pisuak' => $pisuak]);
     }
 
@@ -39,7 +41,7 @@ class PisoController extends Controller
             'izena' => $validate['pisuaren_izena'],
             'kodigoa' => $validate['pisuaren_kodigoa'],
             'odoo_id' => null,
-            'user_id' => Auth::id(), //RECORDEMOS este Auth busca la sesion que esta autentificada 
+            'user_id' => Auth::id(), //RECORDEMOS este Auth busca la sesion que esta autentificada
         ]);
 
         SyncPisoToOdoo::dispatch($pisua);
@@ -67,20 +69,20 @@ class PisoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Piso $piso)
+    public function update(Request $request, Piso $pisua)
     {
         $validate = $request->validate([
             'pisuaren_izena' => 'required|string|max:255',
             'pisuaren_kodigoa' => 'required|string|max:50',
         ]);
 
-        $piso->update([
+        $pisua->update([
             'izena' => $validate['pisuaren_izena'],
             'kodigoa' => $validate['pisuaren_kodigoa'],
             'synced' => false
         ]);
 
-        SyncEditPisoToOdoo::dispatch($piso);
+        SyncEditPisoToOdoo::dispatch($pisua);
 
         return redirect()->route('pisua.show');
     }
@@ -88,8 +90,18 @@ class PisoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Piso $pisua)
     {
-        //
+        $odooId = $pisua->odoo_id;
+
+        //Borramos el biso de SQLite
+        $pisua->delete();
+
+        //Si el piso estaba sincornizado con Odoo (Tiene ID), lanzamos el Job
+        if($odooId){
+            SyncDeletePisoFrom::dispatch((int)$odooId);
+        }
+
+        return redirect()->route('pisua.show');
     }
 }

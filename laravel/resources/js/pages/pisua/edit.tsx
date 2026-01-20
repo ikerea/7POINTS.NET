@@ -1,6 +1,7 @@
 import React from 'react';
-import { useForm, Link } from '@inertiajs/react';
+import { useForm, Head, Link } from '@inertiajs/react';
 
+// Interfaces
 interface Pisua {
     id: number;
     izena: string;
@@ -11,9 +12,10 @@ interface EditProps {
     pisua: Pisua;
 }
 
+const customGreen = '#00796B';
+
 export default function Edit({ pisua }: EditProps) {
-    // Inertia useForm erabiltzen dugu datuak kudeatzeko
-    // 'pisuaren_izena' eta 'pisuaren_kodigoa' erabiltzen ditugu, Controller-ak horrela espero duelako
+    // Inertia useForm datuak kudeatzeko
     const { data, setData, put, processing, errors } = useForm({
         pisuaren_izena: pisua.izena || '',
         pisuaren_kodigoa: pisua.kodigoa || '',
@@ -21,64 +23,84 @@ export default function Edit({ pisua }: EditProps) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        // URL eraikuntza
         const url = `/pisua/${pisua.id}`;
-         console.log("BIDALIKO DEN URL-A:", url);
         put(url);
     };
 
     return (
-        <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow mt-10">
-            <h1 className="text-2xl font-bold mb-6 text-gray-800">Editatu Pisua</h1>
-
-            <form onSubmit={handleSubmit}>
-                {/* Pisuaren Izena Input */}
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="izena">
-                        Pisuaren Izena
-                    </label>
-                    <input
-                        id="izena"
-                        type="text"
-                        value={data.pisuaren_izena}
-                        onChange={e => setData('pisuaren_izena', e.target.value)}
-                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.pisuaren_izena ? 'border-red-500' : ''}`}
-                    />
-                    {errors.pisuaren_izena && <div className="text-red-500 text-xs mt-1">{errors.pisuaren_izena}</div>}
-                </div>
-
-                {/* Pisuaren Kodigoa Input */}
-                <div className="mb-6">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="kodigoa">
-                        Pisuaren Kodigoa
-                    </label>
-                    <input
-                        id="kodigoa"
-                        type="text"
-                        value={data.pisuaren_kodigoa}
-                        onChange={e => setData('pisuaren_kodigoa', e.target.value)}
-                        className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${errors.pisuaren_kodigoa ? 'border-red-500' : ''}`}
-                    />
-                    {errors.pisuaren_kodigoa && <div className="text-red-500 text-xs mt-1">{errors.pisuaren_kodigoa}</div>}
-                </div>
-
-                {/* Ekintza Botoiak */}
-                <div className="flex items-center justify-between">
-                    <Link
-                        href={'pisua.show'}
-                        className="text-gray-500 hover:text-gray-700 font-bold transition duration-150 ease-in-out"
-                    >
-                        Atzera
-                    </Link>
-
-                    <button
-                        type="submit"
-                        disabled={processing}
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50 transition duration-150 ease-in-out"
-                    >
-                        {processing ? 'Gordetzen...' : 'Aldaketak Gorde'}
-                    </button>
-                </div>
-            </form>
-        </div>
+        <>
+            <Head title="Editatu Pisua" />
+            <div className="min-h-screen flex flex-col font-sans" style={{ backgroundColor: '#f3f4f6' }}>
+                <header className="w-full py-5 shadow-md" style={{ backgroundColor: customGreen }}>
+                    <div className="max-w-4xl mx-auto px-6 text-white flex items-center justify-between text-lg font-medium">
+                        <Link href="/" className="font-bold hover:opacity-80 transition">
+                            PISUKIDE
+                        </Link>
+                    </div>
+                </header>
+                <main className="flex-grow flex items-center justify-center p-6">
+                    <div className="bg-white w-full max-w-lg rounded-3xl shadow-xl p-10 md:p-12">
+                        <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
+                            Editatu Pisua
+                        </h1>
+                        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                            <div className="grid gap-2">
+                                <label
+                                    htmlFor="izena"
+                                    className="text-sm font-medium text-gray-700"
+                                >
+                                    Pisuaren Izena
+                                </label>
+                                <input
+                                    id="izena"
+                                    type="text"
+                                    value={data.pisuaren_izena}
+                                    onChange={e => setData('pisuaren_izena', e.target.value)}
+                                    className="flex w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent text-black shadow-sm"
+                                />
+                                {errors.pisuaren_izena && (
+                                    <p className="text-red-500 text-sm mt-1">{errors.pisuaren_izena}</p>
+                                )}
+                            </div>
+                            <div className="grid gap-2">
+                                <label
+                                    htmlFor="kodigoa"
+                                    className="text-sm font-medium text-gray-700"
+                                >
+                                    Pisuaren Kodigoa
+                                </label>
+                                <input
+                                    id="kodigoa"
+                                    type="text"
+                                    value={data.pisuaren_kodigoa}
+                                    onChange={e => setData('pisuaren_kodigoa', e.target.value)}
+                                    className="flex w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent text-black shadow-sm"
+                                />
+                                {errors.pisuaren_kodigoa && (
+                                    <p className="text-red-500 text-sm mt-1">{errors.pisuaren_kodigoa}</p>
+                                )}
+                            </div>
+                            <div className="mt-4 flex flex-col gap-3">
+                                <button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="w-full text-lg py-3 rounded-xl hover:opacity-90 transition shadow-md text-white font-semibold disabled:opacity-70 flex justify-center items-center"
+                                    style={{ backgroundColor: customGreen }}
+                                >
+                                    {processing ? 'Gordetzen...' : 'Aldaketak Gorde'}
+                                </button>
+                                <Link
+                                    href="/pisua/erakutsi"
+                                    className="w-full text-center py-3 rounded-xl border border-gray-300 text-gray-600 font-medium hover:bg-gray-50 transition"
+                                >
+                                    Utzi eta Atzera
+                                </Link>
+                            </div>
+                        </form>
+                    </div>
+                </main>
+            </div>
+        </>
     );
 }

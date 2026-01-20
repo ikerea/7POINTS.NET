@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use Exception;
 use Illuminate\Support\Facades\Http;
 class OdooService
 {
@@ -84,6 +85,27 @@ class OdooService
             $model,
             'write',
             $data
+        ]);
+    }
+
+    public function delete(string $model, array $ids){
+        $uid = $this->rpc('common', 'login', [
+            $this->db,
+            $this->username,
+            $this->password
+        ]);
+
+        if(!$uid){
+            throw new \Exception('Odoo: Creedenciales incorrectas o BD no encontrada');
+        }
+
+        return $this->rpc('object', 'execute_kw', [
+            $this->db,
+            $uid,
+            $this->password,
+            $model,
+            'unlink',
+            [$ids]
         ]);
     }
 

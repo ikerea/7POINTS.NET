@@ -32,7 +32,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Pisuak ikusi',
-        href: '#', // Pon aquí la ruta real cuando la tengas
+        href: '/pisua/erakutsi', // Pon aquí la ruta real cuando la tengas
         icon: Home,
     },
     {
