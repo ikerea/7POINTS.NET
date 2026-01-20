@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, Head, router } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
 
 
+// Ikonoak inportatu 'lucide react' liurutegitik
 import {
     Calendar as CalendarIcon,
     ArrowRight,
@@ -12,19 +12,24 @@ import {
     Trash2,
     Clock,
     CheckCircle2,
-    XCircle
+    XCircle,
+    MoreVertical,
+    ChevronDown,
+    ChevronUp
 } from 'lucide-react';
 
+// Egutegiaren liburutegiak eta moment.js datak kudeatzeko
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-//import 'moment/locale/eu'
 import 'moment/dist/locale/eu';
 
+
+// Moment.js konfiguratu euskaraz erabiltzeko
 moment.locale('eu');
 const localizer = momentLocalizer(moment);
 
-
+// --- INTERFAZEAK ---
 interface Pisua {
     id: number;
     izena: string;
@@ -54,30 +59,23 @@ interface Props {
     zereginak: Zeregina[];
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Zereginak', href: '/zereginak' },
-];
-
-// --- CONFIGURACIÓN DE ESTADOS (CAMBIOS AQUÍ) ---
+// --- EGOERAREN ESTILOAK ---
 const statusStyles = {
     egiteko: {
-        // Usamos Rojo/Rosa para la X
         color: 'bg-red-500',
         text: 'text-red-600',
         bg: 'bg-red-50',
-        icon: XCircle, // <--- CAMBIO: Icono X
+        icon: XCircle,
         label: 'Egiteko'
     },
     egiten: {
-        // Usamos Azul para el proceso (Reloj)
         color: 'bg-blue-500',
         text: 'text-blue-600',
         bg: 'bg-blue-50',
-        icon: Clock, // <--- CAMBIO: Icono Reloj
+        icon: Clock,
         label: 'Egiten'
     },
     eginda: {
-        // Verde para completado
         color: 'bg-green-500',
         text: 'text-green-600',
         bg: 'bg-green-50',
@@ -86,8 +84,171 @@ const statusStyles = {
     }
 };
 
+// --- 3 PUNTUKO MENUAREN KONPONENTEA: Menua ireki eta ixteko logika eta kanpoan klik egitean ixteko funtzionalitatea ---
+interface OpcionesMenuProps {
+    id: number;
+    onDelete: (id: number) => void;
+}
+
+const OpcionesMenu = ({ id, onDelete }: OpcionesMenuProps) => {
+
+    // Menua irekita dagoen ala ez
+    const [isOpen, setIsOpen] = useState(false);
+
+    // Menuaren elementua erreferentziatzeko
+    const menuRef = useRef<HTMLDivElement>(null);
+
+    // "Click outside" detektatzeko efektua: erabiltzaileak menutik kanpo klik egiten badu, itxi egingo da
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    return (
+        <div className="relative" ref={menuRef}>
+            {/* 3 puntuko botoia */}
+            <button
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setIsOpen(!isOpen);
+                }}
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition focus:outline-none"
+            >
+                <MoreVertical className="w-5 h-5" />
+            </button>
+
+            {/* Menua irekita badago, aukerak erakutsi */}
+            {isOpen && (
+                <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-xl border border-gray-100 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+
+                    {/* Editatzeko esteka */}
+                    <Link
+                        href={`/zereginak/${id}/editatu`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 w-full text-left"
+                    >
+                        <Edit className="w-4 h-4" />
+                        Editatu
+                    </Link>
+
+                    {/* Ezabatzeko botoia */}
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setIsOpen(false);
+                            onDelete(id);
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full text-left"
+                    >
+                        <Trash2 className="w-4 h-4" />
+                        Ezabatu
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+};
+
+// --- Zerrendaren elementuak, eta deskripzioa ireki edo itsi kudeaketa ---
+const TaskItem = ({ task, onDelete }: { task: Zeregina, onDelete: (id: number) => void }) => {
+
+    // Deskripzioa ikusi ala ez
+    const [isExpanded, setIsExpanded] = useState(false);
+
+    // Erabiltzailea eta data
+    const assignedUser = task.erabiltzaileak.length > 0 ? task.erabiltzaileak[0] : null;
+    const dateString = assignedUser
+        ? moment(assignedUser.pivot.hasiera_data).format('YYYY/M/D')
+        : 'Data gabe';
+
+    // Estiloak kargatu egoeraren arabera
+    const currentStatus = statusStyles[task.egoera] || statusStyles['egiteko'];
+    const StatusIcon = currentStatus.icon;
+
+    return (
+        <div
+            className="group relative block bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
+            onClick={() => setIsExpanded(!isExpanded)}
+        >
+            {/* CARD-EKO KOLORE BARRA */}
+            <div className={`absolute left-0 top-0 bottom-0 w-2 rounded-l-xl ${currentStatus.color}`}></div>
+
+            <div className="flex flex-col">
+
+                <div className="relative px-6 py-4 flex items-center justify-between gap-4">
+
+                    {/* ZEREGINAREN INFORMAZIOA */}
+                    <div className="grid grid-cols-12 gap-4 flex-1 items-center ml-2">
+
+                        {/* IZENA ZATIA */}
+                        <div className="col-span-12 md:col-span-5 font-semibold text-gray-800 truncate pr-4 flex items-center gap-2">
+                            {task.izena}
+                        </div>
+
+                        {/* ERABILTZAILE ZATIA*/}
+                        <div className="col-span-12 md:col-span-4 flex items-center gap-2 text-gray-600">
+                            <ArrowRight className="w-4 h-4 text-gray-400 hidden md:block" />
+                            <User className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                            <span className="font-medium text-sm truncate">
+                                {assignedUser ? assignedUser.name : <span className="text-gray-400 italic">Esleitu gabe</span>}
+                            </span>
+                        </div>
+
+                        {/* DATA ZATIA */}
+                        <div className="hidden md:flex col-span-2 items-center gap-2 text-sm text-gray-500">
+                            <CalendarIcon className="w-4 h-4 text-gray-400" />
+                            <span>{dateString}</span>
+                        </div>
+
+                        {/* PISUA ZATIA  */}
+                        <div className="hidden lg:flex col-span-1 justify-end">
+                            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded whitespace-nowrap">
+                                {task.pisua ? task.pisua.izena : '-'}
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Eskubiko zatia, Egoera ikonoa + Menua(edit eta delete) + Deskr ikonoa */}
+                    <div className="flex items-center gap-3 flex-shrink-0 pl-2 border-l border-gray-100">
+
+                        {/* Egoeraren ikonoa */}
+                        <div className={`hidden sm:flex items-center justify-center w-8 h-8 rounded-full ${currentStatus.bg}`} title={currentStatus.label}>
+                            <StatusIcon className={`w-5 h-5 ${currentStatus.text}`} />
+                        </div>
+
+                        {/* 3 puntuko menua (Editatu/Ezabatu) */}
+                        <OpcionesMenu id={task.id} onDelete={onDelete} />
+
+                        {/* Deskripzioaren menuaren ikonoa, gezia */}
+                        <div className="text-gray-400">
+                            {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                        </div>
+                    </div>
+                </div>
+
+                {/* --- Deskripzioaren zatia (Menu desplegablea: Soilik 'isExpanded' egia denean erakusten da) --- */}
+                {isExpanded && (
+                    <div className="bg-gray-50 px-8 py-4 ml-2 border-t border-gray-100">
+                        <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Deskripzioa</h4>
+                        <p className="text-gray-700 text-sm whitespace-pre-wrap">
+                            {task.deskripzioa || <span className="italic text-gray-400">Ez dago deskripziorik.</span>}
+                        </p>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
+// --- OSAGAI NAGUSIA (INDEX) ---
 export default function Index({ zereginak }: Props) {
 
+    // Zereginak egutegiko formatura bihurtu
     const eventosCalendario = zereginak.flatMap((tarea) => {
         return tarea.erabiltzaileak.map((user) => ({
             id: tarea.id,
@@ -99,28 +260,21 @@ export default function Index({ zereginak }: Props) {
         }));
     });
 
+    // Zeregina ezabatzeko funtzioa (alert batekin)
     const handleDelete = (id: number) => {
-        if (confirm('¿Estás seguro de que quieres borrar esta tarea?')) {
+        if (confirm('Ziur zaude zeregin hori ezabatu nahi duzu?')) {
             router.delete(`/zereginak/${id}`);
         }
     };
 
-    // Función para pintar los eventos del calendario
+    // Egutegiko ekitaldien koloreak definitzeko funtzioa
     const eventStyleGetter = (event: any) => {
-        let backgroundColor = '#3b82f6'; // Azul por defecto
-
+        let backgroundColor = '#3b82f6';
         switch (event.egoera) {
-            case 'egiteko':
-                backgroundColor = '#ef4444'; // Rojo (bg-red-500)
-                break;
-            case 'egiten':
-                backgroundColor = '#3b82f6'; // Azul (bg-blue-500)
-                break;
-            case 'eginda':
-                backgroundColor = '#22c55e'; // Verde (bg-green-500)
-                break;
+            case 'egiteko': backgroundColor = '#ef4444'; break;
+            case 'egiten': backgroundColor = '#3b82f6'; break;
+            case 'eginda': backgroundColor = '#22c55e'; break;
         }
-
         return {
             style: {
                 backgroundColor: backgroundColor,
@@ -132,16 +286,18 @@ export default function Index({ zereginak }: Props) {
             }
         };
     };
+
+    // Lehen letra larria jartzeko laguntzailea (Egutegiko tituluetarako)
     const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Lista de Tareas" />
+        <AppLayout>
+            <Head title="Zeregin Lista" />
 
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="max-w-7xl mx-auto space-y-6 w-full">
 
-                    {/* SECCIÓN CALENDARIO */}
+                    {/* EGUTEGIA */}
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border">
                         <h2 className="text-xl font-bold mb-4 text-gray-700 flex items-center gap-2">
                             <CalendarIcon className="w-6 h-6" /> Egutegia
@@ -155,14 +311,16 @@ export default function Index({ zereginak }: Props) {
                                 endAccessor="end"
                                 style={{ height: '100%' }}
                                 eventPropGetter={eventStyleGetter}
+                                // Egutegiko formatuak euskarara egokitu (Larriak)
                                 formats={{
-                                monthHeaderFormat: (date: Date, culture: any, localizer: any) =>
-                                    capitalize(localizer.format(date, 'MMMM YYYY', culture)),
-                                weekdayFormat: (date: Date, culture: any, localizer: any) =>
-                                    capitalize(localizer.format(date, 'dddd', culture)),
-                                dayHeaderFormat: (date: Date, culture: any, localizer: any) =>
-                                    capitalize(localizer.format(date, 'dddd DD', culture)),
-                            }}
+                                    monthHeaderFormat: (date: Date, culture: any, localizer: any) =>
+                                        capitalize(localizer.format(date, 'MMMM YYYY', culture)),
+                                    weekdayFormat: (date: Date, culture: any, localizer: any) =>
+                                        capitalize(localizer.format(date, 'dddd', culture)),
+                                    dayHeaderFormat: (date: Date, culture: any, localizer: any) =>
+                                        capitalize(localizer.format(date, 'dddd DD', culture)),
+                                }}
+                                // Itzulpenak (Moment-ek egiten ez dituenak)
                                messages={{
                                     next: "Hurrengoa",
                                     previous: "Aurrekoa",
@@ -181,103 +339,30 @@ export default function Index({ zereginak }: Props) {
                         </div>
                     </div>
 
-                    {/* SECCIÓN LISTADO */}
+                    {/* --- ZEREGINEN ZERRENDA ATALA --- */}
                     <div className="space-y-4">
                         <div className="flex justify-between items-center mb-2">
-                            <h2 className="text-xl font-bold text-gray-700">Listado de Tareas</h2>
+                            <h2 className="text-xl font-bold text-gray-700">Zeregin Lista</h2>
                             <Link
                                 href="/zereginak/sortu"
                                 className="bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-full shadow transition flex items-center gap-2"
                             >
-                                <span>+</span> Nueva Tarea
+                                <span>+</span> Zeregin Berria
                             </Link>
                         </div>
 
                         <div className="flex flex-col gap-3">
+                            {/* Zerrenda hutsik badago mezua erakutsi */}
                             {zereginak.length === 0 && (
                                 <div className="text-center py-10 text-gray-500 bg-white rounded-xl border border-dashed">
-                                    No hay tareas creadas todavía.
+                                    Ez daude zereginik.
                                 </div>
                             )}
 
-                            {zereginak.map((task) => {
-                                const assignedUser = task.erabiltzaileak.length > 0 ? task.erabiltzaileak[0] : null;
-                                const dateString = assignedUser
-                                    ? new Date(assignedUser.pivot.hasiera_data).toLocaleDateString()
-                                    : 'Sin fecha';
-
-                                const currentStatus = statusStyles[task.egoera] || statusStyles['egiteko'];
-                                const StatusIcon = currentStatus.icon;
-
-                                return (
-                                    <div
-                                        key={task.id}
-                                        className="group relative bg-white rounded-full border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 px-6 py-3 flex items-center justify-between gap-4 overflow-hidden"
-                                    >
-                                        {/* BARRA LATERAL DE COLOR */}
-                                        <div className={`absolute left-0 top-0 bottom-0 w-2 ${currentStatus.color}`}></div>
-
-                                        {/* GRID PRINCIPAL */}
-                                        <div className="grid grid-cols-12 gap-4 flex-1 items-center ml-2">
-
-                                            {/* 1. NOMBRE */}
-                                            <div className="col-span-12 md:col-span-5 font-semibold text-gray-800 truncate pr-4" title={task.izena}>
-                                                {task.izena}
-                                            </div>
-
-                                            {/* 2. USUARIO */}
-                                            <div className="col-span-12 md:col-span-4 flex items-center gap-2 text-gray-600">
-                                                <ArrowRight className="w-4 h-4 text-gray-400 hidden md:block" />
-                                                <User className="w-4 h-4 text-gray-500 flex-shrink-0" />
-                                                <span className="font-medium text-sm truncate">
-                                                    {assignedUser ? assignedUser.name : <span className="text-gray-400 italic">Sin asignar</span>}
-                                                </span>
-                                            </div>
-
-                                            {/* 3. FECHA */}
-                                            <div className="hidden md:flex col-span-2 items-center gap-2 text-sm text-gray-500">
-                                                <CalendarIcon className="w-4 h-4 text-gray-400" />
-                                                <span>{dateString}</span>
-                                            </div>
-
-                                            {/* 4. PISO */}
-                                            <div className="hidden lg:flex col-span-1 justify-end">
-                                                 <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded whitespace-nowrap">
-                                                    {task.pisua ? task.pisua.izena : '-'}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        {/* BLOQUE DERECHO */}
-                                        <div className="flex items-center gap-4 flex-shrink-0 pl-2 border-l border-gray-100">
-
-                                            {/* ICONO DE ESTADO */}
-                                            <div className={`hidden sm:flex items-center justify-center w-8 h-8 rounded-full ${currentStatus.bg}`} title={currentStatus.label}>
-                                                {/* He quitado la animación de spin porque al reloj no le suele pegar girar entero */}
-                                                <StatusIcon className={`w-5 h-5 ${currentStatus.text}`} />
-                                            </div>
-
-                                            {/* BOTONES */}
-                                            <div className="flex items-center gap-1">
-                                                <Link
-                                                    href={`/zereginak/${task.id}/editatu`}
-                                                    className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition"
-                                                    title="Editar"
-                                                >
-                                                    <Edit className="w-5 h-5" />
-                                                </Link>
-                                                <button
-                                                    onClick={() => handleDelete(task.id)}
-                                                    className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition"
-                                                    title="Borrar"
-                                                >
-                                                    <Trash2 className="w-5 h-5" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                            {/* Zereginak mapeatu eta TaskItem bidez erakutsi */}
+                            {zereginak.map((task) => (
+                                <TaskItem key={task.id} task={task} onDelete={handleDelete} />
+                            ))}
                         </div>
                     </div>
 
