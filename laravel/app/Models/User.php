@@ -53,4 +53,8 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
         ];
     }
+
+    public function pisuak(){
+        return $this->belongsToMany(Piso::class, 'piso_user', 'user_id', 'piso_id');
+    }
 }

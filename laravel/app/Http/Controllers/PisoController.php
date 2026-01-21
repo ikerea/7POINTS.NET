@@ -12,6 +12,30 @@ use App\Jobs\SyncPisoToOdoo;
 use App\Services\OdooService;
 class PisoController extends Controller
 {
+    public function showSelection()
+    {
+        return Inertia::render('pisua/aukeratu');
+    }
+    public function join(Request $request)
+    {
+        $validated = $request->validate([
+            'kodigoa' => 'required|string|exists:pisua,kodigoa',
+        ], [
+            'kodigoa.exists' => 'Kode hori ez da existitzen. (El código no existe)',
+        ]);
+
+        $piso = Piso::where('kodigoa', $validated['kodigoa'])->first();
+
+        //El 'syncWithoutDetaching' evita duplicados (si ya estaba, no lo mete dos veces)
+        //Añadimos el usuario a ese piso
+        $request->user()->pisuak()->syncWithoutDetaching([$piso->id]);
+
+        $user = $request->user();
+        $user->mota = 'normala';
+        $user->save();
+
+        return redirect()->route('dashboard');
+    }
     public function index()
     {
         $pisuak = Piso::with('user')->get();
@@ -98,8 +122,8 @@ class PisoController extends Controller
         $pisua->delete();
 
         //Si el piso estaba sincornizado con Odoo (Tiene ID), lanzamos el Job
-        if($odooId){
-            SyncDeletePisoFrom::dispatch((int)$odooId);
+        if ($odooId) {
+            SyncDeletePisoFrom::dispatch((int) $odooId);
         }
 
         return redirect()->route('pisua.show');
