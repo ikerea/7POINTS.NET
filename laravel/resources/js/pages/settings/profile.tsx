@@ -121,7 +121,7 @@ export default function Profile({
                                         disabled={processing}
                                         data-test="update-profile-button"
                                     >
-                                        Save
+                                        Gorde
                                     </Button>
 
                                     <Transition
@@ -132,7 +132,7 @@ export default function Profile({
                                         leaveTo="opacity-0"
                                     >
                                         <p className="text-sm text-neutral-600">
-                                            Saved
+                                            Gordeta
                                         </p>
                                     </Transition>
                                 </div>
