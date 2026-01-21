@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Gasto;
 use Inertia\Inertia;
+use App\Models\User;
 
 class GastoController extends Controller {
     
@@ -28,61 +29,66 @@ class GastoController extends Controller {
     public function addGasto(Request $request){
 
         $datosProcesados = $request->validate([
-        'nombre' => 'required|string|max:255',    
-        'dinero' => 'required|numeric|min:0',  
-        'fecha'  => 'required|date',            
-        'pagado' => 'boolean',                 
-    ]);
+        'Nombre' => 'required|string|max:255',    
+        'Cantidad' => 'required|numeric|min:0',  
+        'Fecha'  => 'required|date',            
+        'IdUsuario' => 'required|numeric',                 
+        ]);
 
-    Gasto::create($datosProcesados);
+        $datosProcesados['IdPiso'] = 1;
 
-    return redirect()->back();
+        Gasto::create($datosProcesados);
+
+        return redirect('/gastuak');
     }
 
-    public function editGasto(Request $request, Gasto $gasto) {
+    public function editGasto(Request $request, $id) {
+
+        $gasto = Gasto::where('IdGasto', $id)->firstOrFail();
 
         $datosProcesados = $request->validate([
-            'nombre' => 'required|string|max:255',    
-            'dinero' => 'required|numeric|min:0',  
-            'fecha'  => 'required|date',            
-            'pagado' => 'boolean',                 
+        'Nombre' => 'required|string|max:255',    
+        'Cantidad' => 'required|numeric|min:0',  
+        'Fecha'  => 'required|date',            
+        'IdUsuario' => 'required|exists:users,id',                 
         ]);
+
+        $datosProcesados['IdPiso'] = 1;
         
         $gasto->update($datosProcesados);
-
-        return redirect()->route('gastos.index')
-        ->with('message', 'Gasto actualizado correctamente');
+        //dd($gasto);
+        return redirect("/gastuak");
     }
 
-    public function eliminarGasto(Gasto $gasto) {
-
+    public function eliminarGasto($id) {
+        
+        $gasto = Gasto::where('IdGasto', $id)->firstOrFail();
         $gasto->delete();
-
-        return redirect()->route('gastos.index');
+        return redirect("/gastuak");
     }
 
     public function cargarPaginaEditar(int $gastoId) {
 
-        $gasto = Gasto::findOrfail($gastoId);
+        $gasto = Gasto::findOrFail($gastoId);
 
-        if(!$gasto) {
-            return redirect()->route('gastos.index');
-        }
+        // 2. Cargar TODOS los usuarios para el desplegable
+        // (Si tienes lógica de pisos, filtra por el piso, ej: User::where('piso_id', $pisoId)->get())
+        $usuarios = User::all(); 
 
         return Inertia::render('Gastuak/EditGastoForm', [
             'gasto' => $gasto,
+            'usuarios' => $usuarios, // <--- Aquí pasamos la lista completa
             'flash' => [
-                'message' => session('message')
-            ]
+            'message' => session('message')
+        ]
         ]);
     }
 
-    public function cargarGasto() {
-        return Inertia::render('Gastuak/GastuakPage');
-    }
-
     public function gastuakGehituCargar() {
-        return Inertia::render('Gastuak/AddGastoForm');
-    }
 
+        $todosLosUsuarios = User::all();
+        return Inertia::render('Gastuak/AddGastoForm', [
+            'usuarios' => $todosLosUsuarios // Pasamos los usuarios como prop
+        ]);
+    }
 }

@@ -12,35 +12,36 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('gastos', function (Blueprint $table) {
-            // 1. Clave primaria personalizada
-            // Como tu modelo define 'IdGasto', pasamos ese nombre al método id()
+            // 1. Clave primaria
             $table->id('IdGasto');
 
-            // 2. Claves foráneas (Foreign Keys)
-            // Definimos las columnas con el mismo tipo que las tablas padre (usualmente BigInteger)
+            // 2. Claves foráneas
             $table->unsignedBigInteger('IdUsuario');
             $table->unsignedBigInteger('IdPiso');
 
-            // 3. Campo Cantidad
-            // Usamos decimal con precisión (10 dígitos en total, 2 decimales)
-            // Ejemplo: 12345678.99
+            // 3. Campos de datos
             $table->decimal('Cantidad', 10, 2);
+            
+            // --- AÑADIDO: Los campos que te faltaban ---
+            $table->string('Nombre'); // El "izenburua"
+            $table->date('Fecha');    // La "data"
+            // -------------------------------------------
 
-            // 4. Timestamps (created_at, updated_at)
+            // 4. Timestamps
             $table->timestamps();
 
             // --- Restricciones de Clave Foránea ---
             
-            // Relación con la tabla 'users' (o 'usuarios' si cambiaste el nombre)
+            // Relación con 'users'
             $table->foreign('IdUsuario')
                   ->references('id')
                   ->on('users')
-                  ->onDelete('cascade'); // Opcional: borra el gasto si se borra el usuario
+                  ->onDelete('cascade');
 
-            // Relación con la tabla 'pisos'
+            // Relación con 'pisua' (AQUÍ ESTABA EL ERROR)
             $table->foreign('IdPiso')
-                  ->references('id') // Asumiendo que la PK de pisos es 'id'
-                  ->on('pisos')
+                  ->references('id')   // <--- Asegúrate que la PK de 'pisua' sea 'id'. Si es 'IdPiso', pon 'IdPiso' aquí.
+                  ->on('pisua')        // <--- CAMBIO IMPORTANTE: de 'pisos' a 'pisua'
                   ->onDelete('cascade');
         });
     }

@@ -26,7 +26,7 @@
             if (!window.confirm("¿Seguro que quieres borrar este gasto?")) return;
 
             // Inertia envía la petición DELETE a Laravel
-            router.delete(`/gastos/${id}`, {
+            router.delete(`/gastos/deleteGasto/${id}`, {
                 preserveScroll: true, // Mantiene la posición de la pantalla
                 // No hace falta actualizar el estado manual, Inertia recarga la página con los datos nuevos automáticamente
             });

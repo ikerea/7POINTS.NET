@@ -1,24 +1,13 @@
 import './gastosCSS.css'
 
-interface User {
-    id: number;
-    name: string;
-    email: string;
-    email_verified_at: string | null;
-    mota: string;
-    odoo_id: number | null;
-    synced: number;
-    sync_error: string | null;
-    created_at: string;
-    updated_at: string;
-}
-
 export interface Gasto { // Exporto la interfaz para usarla en el padre si hace falta
     IdGasto: number,
+    Nombre: string,
     IdUsuario: number,
     IdPiso: number,
     Cantidad: number,
-    usuario: User
+    created_at: string,
+    updated_at: string
 }
 
 interface GastosProps {
@@ -37,8 +26,8 @@ function Gastos(props: GastosProps) {
                     
                     {/* Información del Gasto */}
                     <div className="divNombreYGastoNombre">
-                        <h6>#{gasto.IdGasto}</h6>
-                        <p>Ordainduta: {gasto.usuario.name}</p>
+                        <h6>Nombre: {gasto.Nombre}</h6>
+                        <p>Ordainduta: {gasto.IdUsuario}</p>
                     </div>
                     
                     <h3>{gasto.Cantidad} €</h3>
