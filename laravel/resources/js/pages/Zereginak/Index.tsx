@@ -15,7 +15,8 @@ import {
     XCircle,
     MoreVertical,
     ChevronDown,
-    ChevronUp
+    ChevronUp,
+    Filter
 } from 'lucide-react';
 
 // Egutegiaren liburutegiak eta moment.js datak kudeatzeko
@@ -248,8 +249,17 @@ const TaskItem = ({ task, onDelete }: { task: Zeregina, onDelete: (id: number) =
 // --- OSAGAI NAGUSIA (INDEX) ---
 export default function Index({ zereginak }: Props) {
 
+    // 1. EGOERA: Filtroa kudeatzeko aldagaia ('denak' da lehenetsia)
+    const [filtroEgoera, setFiltroaEgoera] = useState<'denak' | 'egiteko' | 'egiten' | 'eginda'>('denak');
+
+    // 2. LOGIKA: Zereginak filtratu egoeraren arabera
+    const zereginFiltratuak = zereginak.filter((task) => {
+        if (filtroEgoera === 'denak') return true;
+        return task.egoera === filtroEgoera;
+    });
+
     // Zereginak egutegiko formatura bihurtu
-    const eventosCalendario = zereginak.flatMap((tarea) => {
+    const eventosCalendario = zereginFiltratuak.flatMap((tarea) => {
         return tarea.erabiltzaileak.map((user) => ({
             id: tarea.id,
             title: `${tarea.izena} (${tarea.pisua?.izena || '-'})`,
@@ -341,26 +351,52 @@ export default function Index({ zereginak }: Props) {
 
                     {/* --- ZEREGINEN ZERRENDA ATALA --- */}
                     <div className="space-y-4">
-                        <div className="flex justify-between items-center mb-2">
+                        <div className="flex flex-col md:flex-row justify-between items-end md:items-center mb-2 gap-4">
+
+                        <div className="flex items-center gap-4">
                             <h2 className="text-xl font-bold text-gray-700">Zeregin Lista</h2>
-                            <Link
-                                href="/zereginak/sortu"
-                                className="bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-full shadow transition flex items-center gap-2"
-                            >
-                                <span>+</span> Zeregin Berria
-                            </Link>
+
+                            {/* FILTRO EGOERA */}
+                            <div className="flex bg-white rounded-lg p-1 border shadow-sm">
+                                {[
+                                    { key: 'denak', label: 'Denak' },
+                                    { key: 'egiteko', label: 'Egiteko' },
+                                    { key: 'egiten', label: 'Egiten' },
+                                    { key: 'eginda', label: 'Eginda' }
+                                ].map((opt) => (
+                                    <button
+                                        key={opt.key}
+                                        onClick={() => setFiltroaEgoera(opt.key as any)}
+                                        className={`px-3 py-1 text-sm font-medium rounded-md transition-all ${
+                                            filtroEgoera === opt.key
+                                            ? 'bg-gray-800 text-white shadow'
+                                            : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
+                                        }`}
+                                    >
+                                        {opt.label}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
+
+                        <Link
+                            href="/zereginak/sortu"
+                            className="bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-full shadow transition flex items-center gap-2"
+                        >
+                            <span>+</span> Zeregin Berria
+                        </Link>
+                    </div>
 
                         <div className="flex flex-col gap-3">
                             {/* Zerrenda hutsik badago mezua erakutsi */}
-                            {zereginak.length === 0 && (
+                            {zereginFiltratuak.length === 0 && (
                                 <div className="text-center py-10 text-gray-500 bg-white rounded-xl border border-dashed">
                                     Ez daude zereginik.
                                 </div>
                             )}
 
                             {/* Zereginak mapeatu eta TaskItem bidez erakutsi */}
-                            {zereginak.map((task) => (
+                            {zereginFiltratuak.map((task) => (
                                 <TaskItem key={task.id} task={task} onDelete={handleDelete} />
                             ))}
                         </div>
