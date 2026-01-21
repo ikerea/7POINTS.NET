@@ -13,7 +13,8 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-
+    Route::get('/pisua/aukeratu', [PisoController::class, 'showSelection'])->name('pisua.selection');
+    Route::post('/pisua/batu', [PisoController::class, 'join'])->name('pisua.join');
     Route::get('/pisua/sortu', [PisoController::class, 'create'])->name('pisua.create');
     Route::post('/pisua', [PisoController::class, 'store'])->name('pisua.store');
     Route::get('/pisua/erakutsi', [PisoController::class, 'index'])->name('pisua.show');

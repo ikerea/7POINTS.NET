@@ -26,5 +26,9 @@ class Piso extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function inquilinos(){
+        return $this->belongsToMany(User::class, 'piso_user', 'piso_id', 'user_id');
+    }
+
 
 }

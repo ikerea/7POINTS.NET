@@ -62,7 +62,7 @@ export default function Erakutsi({ pisuak }: ErakutsiProps) {
                                 className="px-5 py-2.5 text-white font-medium rounded-xl shadow transition hover:opacity-90 flex gap-2"
                                 style={{ backgroundColor: customGreen }}
                             >
-                                <FaHouseChimneyMedical size={25} color='white' /> Sortu Berria
+                                <FaHouseChimneyMedical size={25} color='white' />
                             </Link>
                         </div>
 
