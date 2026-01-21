@@ -22,7 +22,6 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'mota',
         'odoo_id',
         'synced',
         'sync_error'
@@ -55,6 +54,8 @@ class User extends Authenticatable
     }
 
     public function pisuak(){
-        return $this->belongsToMany(Piso::class, 'piso_user', 'user_id', 'piso_id');
+        return $this->belongsToMany(Piso::class, 'piso_user', 'user_id', 'piso_id')
+        ->withPivot('mota')
+        ->withTimestamps();
     }
 }

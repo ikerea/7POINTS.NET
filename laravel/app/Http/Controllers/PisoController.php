@@ -28,11 +28,9 @@ class PisoController extends Controller
 
         //El 'syncWithoutDetaching' evita duplicados (si ya estaba, no lo mete dos veces)
         //Añadimos el usuario a ese piso
-        $request->user()->pisuak()->syncWithoutDetaching([$piso->id]);
-
-        $user = $request->user();
-        $user->mota = 'normala';
-        $user->save();
+        $request->user()->pisuak()->syncWithoutDetaching([
+            $piso->id => ['mota' => 'normala']
+        ]);
 
         return redirect()->route('dashboard');
     }
@@ -61,12 +59,16 @@ class PisoController extends Controller
             'pisuaren_kodigoa' => 'required|string|max:50',
         ]);
 
+        $user = $request->user();
+
         $pisua = Piso::create([
             'izena' => $validate['pisuaren_izena'],
             'kodigoa' => $validate['pisuaren_kodigoa'],
             'odoo_id' => null,
-            'user_id' => Auth::id(), //RECORDEMOS este Auth busca la sesion que esta autentificada
+            'user_id' => $user->id, //RECORDEMOS este Auth busca la sesion que esta autentificada
         ]);
+
+        $pisua->inquilinos()->attach($user->id, ['mota' => 'koordinatzailea']);
 
         SyncPisoToOdoo::dispatch($pisua);
 
