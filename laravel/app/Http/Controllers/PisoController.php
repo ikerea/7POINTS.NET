@@ -130,4 +130,26 @@ class PisoController extends Controller
 
         return redirect()->route('pisua.show');
     }
+
+    public function selectPisua(Request $request, $id)
+    {
+        // 1. Buscar el piso
+        $pisua = Piso::findOrFail($id);
+
+        // 2. (Opcional pero recomendado) Seguridad:
+        // Verificar que el usuario logueado pertenece realmente a ese piso.
+        // Asumiendo que la relación en User se llama 'pisuak' (como usaste en el método join)
+        $pertenece = $request->user()->pisuak()->where('pisua.id', $id)->exists();
+
+        if (!$pertenece) {
+            return back()->withErrors(['message' => 'Ez zara pisu honetako kidea (No eres miembro de este piso).']);
+        }
+
+        // 3. Guardar en sesión
+        session(['pisua_id' => $pisua->id]);
+        session(['pisua_izena' => $pisua->izena]); // Guardamos el nombre por si quieres mostrarlo en el header
+
+        // 4. Redirigir a la lista de tareas (Zereginak)
+        return redirect()->route('zereginak.index');
+    }
 }

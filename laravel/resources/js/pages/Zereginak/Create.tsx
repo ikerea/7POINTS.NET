@@ -6,22 +6,22 @@ import AppLayout from '@/layouts/app-layout';
 const customGreen = '#00796B';
 const backgroundColor = '#f3f4f6';
 
-interface Pisua {
+interface Kidea {
     id: number;
-    izena: string;
+    name: string;
 }
 
 interface Props {
     auth: any;
-    pisuak: Pisua[];
+    kideak: Kidea[];
 }
 
-export default function Create({ auth, pisuak }: Props) {
+export default function Create({ auth,kideak }: Props) {
     const { data, setData, post, processing, errors } = useForm({
         izena: '',
         deskripzioa: '',
-        pisua_id: '',
         hasiera_data: '',
+        erabiltzailea_id: '',
     });
 
     const submit: FormEventHandler = (e) => {
@@ -81,25 +81,23 @@ export default function Create({ auth, pisuak }: Props) {
                                 {errors.deskripzioa && <div className="text-red-500 text-sm mt-1 ml-1">{errors.deskripzioa}</div>}
                             </div>
 
-                            {/* CAMPO: PISUA (SELECT) */}
+                            {/* --- SELECT: NOR? (QUIÉN) --- */}
                             <div className="grid gap-2">
-                                <label className="block text-gray-600 font-medium ml-1" htmlFor="pisua_id">
-                                    Pisua
-                                </label>
+                                <label className="block text-gray-600 font-medium ml-1" htmlFor="kidea">Nork egingo du?</label>
                                 <select
-                                    id="pisua_id"
-                                    value={data.pisua_id}
-                                    onChange={(e) => setData('pisua_id', e.target.value)}
-                                    className="border-gray-300 focus:border-teal-700 focus:ring-teal-700 rounded-xl w-full py-3 px-4 text-gray-800 shadow-sm bg-white transition-all cursor-pointer"
+                                    id="kidea"
+                                    value={data.erabiltzailea_id}
+                                    onChange={(e) => setData('erabiltzailea_id', e.target.value)}
+                                    className="border-gray-300 focus:border-teal-700 focus:ring-teal-700 rounded-xl w-full py-3 px-4 text-gray-800 shadow-sm transition-all bg-white cursor-pointer"
                                 >
-                                    <option value="">-- Pisua aukeratu --</option>
-                                    {pisuak.map((piso) => (
-                                        <option key={piso.id} value={piso.id}>
-                                            {piso.izena}
+                                    <option value="" disabled>Aukeratu kide bat...</option>
+                                    {kideak.map((kidea) => (
+                                        <option key={kidea.id} value={kidea.id}>
+                                            {kidea.name}
                                         </option>
                                     ))}
                                 </select>
-                                {errors.pisua_id && <div className="text-red-500 text-sm mt-1 ml-1">{errors.pisua_id}</div>}
+                                {errors.erabiltzailea_id && <div className="text-red-500 text-sm mt-1 ml-1">{errors.erabiltzailea_id}</div>}
                             </div>
 
                             {/* INPUT DE FECHA */}
