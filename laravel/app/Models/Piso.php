@@ -27,7 +27,9 @@ class Piso extends Model
     }
 
     public function inquilinos(){
-        return $this->belongsToMany(User::class, 'piso_user', 'piso_id', 'user_id');
+        return $this->belongsToMany(User::class, 'piso_user', 'piso_id', 'user_id')
+        ->withPivot('mota')
+        ->withTimestamps();
     }
 
 

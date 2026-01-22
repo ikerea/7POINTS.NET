@@ -8,25 +8,21 @@ const backgroundColor = '#f3f4f6';
 
 
 // --- INTERFAZEAK (DATU MOTAK) ---
-interface Pisua {
+interface Kidea {
     id: number;
-    izena: string;
+    name: string;
 }
 
 interface Pivot {
     hasiera_data: string;
 }
 
-interface Erabiltzailea {
-    id: number;
-    pivot: Pivot;
-}
+interface Erabiltzailea { id: number; pivot: Pivot; }
 
 interface Zeregina {
     id: number;
     izena: string;
     deskripzioa: string;
-    pisua_id: number;
     egoera: 'egiteko' | 'egiten' | 'eginda';
     erabiltzaileak: Erabiltzailea[];
 }
@@ -34,11 +30,11 @@ interface Zeregina {
 interface Props {
     auth: any;
     zereginak: Zeregina;
-    pisuak: Pisua[];
+    kideak: Kidea[];
 }
 
 // --- EDIT KONPONENTEA ---
-export default function Edit({ zereginak, pisuak }: Props) {
+export default function Edit({ zereginak,kideak  }: Props) {
 
     // 1. DATA LORTZEKO LOGIKA
     // Zereginak erabiltzailerik esleituta badu, data 'pivot' taulatik ateratzen dugu.
@@ -47,13 +43,18 @@ export default function Edit({ zereginak, pisuak }: Props) {
         ? zereginak.erabiltzaileak[0].pivot.hasiera_data
         : '';
 
+        // Extraer el usuario actual (asumimos que solo hay uno por tarea por ahora)
+    const currentUser = (zereginak.erabiltzaileak && zereginak.erabiltzaileak.length > 0)
+        ? zereginak.erabiltzaileak[0].id
+        : '';
+
     // 2. FORMULARIOAREN KUDEAKETA, datuen hasierako balioak ezartzen da.
     const { data, setData, put, processing, errors } = useForm({
         izena: zereginak.izena || '',
         deskripzioa: zereginak.deskripzioa || '',
-        pisua_id: zereginak.pisua_id || '',
         egoera: zereginak.egoera || 'egiteko',
         hasiera_data: currentData,
+        erabiltzailea_id: currentUser,
     });
 
     // 3. FORMULARIOA BIDALTZEKO FUNTZIOA, 'put' metodoa datuak kargatzeko
@@ -118,26 +119,23 @@ export default function Edit({ zereginak, pisuak }: Props) {
                                 {errors.deskripzioa && <div className="text-red-500 text-sm mt-1 ml-1">{errors.deskripzioa}</div>}
                             </div>
 
-                           {/* --- PISUA AUKERATZEKO EREMUA (SELECT erabiliz) --- */}
-                            <div className="grid gap-2">
-                                <label className="block text-gray-600 font-medium ml-1" htmlFor="pisua_id">
-                                    Pisua
-                                </label>
+                            {/* --- SELECT: NOR? (EDITABLE) --- */}
+                             <div className="grid gap-2">
+                                <label className="block text-gray-600 font-medium ml-1" htmlFor="kidea">Nork egingo du?</label>
                                 <select
-                                    id="pisua_id"
-                                    value={data.pisua_id}
-                                    onChange={(e) => setData('pisua_id', e.target.value)}
-                                    className="border-gray-300 focus:border-teal-700 focus:ring-teal-700 rounded-xl w-full py-3 px-4 text-gray-800 shadow-sm bg-white transition-all cursor-pointer"
+                                    id="kidea"
+                                    value={data.erabiltzailea_id}
+                                    onChange={(e) => setData('erabiltzailea_id', e.target.value)}
+                                    className="border-gray-300 focus:border-teal-700 focus:ring-teal-700 rounded-xl w-full py-3 px-4 text-gray-800 shadow-sm transition-all bg-white cursor-pointer"
                                 >
-                                    <option value="">-- Aukeratu --</option>
-                                    {/* Pisuak map funtzioarekin zerrendatu */}
-                                    {pisuak.map((piso) => (
-                                        <option key={piso.id} value={piso.id}>
-                                            {piso.izena}
+                                    <option value="" disabled>Aukeratu kide bat...</option>
+                                    {kideak.map((kidea) => (
+                                        <option key={kidea.id} value={kidea.id}>
+                                            {kidea.name}
                                         </option>
                                     ))}
                                 </select>
-                                {errors.pisua_id && <div className="text-red-500 text-sm mt-1 ml-1">{errors.pisua_id}</div>}
+                                {errors.erabiltzailea_id && <div className="text-red-500 text-sm mt-1 ml-1">{errors.erabiltzailea_id}</div>}
                             </div>
 
                             {/* --- DATA EREMUA --- */}

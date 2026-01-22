@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Jobs\SyncDeletePisoFrom;
 use App\Jobs\SyncEditPisoToOdoo;
+use App\Jobs\SyncUserToOdoo;
 use Auth;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Piso;
 use App\Jobs\SyncPisoToOdoo;
 use App\Services\OdooService;
+use Illuminate\Support\Facades\Bus;
 class PisoController extends Controller
 {
     public function showSelection()
@@ -28,11 +30,9 @@ class PisoController extends Controller
 
         //El 'syncWithoutDetaching' evita duplicados (si ya estaba, no lo mete dos veces)
         //Añadimos el usuario a ese piso
-        $request->user()->pisuak()->syncWithoutDetaching([$piso->id]);
-
-        $user = $request->user();
-        $user->mota = 'normala';
-        $user->save();
+        $request->user()->pisuak()->syncWithoutDetaching([
+            $piso->id => ['mota' => 'normala']
+        ]);
 
         return redirect()->route('dashboard');
     }
@@ -61,15 +61,23 @@ class PisoController extends Controller
             'pisuaren_kodigoa' => 'required|string|max:50',
         ]);
 
+        $user = $request->user();
+
         $pisua = Piso::create([
             'izena' => $validate['pisuaren_izena'],
             'kodigoa' => $validate['pisuaren_kodigoa'],
             'odoo_id' => null,
-            'user_id' => Auth::id(), //RECORDEMOS este Auth busca la sesion que esta autentificada
+            'user_id' => $user->id, //RECORDEMOS este Auth busca la sesion que esta autentificada
         ]);
 
-        SyncPisoToOdoo::dispatch($pisua);
+        $pisua->inquilinos()->attach($user->id, ['mota' => 'koordinatzailea']);
 
+        //ESTO COMPROBARA SI EL USUARIO YA ES COORDINADOR EN LA BD Y SI NO LO CREARA
+        //Usamos bus chain para que primero mande el usuario a odoo y luego el piso
+        Bus::chain([
+            new SyncUserToOdoo($user),
+            new SyncPisoToOdoo($pisua),
+        ])->dispatch();
 
         return redirect()->route('pisua.show');
     }
@@ -127,5 +135,27 @@ class PisoController extends Controller
         }
 
         return redirect()->route('pisua.show');
+    }
+
+    public function selectPisua(Request $request, $id)
+    {
+        // 1. Buscar el piso
+        $pisua = Piso::findOrFail($id);
+
+        // 2. (Opcional pero recomendado) Seguridad:
+        // Verificar que el usuario logueado pertenece realmente a ese piso.
+        // Asumiendo que la relación en User se llama 'pisuak' (como usaste en el método join)
+        $pertenece = $request->user()->pisuak()->where('pisua.id', $id)->exists();
+
+        if (!$pertenece) {
+            return back()->withErrors(['message' => 'Ez zara pisu honetako kidea (No eres miembro de este piso).']);
+        }
+
+        // 3. Guardar en sesión
+        session(['pisua_id' => $pisua->id]);
+        session(['pisua_izena' => $pisua->izena]); // Guardamos el nombre por si quieres mostrarlo en el header
+
+        // 4. Redirigir a la lista de tareas (Zereginak)
+        return redirect()->route('zereginak.index');
     }
 }

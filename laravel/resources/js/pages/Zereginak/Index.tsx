@@ -206,12 +206,6 @@ const TaskItem = ({ task, onDelete }: { task: Zeregina, onDelete: (id: number) =
                             <span>{dateString}</span>
                         </div>
 
-                        {/* PISUA ZATIA  */}
-                        <div className="hidden lg:flex col-span-1 justify-end">
-                            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded whitespace-nowrap">
-                                {task.pisua ? task.pisua.izena : '-'}
-                            </span>
-                        </div>
                     </div>
 
                     {/* Eskubiko zatia, Egoera ikonoa + Menua(edit eta delete) + Deskr ikonoa */}
@@ -262,7 +256,7 @@ export default function Index({ zereginak }: Props) {
     const eventosCalendario = zereginFiltratuak.flatMap((tarea) => {
         return tarea.erabiltzaileak.map((user) => ({
             id: tarea.id,
-            title: `${tarea.izena} (${tarea.pisua?.izena || '-'})`,
+            title: `${tarea.izena}`,
             start: new Date(user.pivot.hasiera_data),
             end: new Date(user.pivot.hasiera_data),
             allDay: true,

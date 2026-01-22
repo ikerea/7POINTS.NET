@@ -1,7 +1,7 @@
 import React from 'react';
 import { Head, Link, router } from '@inertiajs/react'; // Importamos router para borrar
 import { FaHouseChimneyMedical } from "react-icons/fa6";
-import { MoreVertical, Pencil, Trash2 } from 'lucide-react'; // Iconos nuevos
+import { MoreVertical, Pencil, Trash2, LogIn } from 'lucide-react'; // Iconos nuevos
 
 // --- IMPORTAMOS LOS COMPONENTES DE UI ---
 import { Button } from '@/components/ui/button';
@@ -36,6 +36,10 @@ export default function Erakutsi({ pisuak }: ErakutsiProps) {
         if (confirm('Ziur zaude pisu hau ezabatu nahi duzula?')) {
             router.delete(`/pisua/${id}`);
         }
+    };
+
+    const handleSelect = (id: number) => {
+        router.post(`/pisua/${id}/aukeratu`);
     };
 
     return (
@@ -96,8 +100,15 @@ export default function Erakutsi({ pisuak }: ErakutsiProps) {
                                     <tbody className="bg-white divide-y divide-gray-200">
                                         {pisuak.map((pisua) => (
                                             <tr key={pisua.id} className="hover:bg-gray-50 transition-colors group">
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-800">
-                                                    {pisua.izena}
+                                                {/* 1. Hacemos que la celda del NOMBRE sea clicable para entrar */}
+                                                <td
+                                                    className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-800 cursor-pointer"
+                                                    onClick={() => handleSelect(pisua.id)}
+                                                >
+                                                    <div className="flex items-center gap-2 hover:text-teal-700 transition-colors">
+                                                        <LogIn className="w-4 h-4 text-gray-400" />
+                                                        {pisua.izena}
+                                                    </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                     <span className="bg-teal-50 text-teal-700 py-1 px-3 rounded-full text-xs font-medium border border-teal-100">
@@ -112,6 +123,15 @@ export default function Erakutsi({ pisuak }: ErakutsiProps) {
                                                     )}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                    {/* 2. Botón explícito "Sartu" que aparece al pasar el ratón */}
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="mr-3 hidden group-hover:inline-flex text-teal-700 border-teal-200 hover:bg-teal-50"
+                                                        onClick={() => handleSelect(pisua.id)}
+                                                    >
+                                                        Sartu
+                                                    </Button>
                                                     <DropdownMenu>
                                                         <DropdownMenuTrigger asChild>
                                                             <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-gray-200">
