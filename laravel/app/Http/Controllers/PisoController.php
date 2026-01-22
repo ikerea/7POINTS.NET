@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Jobs\SyncDeletePisoFrom;
 use App\Jobs\SyncEditPisoToOdoo;
+use App\Jobs\SyncUserToOdoo;
 use Auth;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Piso;
 use App\Jobs\SyncPisoToOdoo;
 use App\Services\OdooService;
+use Illuminate\Support\Facades\Bus;
 class PisoController extends Controller
 {
     public function showSelection()
@@ -70,8 +72,12 @@ class PisoController extends Controller
 
         $pisua->inquilinos()->attach($user->id, ['mota' => 'koordinatzailea']);
 
-        SyncPisoToOdoo::dispatch($pisua);
-
+        //ESTO COMPROBARA SI EL USUARIO YA ES COORDINADOR EN LA BD Y SI NO LO CREARA
+        //Usamos bus chain para que primero mande el usuario a odoo y luego el piso
+        Bus::chain([
+            new SyncUserToOdoo($user),
+            new SyncPisoToOdoo($pisua),
+        ])->dispatch();
 
         return redirect()->route('pisua.show');
     }
