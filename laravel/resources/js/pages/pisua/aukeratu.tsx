@@ -4,11 +4,15 @@ import { Users, PlusCircle, ArrowLeft } from 'lucide-react';
 
 const customGreen = '#00796B';
 
-export default function Aukeratu() {
-    // Estado para controlar si mostramos los botones o el formulario
+interface AukeratuProps {
+    hasPisos: boolean;
+}
+
+export default function Aukeratu({ hasPisos }: AukeratuProps) {
+    //Estado para controlar si mostramos los botones o el formulario
     const [viewMode, setViewMode] = useState<'selection' | 'join'>('selection');
 
-    // Formulario para unirse al piso
+    //Formulario para unirse al piso
     const { data, setData, post, processing, errors, reset } = useForm({
         kodigoa: '',
     });
@@ -34,6 +38,14 @@ export default function Aukeratu() {
                     <div className="bg-white w-full max-w-lg rounded-3xl shadow-xl p-10 md:p-12 transition-all duration-300">
                         {viewMode === 'selection' && (
                             <div className="flex flex-col gap-6 text-center">
+                                {hasPisos && ( //SI ES BOOLEAN BASTA CON '&&'
+                                    <Link
+                                        href="/pisua/erakutsi"
+                                        className="flex items-center text-gray-400 hover:text-gray-600 mb-6 transition"
+                                    >
+                                        <ArrowLeft size={20} className="mr-1" /> Atzera
+                                    </Link>
+                                )}
                                 <h1 className="text-2xl font-bold text-gray-800 mb-2">
                                     Ongi Etorri! <br /> Zer egin nahi duzu?
                                 </h1>

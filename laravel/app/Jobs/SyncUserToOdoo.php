@@ -8,7 +8,7 @@ use Illuminate\Foundation\Queue\Queueable;
 use App\Models\User;
 use Exception;
 
-class cdSyncUserToOdoo implements ShouldQueue
+class SyncUserToOdoo implements ShouldQueue
 {
     use Queueable;
     protected User $user;
@@ -26,14 +26,14 @@ class cdSyncUserToOdoo implements ShouldQueue
     public function handle(OdooService $odoo): void
     {
         try {
-            $esCoordinador = $this->user->pisuak()->wherePivot('mota', 'koordinatzailea')->exists();
+            $esCoordinador = $this->user->pisuak()
+                                  ->wherePivot('mota', 'koordinatzailea')
+                                  ->exists();
 
             if ($esCoordinador) {
                 $internalUserGroup = 1;
                 $coordGroupId = 12;
-
-                // Solo creamos si no tiene ya ID de Odoo (para evitar duplicados)
-                if(!$this->user->odoo_id){
+                if (!$this->user->odoo_id) {
                     $userID = $odoo->create('res.users', [
                         'name' => $this->user->name,
                         'login' => $this->user->email,
@@ -54,7 +54,7 @@ class cdSyncUserToOdoo implements ShouldQueue
             }
         } catch (Exception $ex) {
             $this->user->update([
-                'sync_error' => $ex
+                'sync_error' => $ex->getMessage() // Guarda el mensaje, no el objeto entero
             ]);
             throw $ex;
         }
