@@ -39,9 +39,9 @@ class PisoController extends Controller
 
         return redirect()->route('dashboard');
     }
-    public function index()
+    public function index(Request $request)
     {
-        $pisuak = Piso::with('user')->get();
+        $pisuak = $request->user()->pisuak()->with('user')->get();
 
         return Inertia::render('pisua/erakutsi', ['pisuak' => $pisuak]);
     }

@@ -37,7 +37,7 @@ class ZereginakController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-public function create()
+    public function create()
     {
         // 1: Guardamos el ID en la variable $pisuaId
         $pisuaId = session('pisua_id');

@@ -243,13 +243,29 @@ const TaskItem = ({ task, onDelete }: { task: Zeregina, onDelete: (id: number) =
 // --- OSAGAI NAGUSIA (INDEX) ---
 export default function Index({ zereginak }: Props) {
 
-    // 1. EGOERA: Filtroa kudeatzeko aldagaia ('denak' da lehenetsia)
+   // 1. ESTADOS: Filtros
     const [filtroEgoera, setFiltroaEgoera] = useState<'denak' | 'egiteko' | 'egiten' | 'eginda'>('denak');
+    // NUEVO: Estado para el filtro de usuario
+    const [filtroErabiltzailea, setFiltroaErabiltzailea] = useState<string>('denak');
 
-    // 2. LOGIKA: Zereginak filtratu egoeraren arabera
+    // 2. OBTENER USUARIOS ÚNICOS (Para el Select)
+    // Recorremos todas las tareas, sacamos los usuarios y quitamos duplicados usando un Map
+    const erabiltzaileUnikoak = React.useMemo(() => {
+        const users = zereginak.flatMap(z => z.erabiltzaileak);
+        // Map usa el ID como clave para evitar duplicados
+        return Array.from(new Map(users.map(u => [u.id, u])).values());
+    }, [zereginak]);
+
+    // 3. LOGIKA: Zereginak filtratu (Egoera + Erabiltzailea)
     const zereginFiltratuak = zereginak.filter((task) => {
-        if (filtroEgoera === 'denak') return true;
-        return task.egoera === filtroEgoera;
+        // Filtro por Estado
+        const egoeraMatch = filtroEgoera === 'denak' || task.egoera === filtroEgoera;
+
+        // NUEVO: Filtro por Usuario (comprobamos si el usuario seleccionado está en el array de la tarea)
+        const userMatch = filtroErabiltzailea === 'denak' ||
+                          task.erabiltzaileak.some(u => u.id.toString() === filtroErabiltzailea);
+
+        return egoeraMatch && userMatch;
     });
 
     // Zereginak egutegiko formatura bihurtu
@@ -303,43 +319,50 @@ export default function Index({ zereginak }: Props) {
 
                     {/* EGUTEGIA */}
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border">
-                        <h2 className="text-xl font-bold mb-4 text-gray-700 flex items-center gap-2">
-                            <CalendarIcon className="w-6 h-6" /> Egutegia
-                        </h2>
-                        <div style={{ height: 500 }}>
-                           <Calendar
-                                localizer={localizer}
-                                culture="eu"
-                                events={eventosCalendario}
-                                startAccessor="start"
-                                endAccessor="end"
-                                style={{ height: '100%' }}
-                                eventPropGetter={eventStyleGetter}
-                                // Egutegiko formatuak euskarara egokitu (Larriak)
-                                formats={{
-                                    monthHeaderFormat: (date: Date, culture: any, localizer: any) =>
-                                        capitalize(localizer.format(date, 'MMMM YYYY', culture)),
-                                    weekdayFormat: (date: Date, culture: any, localizer: any) =>
-                                        capitalize(localizer.format(date, 'dddd', culture)),
-                                    dayHeaderFormat: (date: Date, culture: any, localizer: any) =>
-                                        capitalize(localizer.format(date, 'dddd DD', culture)),
-                                }}
-                                // Itzulpenak (Moment-ek egiten ez dituenak)
-                               messages={{
-                                    next: "Hurrengoa",
-                                    previous: "Aurrekoa",
-                                    today: "Gaur",
-                                    month: "Hilabetea",
-                                    week: "Astea",
-                                    day: "Eguna",
-                                    agenda: "Agenda",
-                                    date: "Data",
-                                    time: "Ordua",
-                                    event: "Ekitaldia",
-                                    noEventsInRange: "Ez dago ekitaldirik tarte honetan."
-                                }}
-                                onSelectEvent={(event: any) => router.get(`/zereginak/${event.id}/editatu`)}
-                            />
+
+                        <div className="mx-auto w-full max-w-[900px]">
+
+
+                            <h2 className="text-xl font-bold mb-4 text-gray-700 flex items-center gap-2">
+                                <CalendarIcon className="w-6 h-6" /> Egutegia
+                            </h2>
+
+
+                            <div className="h-[400px]">
+                                <Calendar
+                                    localizer={localizer}
+                                    culture="eu"
+                                    events={eventosCalendario}
+                                    startAccessor="start"
+                                    endAccessor="end"
+                                    style={{ height: '100%' }}
+                                    eventPropGetter={eventStyleGetter}
+                                    // Egutegiko formatuak euskarara egokitu (Larriak)
+                                    formats={{
+                                        monthHeaderFormat: (date: Date, culture: any, localizer: any) =>
+                                            capitalize(localizer.format(date, 'MMMM YYYY', culture)),
+                                        weekdayFormat: (date: Date, culture: any, localizer: any) =>
+                                            capitalize(localizer.format(date, 'dddd', culture)),
+                                        dayHeaderFormat: (date: Date, culture: any, localizer: any) =>
+                                            capitalize(localizer.format(date, 'dddd DD', culture)),
+                                    }}
+                                    // Itzulpenak
+                                    messages={{
+                                        next: "Hurrengoa",
+                                        previous: "Aurrekoa",
+                                        today: "Gaur",
+                                        month: "Hilabetea",
+                                        week: "Astea",
+                                        day: "Eguna",
+                                        agenda: "Agenda",
+                                        date: "Data",
+                                        time: "Ordua",
+                                        event: "Ekitaldia",
+                                        noEventsInRange: "Ez dago ekitaldirik tarte honetan."
+                                    }}
+                                    onSelectEvent={(event: any) => router.get(`/zereginak/${event.id}/editatu`)}
+                                />
+                            </div>
                         </div>
                     </div>
 
@@ -370,6 +393,23 @@ export default function Index({ zereginak }: Props) {
                                         {opt.label}
                                     </button>
                                 ))}
+                            </div>
+
+                            {/* 2. NUEVO: SELECT DE USUARIOS */}
+                            <div className="relative">
+                                <select
+                                    value={filtroErabiltzailea}
+                                    onChange={(e) => setFiltroaErabiltzailea(e.target.value)}
+                                    className="block w-full pl-3 pr-10 py-1.5 text-sm border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm"
+                                    style={{ minWidth: '150px' }}
+                                >
+                                    <option value="denak">Erabiltzaile guztiak</option>
+                                    {erabiltzaileUnikoak.map((user) => (
+                                        <option key={user.id} value={user.id}>
+                                            {user.name}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                         </div>
 
