@@ -81,11 +81,18 @@ public function index() {
 
         // 2. Cargar TODOS los usuarios para el desplegable
         // (Si tienes lógica de pisos, filtra por el piso, ej: User::where('piso_id', $pisoId)->get())
-        $usuarios = User::all(); 
+        $pisuaId = session('pisua_id');
+
+        // Opción A: Buscar el piso y sacar sus inquilinos (Recomendada)
+        // Asumimos que la relación en el modelo Piso se llama 'inquilinos' o 'users'
+        $piso = Piso::with('inquilinos')->find($pisuaId);
+
+        // Verificamos que el piso exista para evitar errores
+        $usuariosDelPiso = $piso ? $piso->inquilinos : [];
 
         return Inertia::render('Gastuak/EditGastoForm', [
             'gasto' => $gasto,
-            'usuarios' => $usuarios, // <--- Aquí pasamos la lista completa
+            'usuarios' => $usuariosDelPiso, // <--- Aquí pasamos la lista completa
             'flash' => [
             'message' => session('message')
         ]
@@ -94,9 +101,17 @@ public function index() {
 
     public function gastuakGehituCargar() {
 
-        $todosLosUsuarios = User::all();
-        return Inertia::render('Gastuak/AddGastoForm', [
-            'usuarios' => $todosLosUsuarios // Pasamos los usuarios como prop
-        ]);
+    $pisuaId = session('pisua_id');
+
+    // Opción A: Buscar el piso y sacar sus inquilinos (Recomendada)
+    // Asumimos que la relación en el modelo Piso se llama 'inquilinos' o 'users'
+    $piso = Piso::with('inquilinos')->find($pisuaId);
+
+    // Verificamos que el piso exista para evitar errores
+    $usuariosDelPiso = $piso ? $piso->inquilinos : [];
+
+    return Inertia::render('Gastuak/AddGastoForm', [
+        'usuarios' => $usuariosDelPiso
+    ]);
     }
 }
