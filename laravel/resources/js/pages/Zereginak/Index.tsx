@@ -319,43 +319,50 @@ export default function Index({ zereginak }: Props) {
 
                     {/* EGUTEGIA */}
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border">
-                        <h2 className="text-xl font-bold mb-4 text-gray-700 flex items-center gap-2">
-                            <CalendarIcon className="w-6 h-6" /> Egutegia
-                        </h2>
-                        <div style={{ height: 500 }}>
-                           <Calendar
-                                localizer={localizer}
-                                culture="eu"
-                                events={eventosCalendario}
-                                startAccessor="start"
-                                endAccessor="end"
-                                style={{ height: '100%' }}
-                                eventPropGetter={eventStyleGetter}
-                                // Egutegiko formatuak euskarara egokitu (Larriak)
-                                formats={{
-                                    monthHeaderFormat: (date: Date, culture: any, localizer: any) =>
-                                        capitalize(localizer.format(date, 'MMMM YYYY', culture)),
-                                    weekdayFormat: (date: Date, culture: any, localizer: any) =>
-                                        capitalize(localizer.format(date, 'dddd', culture)),
-                                    dayHeaderFormat: (date: Date, culture: any, localizer: any) =>
-                                        capitalize(localizer.format(date, 'dddd DD', culture)),
-                                }}
-                                // Itzulpenak (Moment-ek egiten ez dituenak)
-                               messages={{
-                                    next: "Hurrengoa",
-                                    previous: "Aurrekoa",
-                                    today: "Gaur",
-                                    month: "Hilabetea",
-                                    week: "Astea",
-                                    day: "Eguna",
-                                    agenda: "Agenda",
-                                    date: "Data",
-                                    time: "Ordua",
-                                    event: "Ekitaldia",
-                                    noEventsInRange: "Ez dago ekitaldirik tarte honetan."
-                                }}
-                                onSelectEvent={(event: any) => router.get(`/zereginak/${event.id}/editatu`)}
-                            />
+
+                        <div className="mx-auto w-full max-w-[900px]">
+
+
+                            <h2 className="text-xl font-bold mb-4 text-gray-700 flex items-center gap-2">
+                                <CalendarIcon className="w-6 h-6" /> Egutegia
+                            </h2>
+
+
+                            <div className="h-[400px]">
+                                <Calendar
+                                    localizer={localizer}
+                                    culture="eu"
+                                    events={eventosCalendario}
+                                    startAccessor="start"
+                                    endAccessor="end"
+                                    style={{ height: '100%' }}
+                                    eventPropGetter={eventStyleGetter}
+                                    // Egutegiko formatuak euskarara egokitu (Larriak)
+                                    formats={{
+                                        monthHeaderFormat: (date: Date, culture: any, localizer: any) =>
+                                            capitalize(localizer.format(date, 'MMMM YYYY', culture)),
+                                        weekdayFormat: (date: Date, culture: any, localizer: any) =>
+                                            capitalize(localizer.format(date, 'dddd', culture)),
+                                        dayHeaderFormat: (date: Date, culture: any, localizer: any) =>
+                                            capitalize(localizer.format(date, 'dddd DD', culture)),
+                                    }}
+                                    // Itzulpenak
+                                    messages={{
+                                        next: "Hurrengoa",
+                                        previous: "Aurrekoa",
+                                        today: "Gaur",
+                                        month: "Hilabetea",
+                                        week: "Astea",
+                                        day: "Eguna",
+                                        agenda: "Agenda",
+                                        date: "Data",
+                                        time: "Ordua",
+                                        event: "Ekitaldia",
+                                        noEventsInRange: "Ez dago ekitaldirik tarte honetan."
+                                    }}
+                                    onSelectEvent={(event: any) => router.get(`/zereginak/${event.id}/editatu`)}
+                                />
+                            </div>
                         </div>
                     </div>
 
