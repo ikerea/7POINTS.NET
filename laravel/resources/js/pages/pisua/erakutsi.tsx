@@ -62,7 +62,7 @@ export default function Erakutsi({ pisuak }: ErakutsiProps) {
                                 Pisuen Zerrenda
                             </h2>
                             <Link
-                                href="/pisua/sortu"
+                                href="/pisua/aukeratu"
                                 className="px-5 py-2.5 text-white font-medium rounded-xl shadow transition hover:opacity-90 flex gap-2"
                                 style={{ backgroundColor: customGreen }}
                             >
@@ -76,9 +76,7 @@ export default function Erakutsi({ pisuak }: ErakutsiProps) {
                                 <p className="text-gray-400 text-sm mt-2">Hasi berri bat sortzen!</p>
                             </div>
                         ) : (
-                            // --- TABLA ---
                             <div className="overflow-visible rounded-xl border border-gray-100">
-                                {/* Nota: overflow-visible o auto. Si el dropdown se corta, usa overflow-visible en el contenedor padre o el DropdownMenu usará Portal automáticamente */}
                                 <table className="min-w-full divide-y divide-gray-200">
                                     <thead className="bg-gray-50">
                                         <tr>
@@ -91,7 +89,6 @@ export default function Erakutsi({ pisuak }: ErakutsiProps) {
                                             <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
                                                 Koordinatzailea
                                             </th>
-                                            {/* Columna vacía para las acciones */}
                                             <th scope="col" className="relative px-6 py-4">
                                                 <span className="sr-only">Ekintzak</span>
                                             </th>
