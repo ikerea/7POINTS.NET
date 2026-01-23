@@ -76,7 +76,6 @@ export default function Erakutsi({ pisuak }: ErakutsiProps) {
                                 style={{ backgroundColor: customGreen }}
                             >
                                 <FaHouseChimneyMedical size={20} color='white' />
-                                <span>Sortu Berria</span>
                             </Link>
                         </div>
 
