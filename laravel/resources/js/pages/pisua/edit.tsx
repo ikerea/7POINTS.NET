@@ -63,24 +63,6 @@ export default function Edit({ pisua }: EditProps) {
                                     <p className="text-red-500 text-sm mt-1">{errors.pisuaren_izena}</p>
                                 )}
                             </div>
-                            <div className="grid gap-2">
-                                <label
-                                    htmlFor="kodigoa"
-                                    className="text-sm font-medium text-gray-700"
-                                >
-                                    Pisuaren Kodigoa
-                                </label>
-                                <input
-                                    id="kodigoa"
-                                    type="text"
-                                    value={data.pisuaren_kodigoa}
-                                    onChange={e => setData('pisuaren_kodigoa', e.target.value)}
-                                    className="flex w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent text-black shadow-sm"
-                                />
-                                {errors.pisuaren_kodigoa && (
-                                    <p className="text-red-500 text-sm mt-1">{errors.pisuaren_kodigoa}</p>
-                                )}
-                            </div>
                             <div className="mt-4 flex flex-col gap-3">
                                 <button
                                     type="submit"

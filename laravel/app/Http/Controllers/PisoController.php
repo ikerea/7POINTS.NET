@@ -54,29 +54,34 @@ class PisoController extends Controller
         return Inertia::render('pisua/sortu');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
+        // 1. Quitamos la validación del codigo, porque ya no lo introduce el usuario
         $validate = $request->validate([
             'pisuaren_izena' => 'required|string|max:255',
-            'pisuaren_kodigoa' => 'required|string|max:50',
+            // 'pisuaren_kodigoa' => 'required...'  <-- ESTO FUERA
         ]);
 
         $user = $request->user();
 
+        $kodigoa = null;
+        do {
+            $posibleKodigoa = str_pad(rand(0, 99999), 5, '0', STR_PAD_LEFT);
+
+            if (!Piso::where('kodigoa', $posibleKodigoa)->exists()) {
+                $kodigoa = $posibleKodigoa;
+            }
+        } while (!$kodigoa);
+
         $pisua = Piso::create([
             'izena' => $validate['pisuaren_izena'],
-            'kodigoa' => $validate['pisuaren_kodigoa'],
+            'kodigoa' => $kodigoa,
             'odoo_id' => null,
-            'user_id' => $user->id, 
+            'user_id' => $user->id,
         ]);
 
         $pisua->inquilinos()->attach($user->id, ['mota' => 'koordinatzailea']);
 
-        //ESTO COMPROBARA SI EL USUARIO YA ES COORDINADOR EN LA BD Y SI NO LO CREARA
-        //Usamos bus chain para que primero mande el usuario a odoo y luego el piso
         Bus::chain([
             new SyncUserToOdoo($user),
             new SyncPisoToOdoo($pisua),
@@ -85,25 +90,16 @@ class PisoController extends Controller
         return redirect()->route('dashboard');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Piso $pisua)
     {
         return Inertia::render('pisua/edit', compact('pisua'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Piso $pisua)
     {
         $validate = $request->validate([
