@@ -1,58 +1,127 @@
+/* --- CONTENEDOR CON SCROLL (Tu diseño original) --- */
 .divPadre {
     border: solid 0.2px black;
-
+    
+    /* Mantenemos tu scroll y altura fija */
+    height: 50vh; 
+    overflow-y: auto;
+    overflow-x: hidden; /* Evitamos scroll horizontal feo */
+    
     display: flex;
     flex-direction: column;
-    padding: 4%;
-    width: 30vw;
-    height: 50vh;
-    overflow-y: auto;
-    gap: 2%;
-    overflow-x: hidden;
+    padding: 10px; /* Un poco de aire interno */
+    gap: 10px;     /* Separación entre cajas */
+    
+    /* IMPORTANTE: Quitamos el 30vw fijo para que se adapte al contenedor padre */
+    width: 100%;   
+    box-sizing: border-box; 
+    background-color: white; /* Asegura fondo blanco */
 }
 
+/* --- CADA FILA (CAJA) --- */
 .divHijos {
     border: solid 0.2px black;
     display: flex;
     flex-direction: row;
+    align-items: center;    /* Centrado vertical perfecto */
+    justify-content: space-between;
     width: 100%;
-
+    padding: 10px;          /* Espacio interno para que no toque los bordes */
+    box-sizing: border-box; /* Para que el padding no sume al ancho */
+    gap: 10px;              /* Espacio mínimo entre texto y botones */
 }
 
-.divHijos h3 {
-    flex: 1;           /* Ocupa todo el espacio sobrante */
-    text-align: right; /* (Opcional) Alinea el número a la derecha */
-    margin: 0;         /* (Opcional) Quita márgenes por defecto del h3 */
-    display: flex;     /* (Opcional) Para centrar verticalmente si hace falta */
-    align-items: center; 
-    justify-content: flex-end; /* Alinea a la derecha usando flex */
-    margin-right: 5%;
-}
-
+/* --- ZONA IZQUIERDA: TEXTO --- */
 .divNombreYGastoNombre {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    margin-left: 2%;
+    justify-content: center;
+    
+    /* ESTO ES LO QUE HACE QUE NO SE ROMPA */
+    flex: 1;           /* Ocupa todo el espacio disponible */
+    min-width: 0;      /* Permite que el texto se corte si no cabe */
 }
 
-/* --- ADAPTACIÓN PARA MÓVIL (MEDIA QUERY) --- */
-/* Esto se aplicará SOLO cuando la pantalla sea menor a 768px (tablets y móviles) */
+.divNombreYGastoNombre h6 {
+    margin: 0;
+    font-size: 1rem;
+    
+    /* Si el nombre es larguísimo, poner "..." */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.divNombreYGastoNombre p {
+    margin: 5px 0 0 0;
+    font-size: 0.85rem;
+    color: #555;
+}
+
+/* --- ZONA DERECHA: PRECIO + BOTONES --- */
+.divDerecha {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Separación entre el precio y los botones */
+    
+    /* ESTO CONGELA ESTA PARTE: Prohíbe que se aplaste */
+    flex-shrink: 0; 
+}
+
+.divDerecha h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    white-space: nowrap; /* El precio nunca salta de línea */
+}
+
+.acciones-gastos {
+    display: flex;
+    gap: 5px;
+}
+
+/* --- ESTILOS DE LOS BOTONES --- */
+.btn-editar, .btn-borrar {
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+    font-size: 0.9rem;
+    /* Aseguramos que los botones no cambien de tamaño */
+    flex-shrink: 0; 
+}
+
+.btn-editar {
+    background-color: #f0ad4e;
+}
+
+.btn-borrar {
+    background-color: #d9534f;
+}
+
+/* --- RESPONSIVE (MÓVIL) --- */
 @media (max-width: 768px) {
+    /* En móvil, ajustamos pequeños detalles pero mantenemos el diseño */
     
     .divPadre {
-        width: 90vw;   /* Aumentamos de 30% a 90% para usar casi toda la pantalla */
-        height: 70vh;  /* (Opcional) Hacemos la lista más alta en móvil */
-        padding: 4%;   /* Reducimos el padding para no desperdiciar espacio */
-        gap: 2%;
+        /* En móvil podemos dar un poco más de altura si quieres */
+        height: 60vh; 
     }
 
     .divHijos {
-        min-height: 60px; /* Asegura que cada fila sea fácil de tocar con el dedo */
+        padding: 8px; /* Un poco menos de padding en móvil */
+        gap: 5px;
     }
 
-    .divNombreYGastoNombre h6, 
-    .divNombreYGastoNombre p {
-        margin: 2px 0; /* Ajustar márgenes de texto para que no se vean muy separados */
+    /* En pantallas muy pequeñas (móvil vertical), tal vez quieras ocultar 
+       el texto "Editar/Borrar" y dejar solo colores o iconos, 
+       pero si quieres mantener texto, reducimos la fuente */
+    .btn-editar, .btn-borrar {
+        padding: 5px 8px;
+        font-size: 0.8rem;
+    }
+    
+    .divDerecha h3 {
+        font-size: 1rem; /* Precio un pelín más pequeño */
     }
 }

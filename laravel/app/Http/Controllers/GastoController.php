@@ -4,27 +4,32 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Gasto;
+use App\Models\Piso;
 use Inertia\Inertia;
 use App\Models\User;
+use App\Http\Controllers\PisoController;
 
 class GastoController extends Controller {
     
-    public function index() {
+public function index() {
+    $pisuaId = session('pisua_id');
 
-        //$gastos = Gasto::with('usuario')->where('IdPiso', 1)->get(); // Ejemplo simplificado
-    
-        // IMPORTANTE: El nombre 'gastos' aquí debe coincidir con el de React
-        //return Inertia::render('Gastuak/GastuakPage', [
-        //    'gastos' => $gastos 
-        //]);
-        // 1. Obtienes los datos de la BD
-        $gastos = Gasto::all(); 
-        
-        // 2. Renderizas la vista y LE PASAS los datos
-            return Inertia::render('Gastuak/GastuakPage', [ 
-                'gastos' => $gastos 
-            ]);
+    if (!$pisuaId) {
+        return redirect()->route('pisua.show');
     }
+
+    // Cargamos el piso con sus relaciones correctas
+    $piso = Piso::with([
+        'inquilinos',      // <--- AQUÍ estaba el error (antes ponía 'usuarios')
+        'gastos.usuario'   // <--- Esto requiere que exista la función gastos() en el modelo Piso
+    ])->find($pisuaId);
+    
+    // Solo pasamos 'piso', ya que dentro lleva los gastos y los inquilinos
+    return Inertia::render('Gastuak/GastuakPage', [ 
+        'piso' => $piso,
+        // Inertia suele inyectar 'auth' automáticamente, no necesitas pasarlo manual si usas el Middleware por defecto
+    ]);
+}
 
     public function addGasto(Request $request){
 
@@ -35,10 +40,12 @@ class GastoController extends Controller {
         'IdUsuario' => 'required|numeric',                 
         ]);
 
-        $datosProcesados['IdPiso'] = 1;
+        $pisuaId = session('pisua_id');
+        $datosProcesados['IdPiso'] = $pisuaId;
+
 
         Gasto::create($datosProcesados);
-
+        
         return redirect('/gastuak');
     }
 
@@ -53,7 +60,8 @@ class GastoController extends Controller {
         'IdUsuario' => 'required|exists:users,id',                 
         ]);
 
-        $datosProcesados['IdPiso'] = 1;
+        $pisuaId = session('pisua_id');
+        $datosProcesados['IdPiso'] = $pisuaId;
         
         $gasto->update($datosProcesados);
         //dd($gasto);

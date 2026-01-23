@@ -47,14 +47,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/zereginak/{zeregina}', [ZereginakController::class, 'destroy'])
         ->name('zereginak.destroy');
 
+    //Gastos rutas
+    Route::get('/gastuak', [GastoController::class, 'index']);
+    Route::get('/gastuak/ikusi', [GastoController::class, 'gastuakGehituCargar']);
+    Route::post('/gastuak/addGastua', [GastoController::class, 'addGasto'])->name('gastuak.gehitu');
+    Route::get('/gastos/{idPisua}/{idErabiltzailea}', [GastoController::class, 'index'])->name('gastuak.ikusi');
+    Route::delete('/gastos/deleteGasto/{id}', [GastoController::class, 'eliminarGasto'])->name('gastuak.kendu');
+    Route::get('/gastuak/{idGasto}/edit', [GastoController::class, 'cargarPaginaEditar'])->name('gastuak.cargaEdit');
+    Route::put('/gastuak/editar/{id}', [GastoController::class, 'editGasto'])->name('gastuak.editar');
 });
 
-Route::get('/gastuak', [GastoController::class, 'index']);
-Route::get('/gastuak/ikusi', [GastoController::class, 'gastuakGehituCargar']);
-Route::post('/gastuak/addGastua', [GastoController::class, 'addGasto'])->name('gastuak.gehitu');
-Route::get('/gastos/{idPisua}/{idErabiltzailea}', [GastoController::class, 'index'])->name('gastuak.ikusi');
-Route::delete('/gastos/deleteGasto/{id}', [GastoController::class, 'eliminarGasto'])->name('gastuak.kendu');
-Route::get('/gastuak/{idGasto}/edit', [GastoController::class, 'cargarPaginaEditar'])->name('gastuak.cargaEdit');
-Route::put('/gastuak/editar/{id}', [GastoController::class, 'editGasto'])->name('gastuak.editar');
+
 
 require __DIR__ . '/settings.php';
