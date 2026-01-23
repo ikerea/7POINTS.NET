@@ -42,7 +42,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Gastuak',
-        href: '#',
+        href: '/gastuak',
         icon: Wallet,
     },
     {
