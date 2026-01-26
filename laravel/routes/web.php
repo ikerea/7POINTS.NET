@@ -15,7 +15,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/pisua/{id}/aukeratu', [PisoController::class, 'selectPisua'])->name('pisua.select');
-    
+
     Route::get('/pisua/aukeratu', [PisoController::class, 'showSelection'])->name('pisua.selection');
     Route::post('/pisua/batu', [PisoController::class, 'join'])->name('pisua.join');
     Route::get('/pisua/sortu', [PisoController::class, 'create'])->name('pisua.create');
@@ -24,6 +24,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/pisua/{pisua}/edit', [PisoController::class, 'edit'])->name('pisua.edit');
     Route::put('/pisua/{pisua}', [PisoController::class, 'update'])->name('pisua.update');
     Route::delete('/pisua/{pisua}', [PisoController::class, 'destroy'])->name('pisua.destroy');
+
+    Route::get('/pisua/kideak', [PisoController::class, 'showMembers'])->name('pisua.kideak');
+
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');

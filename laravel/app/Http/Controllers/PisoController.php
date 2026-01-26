@@ -155,4 +155,24 @@ class PisoController extends Controller
         // 4. Redirigir a la lista de tareas (Zereginak)
         return redirect()->route('zereginak.index');
     }
+
+    public function showMembers()
+    {
+        // 1. Recuperar ID de sesión
+        $pisuaId = session('pisua_id');
+
+        // 2. Si no hay piso seleccionado, mandar a seleccionar uno
+        if (!$pisuaId) {
+            return redirect()->route('pisua.show');
+        }
+
+        // 3. Buscar el piso y cargar la relación 'inquilinos'
+        // Asumimos que en tu modelo Piso tienes la relación inquilinos() definida
+        $pisua = Piso::with('inquilinos')->findOrFail($pisuaId);
+
+        return Inertia::render('pisuaIkusi/pisua_ikusi', [
+            'pisua' => $pisua,
+            'kideak' => $pisua->inquilinos
+        ]);
+    }
 }
