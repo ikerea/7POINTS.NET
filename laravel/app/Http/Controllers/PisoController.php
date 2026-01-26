@@ -37,6 +37,9 @@ class PisoController extends Controller
             $piso->id => ['mota' => 'normala']
         ]);
 
+        session(['pisua_id' => $piso->id]);
+        session(['pisua_izena' => $piso->izena]);
+
         return redirect()->route('dashboard');
     }
     public function index(Request $request)
@@ -86,6 +89,9 @@ class PisoController extends Controller
             new SyncUserToOdoo($user),
             new SyncPisoToOdoo($pisua),
         ])->dispatch();
+
+        session(['pisua_id' => $pisua->id]);
+        session(['pisua_izena' => $pisua->izena]);
 
         return redirect()->route('dashboard');
     }

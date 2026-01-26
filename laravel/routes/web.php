@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use App\Http\Controllers\ZereginakController;
 use App\Http\Controllers\GastoController;
+use App\Http\Controllers\DashboadController;
 
 Route::get('/', function () {
     return Inertia::render('welcome', [
@@ -14,8 +15,9 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('dashboard', [DashboadController::class, 'index'])->name('dashboard');
     Route::post('/pisua/{id}/aukeratu', [PisoController::class, 'selectPisua'])->name('pisua.select');
-    
+
     Route::get('/pisua/aukeratu', [PisoController::class, 'showSelection'])->name('pisua.selection');
     Route::post('/pisua/batu', [PisoController::class, 'join'])->name('pisua.join');
     Route::get('/pisua/sortu', [PisoController::class, 'create'])->name('pisua.create');
@@ -24,9 +26,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/pisua/{pisua}/edit', [PisoController::class, 'edit'])->name('pisua.edit');
     Route::put('/pisua/{pisua}', [PisoController::class, 'update'])->name('pisua.update');
     Route::delete('/pisua/{pisua}', [PisoController::class, 'destroy'])->name('pisua.destroy');
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
 
 
     Route::get('/zereginak', [ZereginakController::class, 'index'])

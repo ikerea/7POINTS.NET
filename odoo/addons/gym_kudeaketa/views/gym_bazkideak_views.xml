@@ -1,0 +1,48 @@
+<odoo>
+    <record id="gym_bazkideak_form" model="ir.ui.view">
+        <field name="name">gym.bazkideak.form</field>
+        <field name="model">gym.bazkideak</field>
+        <field name="arch" type="xml">
+            <form string="Bazkidea">
+                <sheet>
+                    <group>
+                        <field name="name" />
+                        <field name="member_number" />
+                        <field name="birth_date" />
+                        <field name="subscription_type" />
+                        <field name="active" />
+                        <field name="notes" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="gym_bazkideak_tree" model="ir.ui.view">
+        <field name="name">gym.bazkideak.tree</field>
+        <field name="model">gym.bazkideak</field>
+        <field name="arch" type="xml">
+            <tree string="Bazkideak">
+                <field name="member_number" />
+                <field name="name" />
+                <field name="subscription_type" />
+                <field name="active" />
+            </tree>
+        </field>
+    </record>
+
+    <record id= "action_gym_bazkideak" model="ir.actions.act_window">
+        <field name="name">Bazkideak</field>
+        <field name="res_model">gym.bazkideak</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_gym_root" name="Gym Bazkidetza" sequence="1"/>
+
+    <menuitem id="menu_gym_bazkideak"
+        name="Bazkideak"
+        parent="menu_gym_root"
+        action="action_gym_bazkideak"
+        groups="group_gym_user"
+    />
+</odoo>

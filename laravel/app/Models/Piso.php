@@ -19,7 +19,7 @@ class Piso extends Model
         'odoo_id',
         'synced',
         'sync_error',
-        'user_id', 
+        'user_id',
     ];
 
     // Relación con el Creador del piso
@@ -34,7 +34,6 @@ class Piso extends Model
         ->withTimestamps();
     }
 
-    // --- ESTA ES LA FUNCIÓN QUE TE FALTABA ---
     public function gastos(){
         // Busca gastos donde la columna 'IdPiso' coincida con el id de este piso
         return $this->hasMany(Gasto::class, 'IdPiso', 'id');

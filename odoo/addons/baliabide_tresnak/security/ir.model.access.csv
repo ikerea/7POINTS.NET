@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_baliabideak_tresnak_user,baliabideak.tresnak.user,model_baliabideak_tresnak,group_baliabide_user,1,0,0,0
+access_baliabideak_tresnak_langilea,baliabideak.tresnak.langilea,model_baliabideak_tresnak,group_baliabide_employee,1,1,1,0
+access_baliabideak_tresnak_admin,baliabideak.tresnak.admin,model_baliabideak_tresnak,group_baliabide_admin,1,1,1,1
