@@ -55,7 +55,7 @@ const GastuakPage = ({ piso, auth, filters }: Props) => {
     const listaGastos = piso.gastos || [];
     const usuarioLogueado = auth?.user;
 
-    const [activeTab, setActiveTab] = useState<'gastuak' | 'zergak'>('gastuak');
+    const [activeTab, setActiveTab] = useState<string>('gastuak');
     
     // Estado para mostrar u ocultar el calendario emergente
     const [showDateInput, setShowDateInput] = useState(false);
@@ -203,11 +203,16 @@ const GastuakPage = ({ piso, auth, filters }: Props) => {
                                 </button>
                             </div>
                         ) : (
-                            <Gastos 
-                                gastos={listaGastos} 
-                                onDelete={handleDeleteGasto}
-                                onEdit={handleEditGasto}
-                            />
+                            activeTab === 'gastuak' ? (
+                                <Gastos 
+                                    gastos={listaGastos} 
+                                    onDelete={handleDeleteGasto}
+                                    onEdit={handleEditGasto}
+                                />
+                            ) :(
+                                <p>Hemen gastuak agertuko dira</p>
+                            )
+
                         )}
                     </div>
 
