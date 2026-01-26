@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, router } from '@inertiajs/react'; // Importamos herramientas de Inertia
 import './GastuakPage.css'; // Reutilizamos los estilos generales de la web
 import './AddGastoForm.css'; // Importamos los estilos específicos de este formulario
+import AppLayout from '@/layouts/app-layout';
 
 interface UserProps {
     id: number;
@@ -55,26 +56,9 @@ const AddGastoForm = (props: Usuarios) => {
     
 
     return (
-        // Usamos "page-wrapper" para mantener el fondo gris general
+        <AppLayout>
+        {/* // Usamos "page-wrapper" para mantener el fondo gris general*/}
         <div className="page-wrapper">
-            
-            {/* --- HEADER (Idéntico al de la página principal) --- */}
-            <header className="header">
-                <div className="logo-box">Logoa</div>
-                <nav className="nav-links">
-                    <Link href="/sarrera">Sarrera</Link>
-                    <Link href="/pisuak">Pisuak ikusi</Link>
-                    <Link href="/zereginak">Zereginak</Link>
-                    {/* El botón activo se marca diferente */}
-                    <Link href="/gastuak" className="btn-gastos">Gastuak</Link>
-                    <Link href="/pisua">Pisua</Link>
-                </nav>
-                <div className="user-profile">
-                    <svg viewBox="0 0 24 24" width="30" height="30" fill="#fff">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                    </svg>
-                </div>
-            </header>
 
             {/* --- CONTENIDO PRINCIPAL (Fondo blanco centrado) --- */}
             <main className="main-container">
@@ -157,6 +141,8 @@ const AddGastoForm = (props: Usuarios) => {
                 © 2025 Pisukide. Eskubide guztiak erreserbatuta
             </footer>
         </div>
+        </AppLayout>
+
     );
 };
 

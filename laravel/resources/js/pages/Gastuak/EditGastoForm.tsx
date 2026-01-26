@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, router } from '@inertiajs/react';
 import './GastuakPage.css';
 import './AddGastoForm.css';
+import AppLayout from '@/layouts/app-layout';
 
 // 1. Definimos las interfaces
 interface UsuarioData {
@@ -49,23 +50,8 @@ const EditGastoForm = ({ gasto, usuarios }: Props) => {
     };
 
     return (
-        <div className="page-wrapper">
-            <header className="header">
-                <div className="logo-box">Logoa</div>
-                <nav className="nav-links">
-                    <Link href="/sarrera">Sarrera</Link>
-                    <Link href="/pisuak">Pisuak ikusi</Link>
-                    <Link href="/zereginak">Zereginak</Link>
-                    <Link href="/gastuak" className="btn-gastos">Gastuak</Link>
-                    <Link href="/pisua">Pisua</Link>
-                </nav>
-                <div className="user-profile">
-                    {/* Icono usuario */}
-                    <svg viewBox="0 0 24 24" width="30" height="30" fill="#fff">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                    </svg>
-                </div>
-            </header>
+        <AppLayout>
+            <div className="page-wrapper">
 
             <main className="main-container">
                 <h1 style={{textAlign: 'center', marginTop: '20px', marginBottom: '40px'}}>
@@ -146,6 +132,8 @@ const EditGastoForm = ({ gasto, usuarios }: Props) => {
                 © 2025 Pisukide. Eskubide guztiak erreserbatuta
             </footer>
         </div>
+        </AppLayout>
+
     );
 };
 
