@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { router, Link } from '@inertiajs/react';
 import Gastos from './Gastos'; 
 import './GastuakPage.css';
+import AppLayout from '@/layouts/app-layout';
 
 // --- INTERFACES (Tal cual definimos antes) ---
 
+const customGreen = '#00796B';
 export interface User {
     id: number;
     name: string;
@@ -72,22 +74,9 @@ const GastuakPage = ({ piso, auth }: Props) => {
     };
 
     return (
-        <div className="page-wrapper">
-            <header className="header">
-                <div className="logo-box">Logoa</div>
-                <nav className="nav-links">
-                    <Link href="/dashboard">Sarrera</Link>
-                    <Link href="/pisos">Pisuak ikusi</Link>
-                    <Link href="/gastuak" className="btn-gastos">Gastuak</Link>
-                </nav>
-                <div className="user-profile">
-                    <span style={{marginRight: '10px'}}>{usuarioLogueado?.name}</span>
-                    <div className="avatar-circle">
-                         {/* Inicial del usuario */}
-                        {usuarioLogueado?.name.charAt(0).toUpperCase()}
-                    </div>
-                </div>
-            </header>
+            <AppLayout>
+                        <div className="page-wrapper">
+
 
             <main className="main-container">
                 {/* Mostramos el nombre del piso dinámicamente */}
@@ -140,6 +129,8 @@ const GastuakPage = ({ piso, auth }: Props) => {
                 © 2025 Pisukide. Eskubide guztiak erreserbatuta
             </footer>
         </div>
+            </AppLayout>
+
     );
 };
 
