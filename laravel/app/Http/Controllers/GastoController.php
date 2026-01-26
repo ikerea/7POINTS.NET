@@ -11,23 +11,36 @@ use App\Http\Controllers\PisoController;
 
 class GastoController extends Controller {
     
-public function index() {
+public function index(Request $request) { // <--- Inyectamos Request
     $pisuaId = session('pisua_id');
 
     if (!$pisuaId) {
         return redirect()->route('pisua.show');
     }
 
-    // Cargamos el piso con sus relaciones correctas
+    // Recogemos la fecha del filtro (si existe)
+    $fechaFiltro = $request->input('fecha');
+
+    // Cargamos el piso y filtramos la relación 'gastos' si hay fecha
     $piso = Piso::with([
-        'inquilinos',      // <--- AQUÍ estaba el error (antes ponía 'usuarios')
-        'gastos.usuario'   // <--- Esto requiere que exista la función gastos() en el modelo Piso
+        'inquilinos',
+        'gastos' => function ($query) use ($fechaFiltro) {
+            // Si hay fecha, filtramos por el campo 'Fecha'
+            if ($fechaFiltro) {
+                $query->whereDate('Fecha', $fechaFiltro);
+            }
+            // Opcional: Ordenar por fecha descendente
+            $query->orderBy('Fecha', 'desc'); 
+        },
+        'gastos.usuario'
     ])->find($pisuaId);
     
-    // Solo pasamos 'piso', ya que dentro lleva los gastos y los inquilinos
     return Inertia::render('Gastuak/GastuakPage', [ 
         'piso' => $piso,
-        // Inertia suele inyectar 'auth' automáticamente, no necesitas pasarlo manual si usas el Middleware por defecto
+        // Pasamos el filtro actual a la vista para que el calendario no se resetee
+        'filters' => [
+            'fecha' => $fechaFiltro
+        ]
     ]);
 }
 
