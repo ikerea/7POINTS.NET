@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use App\Http\Controllers\ZereginakController;
 use App\Http\Controllers\GastoController;
+use App\Http\Controllers\DashboadController;
 
 Route::get('/', function () {
     return Inertia::render('welcome', [
@@ -14,6 +15,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('dashboard', [DashboadController::class, 'index'])->name('dashboard');
     Route::post('/pisua/{id}/aukeratu', [PisoController::class, 'selectPisua'])->name('pisua.select');
 
     Route::get('/pisua/aukeratu', [PisoController::class, 'showSelection'])->name('pisua.selection');

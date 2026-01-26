@@ -1,0 +1,24 @@
+<odoo>
+    <data noupdate="1">
+        <record id="module_category_baliabideak_tresnak" model="ir.module.category">
+            <field name="name">WAG Miguel Altuna Enpresa</field>
+        </record>
+
+        <record id="group_baliabide_user" model="res.groups">
+            <field name="name">Ikuslea</field>
+            <field name="category_id" ref="module_category_baliabideak_tresnak" />
+        </record>
+
+        <record id="group_baliabide_employee" model="res.groups">
+            <field name="name">Langilea</field>
+            <field name="category_id" ref="module_category_baliabideak_tresnak" />
+            <field name="implied_ids" eval="[(4, ref('group_baliabide_user'))]" />
+        </record>
+
+        <record id="group_baliabide_admin" model="res.groups">
+            <field name="name">Administratzailea</field>
+            <field name="category_id" ref="module_category_baliabideak_tresnak" />
+            <field name="implied_ids" eval="[(4, ref('group_baliabide_user'))]" />
+        </record>
+    </data>
+</odoo>

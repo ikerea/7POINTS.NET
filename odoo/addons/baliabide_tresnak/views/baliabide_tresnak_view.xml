@@ -1,0 +1,50 @@
+<odoo>
+    <record id="baliabideak_tresnak_form" model="ir.ui.view">
+        <field name="name">baliabideak.tresnak.form</field>
+        <field name="model">baliabideak.tresnak</field>
+        <field name="arch" type="xml">
+            <form string="Tresnen Inbentarioa">
+                <sheet>
+                    <group>
+                        <field name="name" />
+                        <field name="serial_name" />
+                        <field name="purchase_date" />
+                        <field name="value" />
+                        <field name="state" />
+                        <field name="is_electric" />
+                        <field name="description" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="baliabideak_tresnak_tree" model="ir.ui.view">
+        <field name="name">baliabideak.tresnak.tree</field>
+        <field name="model">baliabideak.tresnak</field>
+        <field name="arch" type="xml">
+            <tree string="Tresnen Inbentarioa">
+                <field name="name" />
+                <field name="serial_name" />
+                <field name="state" />
+                <field name="is_electric" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="baliabideak_tresnak_list" model="ir.actions.act_window">
+        <field name="name"></field>
+        <field name="res_model">baliabideak.tresnak</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_baliabideak_tresnak_root" name="Tresnen Inbentarioa" sequence="1" />
+
+    <menuitem id="menu_baliabideak_tresnak"
+        name="Tresnak"
+        parent="menu_baliabideak_tresnak_root"
+        action="baliabideak_tresnak_list"
+        sequence="10"
+        groups="group_baliabide_user"
+    />
+</odoo>
