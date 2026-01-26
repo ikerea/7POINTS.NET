@@ -6,6 +6,6 @@ class Pisua(models.Model):
 
     name = fields.Char(string="Pisu Izena", required=True)
     code = fields.Char(string="Pisuaren Kodigoa")
-    zereginak_ids = fields.One2many('zereginak', 'pisua_id', string="Zereginak")
     coordinator_id = fields.Many2one('res.users', string="Koordinatzailea")
+    inquilino_ids = fields.Many2many('res.partner', string="Inkilinoak (Guztiak)")
 

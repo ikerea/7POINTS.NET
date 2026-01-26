@@ -71,12 +71,9 @@ const DashboardTaskItem = ({ task, colorClass, iconColorClass }: { task: Zeregin
         </div>
     );
 };
-
-// --- SUB-COMPONENTE: Sección de Lista (Para no repetir código) ---
 const TaskListSection = ({ title, tasks, colorBorder, colorBg, colorIcon }: { title: string, tasks: Zeregina[], colorBorder: string, colorBg: string, colorIcon: string }) => {
     return (
         <div className="mb-10">
-            {/* Título de la Sección */}
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-bold text-black uppercase tracking-wide border-l-4 pl-4" style={{ borderColor: colorBorder }}>
                     {title}
@@ -87,8 +84,6 @@ const TaskListSection = ({ title, tasks, colorBorder, colorBg, colorIcon }: { ti
                     </span>
                 )}
             </div>
-
-            {/* Lista o Mensaje Vacío */}
             {tasks.length > 0 ? (
                 <div className="flex flex-col gap-2">
                     {tasks.map((task) => (
@@ -134,7 +129,7 @@ export default function Dashboard({ zereginakEgiteko = [], zereginakEgiten = [] 
                                     Hemen duzu zure pisuko zereginen laburpena.
                                 </p>
                             </div>
-                            <Link href="/zereginak" className="hidden md:flex bg-white/20 hover:bg-white/30 text-black px-4 py-2 rounded-lg text-sm font-medium transition items-center gap-2 backdrop-blur-sm">
+                            <Link href="/zereginak" style={{backgroundColor: '#00796B'}} className="hidden md:flex hover:brightness-95 text-white px-4 py-2 rounded-lg text-sm font-medium transition items-center gap-2 backdrop-blur-sm">
                                 Ikusi Egutegia <ArrowRight size={16}/>
                             </Link>
                         </div>
@@ -144,7 +139,7 @@ export default function Dashboard({ zereginakEgiteko = [], zereginakEgiten = [] 
 
                             {/* COLUMNA 1: EGITEKO (ROJO) */}
                             <TaskListSection
-                                title="EGITEKO (PENDIENTES)"
+                                title="EGITEKO"
                                 tasks={zereginakEgiteko}
                                 colorBorder="#ef4444" // red-500
                                 colorBg="bg-red-500"
@@ -153,7 +148,7 @@ export default function Dashboard({ zereginakEgiteko = [], zereginakEgiten = [] 
 
                             {/* COLUMNA 2: EGITEN (AZUL) */}
                             <TaskListSection
-                                title="EGITEN (EN PROCESO)"
+                                title="EGITEN"
                                 tasks={zereginakEgiten}
                                 colorBorder="#3b82f6" // blue-500
                                 colorBg="bg-blue-500"
