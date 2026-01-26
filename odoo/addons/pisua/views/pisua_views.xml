@@ -33,7 +33,6 @@
                                 <tree>
                                     <field name="name" />
                                     <field name="email" />
-                                    <field name="phone" />
                                 </tree>
                             </field>
                         </page>
