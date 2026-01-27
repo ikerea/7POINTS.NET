@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
-// Reutilizamos el mismo CSS para que se vea igual
 import './gastosCSS.css'; 
-import { Gasto, User } from './GastuakPage'; // Asegúrate de importar las interfaces
+import { Gasto, User } from './GastuakPage';
 
 interface ZergakProps {
     gastos: Gasto[];
@@ -22,17 +21,16 @@ interface Transaccion {
 
 function Zergak({ gastos, usuarios }: ZergakProps) {
 
-    // --- CÁLCULOS MATEMÁTICOS (useMemo para eficiencia) ---
+    // --- CÁLCULOS MATEMÁTICOS ---
     const { transacciones, balances } = useMemo(() => {
         if (usuarios.length === 0) return { transacciones: [], balances: [] };
 
-        // 1. Calcular total gastado por cada usuario
+        // 1. Calcular total gastado y cuota
         const totalGasto = gastos.reduce((acc, g) => acc + Number(g.Cantidad), 0);
         const cuotaPorPersona = totalGasto / usuarios.length;
 
         // 2. Calcular balances individuales
         const listaBalances: BalanceUsuario[] = usuarios.map(u => {
-            // Sumar todo lo que ha pagado este usuario (ojo con los tipos string/number)
             const loQueHaPagado = gastos
                 .filter(g => g.IdUsuario === u.id)
                 .reduce((acc, g) => acc + Number(g.Cantidad), 0);
@@ -44,21 +42,30 @@ function Zergak({ gastos, usuarios }: ZergakProps) {
             };
         });
 
-        // 3. Algoritmo para saldar deudas (Quién paga a quién)
-        // Separamos en deudores (balance < 0) y acreedores (balance > 0)
+        // 3. Algoritmo para saldar deudas
         let deudores = listaBalances.filter(b => b.balance < -0.01).sort((a, b) => a.balance - b.balance);
         let acreedores = listaBalances.filter(b => b.balance > 0.01).sort((a, b) => b.balance - a.balance);
 
         const listaTransacciones: Transaccion[] = [];
+        let i = 0; 
+        let j = 0; 
 
-        let i = 0; // índice deudores
-        let j = 0; // índice acreedores
+        // Clonamos balances para no mutar el original en el cálculo de transacciones
+        // (Aunque en JS objetos son ref, aquí modificamos solo props numéricas para el algoritmo)
+        // Nota: para visualización usamos 'listaBalances' original intacta, 
+        // pero necesitamos los valores mutables para calcular los pagos.
+        
+        // *Corrección para el algoritmo*: Usamos copias simples de los valores de balance para el loop
+        let saldosDeudores = deudores.map(d => ({ ...d }));
+        let saldosAcreedores = acreedores.map(a => ({ ...a }));
 
-        while (i < deudores.length && j < acreedores.length) {
-            const deudor = deudores[i];
-            const acreedor = acreedores[j];
+        let x = 0;
+        let y = 0;
 
-            // La cantidad a pagar es el mínimo entre lo que debe uno y lo que le deben al otro
+        while (x < saldosDeudores.length && y < saldosAcreedores.length) {
+            const deudor = saldosDeudores[x];
+            const acreedor = saldosAcreedores[y];
+
             const monto = Math.min(Math.abs(deudor.balance), acreedor.balance);
 
             listaTransacciones.push({
@@ -67,13 +74,11 @@ function Zergak({ gastos, usuarios }: ZergakProps) {
                 cantidad: monto
             });
 
-            // Ajustamos balances temporales
             deudor.balance += monto;
             acreedor.balance -= monto;
 
-            // Avanzamos índices si ya se ha saldado
-            if (Math.abs(deudor.balance) < 0.01) i++;
-            if (acreedor.balance < 0.01) j++;
+            if (Math.abs(deudor.balance) < 0.01) x++;
+            if (acreedor.balance < 0.01) y++;
         }
 
         return { transacciones: listaTransacciones, balances: listaBalances };
@@ -87,48 +92,69 @@ function Zergak({ gastos, usuarios }: ZergakProps) {
     return (
         <div className="divPadre">
             
-            {/* SECCIÓN 1: RESUMEN (OPCIONAL, SI QUIERES VER ESTADO DE CADA UNO) */}
-            {/* Puedes quitar esto si solo quieres ver los pagos finales */}
+            {/* SECCIÓN 1: EGOERA OROKORRA (ACTUALIZADA) */}
             <div style={{ padding: '0 10px', marginBottom: '10px' }}>
                 <h4 style={{ margin: '0 0 10px 0', borderBottom: '1px solid #ccc' }}>Egoera Orokorra</h4>
             </div>
 
-            {balances.map((b) => (
-                <div className="divHijos" key={`bal-${b.usuario.id}`} style={{ backgroundColor: '#f9f9f9' }}>
-                    <div className="divNombreYGastoNombre">
-                        <h6>{b.usuario.name}</h6>
-                        <p>Pagado: {b.pagado.toFixed(2)}€</p>
-                    </div>
-                    <div className="divDerecha">
-                        <h3 style={{ color: b.balance >= 0 ? 'green' : 'red' }}>
-                            {b.balance >= 0 ? '+' : ''}{b.balance.toFixed(2)} €
-                        </h3>
-                    </div>
-                </div>
-            ))}
+            {balances.map((b) => {
+                const esPositivo = b.balance >= 0;
+                // Definimos color y texto según el estado
+                const colorEstado = esPositivo ? '#16655D' : '#d9534f'; // Verde Teal o Rojo
+                const textoEstado = esPositivo ? 'Jasotzeko' : 'Ordaintzeko';
 
+                return (
+                    <div className="divHijos" key={`bal-${b.usuario.id}`} style={{ backgroundColor: '#f9f9f9' }}>
+                        
+                        {/* Izquierda: Nombre y lo pagado */}
+                        <div className="divNombreYGastoNombre">
+                            <h6>{b.usuario.name}</h6>
+                            <p style={{ fontSize: '0.8rem', color: '#666' }}>
+                                Jarritakoa: {b.pagado.toFixed(2)}€
+                            </p>
+                        </div>
+
+                        {/* Derecha: Estado explícito */}
+                        {/* Usamos flexDirection column para poner texto encima del número */}
+                        <div className="divDerecha" style={{ flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
+                            <span style={{ 
+                                fontSize: '0.8rem', 
+                                fontWeight: 'bold', 
+                                color: colorEstado,
+                                textTransform: 'uppercase'
+                            }}>
+                                {textoEstado}
+                            </span>
+                            <h3 style={{ color: colorEstado, margin: 0 }}>
+                                {Math.abs(b.balance).toFixed(2)} €
+                            </h3>
+                        </div>
+                    </div>
+                );
+            })}
+
+            {/* SECCIÓN 2: ORDAINKETAK */}
             <div style={{ padding: '10px', marginTop: '10px' }}>
                 <h4 style={{ margin: '0 0 10px 0', borderBottom: '1px solid #ccc' }}>Ordainketak (Settlement)</h4>
             </div>
 
-            {/* SECCIÓN 2: PAGOS NECESARIOS (LO QUE IMPORTA) */}
             {transacciones.length === 0 ? (
-                <p style={{ textAlign: 'center', color: 'green', padding: '10px' }}>Dena ordainduta dago! ✅</p>
+                <p style={{ textAlign: 'center', color: '#16655D', padding: '10px', fontWeight: 'bold' }}>
+                    Dena koadratuta dago! ✅
+                </p>
             ) : (
                 transacciones.map((t, index) => (
-                    <div className="divHijos" key={index} style={{ borderColor: '#16655D' }}>
+                    <div className="divHijos" key={index} style={{ borderColor: '#16655D', borderLeftWidth: '5px' }}>
                         
-                        {/* ZONA 1: QUIÉN PAGA A QUIÉN */}
                         <div className="divNombreYGastoNombre">
-                            <h6 style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                            <h6 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1rem' }}>
                                 <span style={{color: '#d9534f', fontWeight: 'bold'}}>{t.deudor.name}</span>
-                                <span>➝</span>
+                                <span style={{fontSize: '1.2rem'}}>➝</span>
                                 <span style={{color: '#16655D', fontWeight: 'bold'}}>{t.acreedor.name}</span>
                             </h6>
-                            <p>Zorren kitatzea</p>
+                            <p style={{fontSize: '0.8rem'}}>Zorren kitatzea</p>
                         </div>
                         
-                        {/* ZONA 2: CANTIDAD */}
                         <div className="divDerecha">
                             <h3>{t.cantidad.toFixed(2)} €</h3>
                         </div>
