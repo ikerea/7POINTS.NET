@@ -121,7 +121,11 @@ class PisoController extends Controller
 
         SyncEditPisoToOdoo::dispatch($pisua);
 
-        return redirect()->route('pisua.show');
+        session(['pisua_id' => $pisua->id]);
+        session(['pisua_izena' => $pisua->izena]);
+
+
+      return redirect('/pisua/kideak');
     }
 
     /**
@@ -181,4 +185,26 @@ class PisoController extends Controller
             'kideak' => $pisua->inquilinos
         ]);
     }
+
+    public function promoteMember($pisuaId, $memberId)
+    {
+        $pisua = Piso::findOrFail($pisuaId);
+
+        // Cambiamos el rol en la tabla pivote a 'koordinatzailea'
+        $pisua->inquilinos()->updateExistingPivot($memberId, ['mota' => 'koordinatzailea']);
+
+        return back();
+    }
+
+    public function removeMember($pisuaId, $memberId)
+    {
+        $pisua = Piso::findOrFail($pisuaId);
+
+        // Quitamos la relación (detach)
+        $pisua->inquilinos()->detach($memberId);
+
+        return back();
+    }
+
+
 }

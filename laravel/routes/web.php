@@ -29,6 +29,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/pisua/kideak', [PisoController::class, 'showMembers'])->name('pisua.kideak');
 
+    Route::put('/pisua/{pisuaId}/kidea/{memberId}/promote', [PisoController::class, 'promoteMember']);
+    Route::delete('/pisua/{pisuaId}/kidea/{memberId}/remove', [PisoController::class, 'removeMember']);
+
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
