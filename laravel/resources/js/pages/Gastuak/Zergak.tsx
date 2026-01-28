@@ -135,12 +135,12 @@ function Zergak({ gastos, usuarios }: ZergakProps) {
 
             {/* SECCIÓN 2: ORDAINKETAK */}
             <div style={{ padding: '10px', marginTop: '10px' }}>
-                <h4 style={{ margin: '0 0 10px 0', borderBottom: '1px solid #ccc' }}>Ordainketak (Settlement)</h4>
+                <h4 style={{ margin: '0 0 10px 0', borderBottom: '1px solid #ccc' }}>Ordainketak</h4>
             </div>
 
             {transacciones.length === 0 ? (
                 <p style={{ textAlign: 'center', color: '#16655D', padding: '10px', fontWeight: 'bold' }}>
-                    Dena koadratuta dago! ✅
+                    Dena koadratuta dago! 
                 </p>
             ) : (
                 transacciones.map((t, index) => (

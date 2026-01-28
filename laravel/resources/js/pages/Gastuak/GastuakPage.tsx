@@ -57,6 +57,8 @@ const GastuakPage = ({ piso, auth, filters }: Props) => {
     const usuarioLogueado = auth?.user;
     const listaInquilinos = piso.inquilinos || [];
 
+    const usuariosMap = new Map(listaInquilinos.map(u => [u.id, u.name]));
+
     const [activeTab, setActiveTab] = useState<string>('gastuak');
     
     // Estado para mostrar u ocultar el calendario emergente
@@ -210,6 +212,7 @@ const GastuakPage = ({ piso, auth, filters }: Props) => {
                                     gastos={listaGastos} 
                                     onDelete={handleDeleteGasto}
                                     onEdit={handleEditGasto}
+                                    usuariosMap={usuariosMap}
                                 />
                             ) :(
                                 <>

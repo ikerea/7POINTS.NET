@@ -14,10 +14,11 @@ interface GastosProps {
     gastos: Gasto[];
     onDelete: (id: number) => void;
     onEdit: (gasto: Gasto) => void;
+    usuariosMap: Map<number, string>;
 }
 
 function Gastos(props: GastosProps) {
-    const { gastos, onDelete, onEdit } = props;
+    const { gastos, onDelete, onEdit, usuariosMap } = props;
 
     return (
         <div className="divPadre">
@@ -26,8 +27,8 @@ function Gastos(props: GastosProps) {
                     
                     {/* ZONA 1: Texto (Se encoge si hace falta) */}
                     <div className="divNombreYGastoNombre">
-                        <h6 title={gasto.Nombre}>Nombre: {gasto.Nombre}</h6>
-                        <p>Ordainduta: {gasto.IdUsuario}</p>
+                        <h6 title={gasto.Nombre}>Izena: {gasto.Nombre}</h6>
+                        <p>Ordainduta: {usuariosMap.get(gasto.IdUsuario) || 'Erabiltzaile ezezaguna'}</p>
                     </div>
                     
                     {/* ZONA 2: Precio y Botones (NO se mueven ni se encogen) */}
@@ -39,7 +40,7 @@ function Gastos(props: GastosProps) {
                                 className="btn-editar"
                                 onClick={() => onEdit(gasto)}
                             >
-                                Editar
+                                Editatu
                             </button>
                             
                             <button 
