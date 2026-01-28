@@ -18,6 +18,81 @@ class OdooService
         $this->password = env("ODOO_PASSWORD");
     }
 
+    public function syncUserContact($user)
+    {
+        $uid = $this->rpc('common', 'login', [
+            $this->db,
+            $this->username,
+            $this->password
+        ]);
+
+        if (!$uid) {
+            throw new \Exception('Odoo: Creedenciales incorrectas o BD no encontrada');
+        }
+
+        //AHORA BUSCAMOS SI ESE USUARIO EXISTE EN CONTACTOS
+        $criteria = [['email', '=', $user->email]];
+
+        $ids = $this->rpc('object', 'execute_kw', [
+            $this->db,
+            $uid,
+            $this->password,
+            'res.partner',
+            'search',
+            [$criteria]
+        ]);
+
+        $partnerId = null;
+
+        if (!empty($ids)) {
+            //Si el usuario ya existe en el modulo de contacto se lo asignamos directamente
+            $partnerId = $ids[0];
+        } else {
+            //Si no existe creamos el contacto en Odoo
+            $partnerId = $this->rpc('object', 'execute_kw', [
+                $this->db,
+                $uid,
+                $this->password,
+                'res.partner', //Apuntamos al modelo de contactos de odoo
+                'create',
+                [
+                    [
+                        'name' => $user->name,
+                        'email' => $user->email,
+                    ]
+                ]
+            ]);
+        }
+        return $partnerId;
+    }
+
+    public function addInquilinoToPiso($odooPisoId, $odooPartnerId)
+    {
+        $uid = $this->rpc('common', 'login', [
+            $this->db,
+            $this->username,
+            $this->password
+        ]);
+
+        if (!$uid) {
+            throw new \Exception('Odoo: Creedenciales incorrectas o BD no encontrada');
+        }
+
+        $this->rpc('object', 'execute_kw', [
+            $this->db,
+            $uid,
+            $this->password,
+            'pisua',
+            'write',
+            [
+                [$odooPisoId],
+                ['inquilino_ids' => [[4, $odooPartnerId]]]
+            ]
+        ]);
+
+    }
+
+
 
     public function create(string $model, array $data)
     {
@@ -88,14 +163,15 @@ class OdooService
         ]);
     }
 
-    public function delete(string $model, array $ids){
+    public function delete(string $model, array $ids)
+    {
         $uid = $this->rpc('common', 'login', [
             $this->db,
             $this->username,
             $this->password
         ]);
 
-        if(!$uid){
+        if (!$uid) {
             throw new \Exception('Odoo: Creedenciales incorrectas o BD no encontrada');
         }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\SyncDeletePisoFrom;
 use App\Jobs\SyncEditPisoToOdoo;
+use App\Jobs\SyncInquilinoToOdoo;
 use App\Jobs\SyncUserToOdoo;
 use Auth;
 use Illuminate\Http\Request;
@@ -37,6 +38,8 @@ class PisoController extends Controller
             $piso->id => ['mota' => 'normala']
         ]);
 
+        SyncInquilinoToOdoo::dispatch($request->user(), $piso);
+
         session(['pisua_id' => $piso->id]);
         session(['pisua_izena' => $piso->izena]);
 
@@ -62,7 +65,6 @@ class PisoController extends Controller
         // 1. Quitamos la validación del codigo, porque ya no lo introduce el usuario
         $validate = $request->validate([
             'pisuaren_izena' => 'required|string|max:255',
-            // 'pisuaren_kodigoa' => 'required...'  <-- ESTO FUERA
         ]);
 
         $user = $request->user();
@@ -88,6 +90,7 @@ class PisoController extends Controller
         Bus::chain([
             new SyncUserToOdoo($user),
             new SyncPisoToOdoo($pisua),
+            new SyncInquilinoToOdoo($user, $pisua)
         ])->dispatch();
 
         session(['pisua_id' => $pisua->id]);
