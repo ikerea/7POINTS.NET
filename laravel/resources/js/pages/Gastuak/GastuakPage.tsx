@@ -3,6 +3,7 @@ import { router, Link } from '@inertiajs/react';
 import Gastos from './Gastos'; 
 import './GastuakPage.css';
 import AppLayout from '@/layouts/app-layout';
+import Zergak from './Zergak';
 
 // --- INTERFACES ---
 
@@ -54,8 +55,11 @@ const GastuakPage = ({ piso, auth, filters }: Props) => {
     // Extraemos gastos e inquilinos del objeto piso (con valores por defecto por seguridad)
     const listaGastos = piso.gastos || [];
     const usuarioLogueado = auth?.user;
+    const listaInquilinos = piso.inquilinos || [];
 
-    const [activeTab, setActiveTab] = useState<'gastuak' | 'zergak'>('gastuak');
+    const usuariosMap = new Map(listaInquilinos.map(u => [u.id, u.name]));
+
+    const [activeTab, setActiveTab] = useState<string>('gastuak');
     
     // Estado para mostrar u ocultar el calendario emergente
     const [showDateInput, setShowDateInput] = useState(false);
@@ -203,11 +207,23 @@ const GastuakPage = ({ piso, auth, filters }: Props) => {
                                 </button>
                             </div>
                         ) : (
-                            <Gastos 
-                                gastos={listaGastos} 
-                                onDelete={handleDeleteGasto}
-                                onEdit={handleEditGasto}
-                            />
+                            activeTab === 'gastuak' ? (
+                                <Gastos 
+                                    gastos={listaGastos} 
+                                    onDelete={handleDeleteGasto}
+                                    onEdit={handleEditGasto}
+                                    usuariosMap={usuariosMap}
+                                />
+                            ) :(
+                                <>
+                                    <Zergak 
+                                        gastos={listaGastos} 
+                                        usuarios={listaInquilinos} 
+                                    />                                
+                                </>
+
+                            )
+
                         )}
                     </div>
 
