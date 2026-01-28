@@ -10,7 +10,6 @@ import 'moment/dist/locale/eu';
 
 moment.locale('eu');
 
-// --- TIPOS ---
 interface UserData {
     id: number;
     name: string;
@@ -106,8 +105,6 @@ const TaskListSection = ({ title, tasks, colorBorder, colorBg, colorIcon }: { ti
     );
 };
 
-
-// --- COMPONENTE PRINCIPAL ---
 export default function Dashboard({ zereginakEgiteko = [], zereginakEgiten = [] }: DashboardProps) {
     const { auth } = usePage<SharedData>().props;
 
