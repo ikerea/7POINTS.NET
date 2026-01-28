@@ -18,7 +18,7 @@ class DashboadController extends Controller
         if($pisuaId) {
             $zereginakEgiteko = Zereginak::where('pisua_id', $pisuaId)
                 ->where('egoera', 'egiteko')
-                ->with('erabiltzaileak') // Importante para ver quién hace la tarea
+                ->with('erabiltzaileak') //Importante para ver quién hace la tarea
                 ->get();
 
 
@@ -28,7 +28,7 @@ class DashboadController extends Controller
                 ->get();
         }
 
-        // 3. Enviamos los datos a la vista
+        //3. Enviamos los datos a la vista
         return Inertia::render('dashboard', [
             'zereginakEgiteko' => $zereginakEgiteko,
             'zereginakEgiten' => $zereginakEgiten

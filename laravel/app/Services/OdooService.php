@@ -18,7 +18,6 @@ class OdooService
         $this->password = env("ODOO_PASSWORD");
     }
 
-
     public function create(string $model, array $data)
     {
         //AUTENTIFIKAZIOA
@@ -88,14 +87,15 @@ class OdooService
         ]);
     }
 
-    public function delete(string $model, array $ids){
+    public function delete(string $model, array $ids)
+    {
         $uid = $this->rpc('common', 'login', [
             $this->db,
             $this->username,
             $this->password
         ]);
 
-        if(!$uid){
+        if (!$uid) {
             throw new \Exception('Odoo: Creedenciales incorrectas o BD no encontrada');
         }
 
