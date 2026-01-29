@@ -290,6 +290,7 @@ export default function Index({ zereginak }: Props) {
     // Egutegiko ekitaldien koloreak definitzeko funtzioa
     const eventStyleGetter = (event: any) => {
         let backgroundColor = '#3b82f6';
+
         switch (event.egoera) {
             case 'egiteko': backgroundColor = '#ef4444'; break;
             case 'egiten': backgroundColor = '#3b82f6'; break;
@@ -298,11 +299,20 @@ export default function Index({ zereginak }: Props) {
         return {
             style: {
                 backgroundColor: backgroundColor,
-                borderRadius: '6px',
+                borderRadius: '3px',
                 opacity: 0.9,
                 color: 'white',
                 border: '0px',
-                display: 'block'
+                display: 'block',
+
+               // --- CAMBIOS CLAVE ---
+                fontSize: '12px',
+                padding: '0px 4px',
+                lineHeight: '1.5',
+                marginBottom: '2px',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis'
             }
         };
     };
@@ -337,6 +347,8 @@ export default function Index({ zereginak }: Props) {
                                     endAccessor="end"
                                     style={{ height: '100%' }}
                                     eventPropGetter={eventStyleGetter}
+
+                                    popup={true}
                                     // Egutegiko formatuak euskarara egokitu (Larriak)
                                     formats={{
                                         monthHeaderFormat: (date: Date, culture: any, localizer: any) =>
@@ -358,7 +370,8 @@ export default function Index({ zereginak }: Props) {
                                         date: "Data",
                                         time: "Ordua",
                                         event: "Ekitaldia",
-                                        noEventsInRange: "Ez dago ekitaldirik tarte honetan."
+                                        noEventsInRange: "Ez dago ekitaldirik tarte honetan.",
+                                        showMore: (total) => `+${total} gehiago`
                                     }}
                                     onSelectEvent={(event: any) => router.get(`/zereginak/${event.id}/editatu`)}
                                 />

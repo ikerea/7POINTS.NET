@@ -1,18 +1,10 @@
 import React from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import { FaHouseChimneyMedical } from "react-icons/fa6";
-import { MoreVertical, Pencil, Trash2, ArrowRight, User as UserIcon } from 'lucide-react';
+import { ArrowRight, User as UserIcon } from 'lucide-react';
 
 // --- IMPORTAMOS LOS COMPONENTES DE UI ---
 import { Button } from '@/components/ui/button';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-    DropdownMenuLabel,
-    DropdownMenuSeparator
-} from '@/components/ui/dropdown-menu';
 
 interface User {
     id: number;
@@ -34,11 +26,6 @@ const customGreen = '#00796B';
 
 export default function Erakutsi({ pisuak }: ErakutsiProps) {
 
-    const handleDelete = (id: number) => {
-        if (confirm('Ziur zaude pisu hau ezabatu nahi duzula?')) {
-            router.delete(`/pisua/${id}`);
-        }
-    };
 
     const handleSelect = (id: number) => {
         router.post(`/pisua/${id}/aukeratu`);
@@ -111,29 +98,6 @@ export default function Erakutsi({ pisuak }: ErakutsiProps) {
                                                 </div>
                                             </div>
 
-                                            {/* DROPDOWN MENU (Top Right) */}
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="ghost" size="icon" className="h-8 w-8 -mr-2 text-gray-400 hover:text-gray-700 rounded-full">
-                                                        <MoreVertical className="h-4 w-4" />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end">
-                                                    <DropdownMenuLabel>Aukerak</DropdownMenuLabel>
-                                                    <DropdownMenuSeparator />
-                                                    <DropdownMenuItem asChild>
-                                                        <Link href={`/pisua/${pisua.id}/edit`} className="cursor-pointer flex items-center">
-                                                            <Pencil className="mr-2 h-4 w-4 text-blue-500" /> Editatu
-                                                        </Link>
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem
-                                                        onClick={() => handleDelete(pisua.id)}
-                                                        className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
-                                                    >
-                                                        <Trash2 className="mr-2 h-4 w-4" /> Ezabatu
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
                                         </div>
 
                                         {/* CARD BODY (Info) */}

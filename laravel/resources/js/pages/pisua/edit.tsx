@@ -25,7 +25,11 @@ export default function Edit({ pisua }: EditProps) {
         e.preventDefault();
         // URL eraikuntza
         const url = `/pisua/${pisua.id}`;
-        put(url);
+        put(url, {
+        onSuccess: () => {
+            window.location.href = '/pisua/kideak';
+        }
+    });
     };
 
     return (
@@ -73,7 +77,7 @@ export default function Edit({ pisua }: EditProps) {
                                     {processing ? 'Gordetzen...' : 'Aldaketak Gorde'}
                                 </button>
                                 <Link
-                                    href="/pisua/erakutsi"
+                                    href="/pisua/kideak"
                                     className="w-full text-center py-3 rounded-xl border border-gray-300 text-gray-600 font-medium hover:bg-gray-50 transition"
                                 >
                                     Utzi eta Atzera

@@ -45,7 +45,7 @@ export default function Create({ auth,kideak }: Props) {
                         <h2 className="text-3xl font-bold mb-2 text-center text-gray-800">
                             Zeregina sortu
                         </h2>
-                        <div className="w-32 h-[3px] bg-gray-400 mx-auto rounded-full mb-8"></div>
+                        <div className="w-64 h-[1px] bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto mt-4 mb-8"></div>
 
                         <form onSubmit={submit} className="flex flex-col gap-5">
 

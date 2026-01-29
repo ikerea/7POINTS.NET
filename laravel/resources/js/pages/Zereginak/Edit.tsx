@@ -82,7 +82,7 @@ export default function Edit({ zereginak,kideak  }: Props) {
                         </h2>
 
                         {/* LERRO DEKORATIBOA (Izenburuaren azpian) */}
-                        <div className="w-32 h-[3px] bg-gray-400 mx-auto rounded-full mb-8"></div>
+                        <div className="w-64 h-[1px] bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto mt-4 mb-8"></div>
 
                         {/* FORMULARIOA HASI */}
                         <form onSubmit={submit} className="flex flex-col gap-5">
