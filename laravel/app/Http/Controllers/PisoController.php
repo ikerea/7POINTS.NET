@@ -12,6 +12,9 @@ use App\Models\Piso;
 use App\Jobs\SyncPisoToOdoo;
 use App\Services\OdooService;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+
 class PisoController extends Controller
 {
     public function showSelection(Request $request)
@@ -21,6 +24,7 @@ class PisoController extends Controller
             'hasPisos' => $hasPisos
         ]);
     }
+
     public function join(Request $request)
     {
         $validated = $request->validate([
@@ -42,11 +46,26 @@ class PisoController extends Controller
 
         return redirect()->route('dashboard');
     }
-    public function index(Request $request)
-    {
-        $pisuak = $request->user()->pisuak()->with('user')->get();
 
-        return Inertia::render('pisua/erakutsi', ['pisuak' => $pisuak]);
+   public function index()
+    {
+        // 1. Obtenemos los pisos del usuario actual
+        $pisuak = auth()->user()->pisuak;
+
+        // 2. Para cada piso, buscamos explícitamente quién tiene el rol de 'koordinatzailea'
+        foreach ($pisuak as $piso) {
+            $coordinador = $piso->inquilinos()
+                                ->wherePivot('mota', 'koordinatzailea')
+                                ->first();
+
+            // Asignamos ese usuario a la propiedad 'user' que espera tu React
+            $piso->user = $coordinador;
+        }
+
+        // 3. Enviamos los datos a la vista
+        return Inertia::render('pisua/erakutsi', [
+            'pisuak' => $pisuak
+        ]);
     }
 
     /**
@@ -103,11 +122,13 @@ class PisoController extends Controller
 
     public function edit(Piso $pisua)
     {
+        Gate::authorize('update', $pisua);
         return Inertia::render('pisua/edit', compact('pisua'));
     }
 
     public function update(Request $request, Piso $pisua)
     {
+        Gate::authorize('update', $pisua);
         $validate = $request->validate([
             'pisuaren_izena' => 'required|string|max:255',
             'pisuaren_kodigoa' => 'required|string|max:50',
@@ -133,6 +154,7 @@ class PisoController extends Controller
      */
     public function destroy(Piso $pisua)
     {
+        Gate::authorize('delete', $pisua);
         $odooId = $pisua->odoo_id;
 
         //Borramos el biso de SQLite
@@ -166,7 +188,7 @@ class PisoController extends Controller
         return redirect()->route('zereginak.index');
     }
 
-    public function showMembers()
+   public function showMembers()
     {
         // 1. Recuperar ID de sesión
         $pisuaId = session('pisua_id');
@@ -177,33 +199,100 @@ class PisoController extends Controller
         }
 
         // 3. Buscar el piso y cargar la relación 'inquilinos'
-        // Asumimos que en tu modelo Piso tienes la relación inquilinos() definida
         $pisua = Piso::with('inquilinos')->findOrFail($pisuaId);
+
+        // --- ALDAKETA HEMEN ---
+        // Bilatu uneko erabiltzailea inquilinos zerrendan eta ikusi bere 'mota'
+        $currentUser = $pisua->inquilinos->find(auth()->id());
+        $isCurrentUserAdmin = $currentUser && $currentUser->pivot->mota === 'koordinatzailea';
 
         return Inertia::render('pisuaIkusi/pisua_ikusi', [
             'pisua' => $pisua,
-            'kideak' => $pisua->inquilinos
+            'kideak' => $pisua->inquilinos,
+            'isCurrentUserAdmin' => $isCurrentUserAdmin, // <--- HAU GEHITU DUGU
         ]);
     }
 
-    public function promoteMember($pisuaId, $memberId)
+    public function promoteMember(Request $request, $pisuaId, $memberId)
     {
         $pisua = Piso::findOrFail($pisuaId);
 
-        // Cambiamos el rol en la tabla pivote a 'koordinatzailea'
-        $pisua->inquilinos()->updateExistingPivot($memberId, ['mota' => 'koordinatzailea']);
+        // SEGURIDAD: Solo el coordinador actual puede nombrar a otro coordinador.
+        // Usamos la misma policy 'update' que creamos antes, ya que verifica si es coordinador.
+        Gate::authorize('update', $pisua);
 
-        return back();
+        return DB::transaction(function () use ($request, $pisua, $memberId) {
+            $currentUserId = $request->user()->id;
+
+            // 1. Quitar rol al actual
+            $pisua->inquilinos()->updateExistingPivot($currentUserId, ['mota' => 'normala']);
+
+            // 2. Dar rol al nuevo
+            $pisua->inquilinos()->updateExistingPivot($memberId, ['mota' => 'koordinatzailea']);
+
+            return back();
+        });
     }
 
     public function removeMember($pisuaId, $memberId)
     {
         $pisua = Piso::findOrFail($pisuaId);
 
+        if ($memberId != auth()->id()) {
+        Gate::authorize('update', $pisua);
+    }
+
         // Quitamos la relación (detach)
         $pisua->inquilinos()->detach($memberId);
 
+        if ($memberId == auth()->id() && session('pisua_id') == $pisuaId) {
+            session()->forget('pisua_id');
+            session()->forget('pisua_izena');
+            return redirect()->route('dashboard'); // Redirigir fuera porque ya no tienes acceso
+        }
+
         return back();
+
+
+    }
+
+    public function atera(Piso $pisua)
+    {
+        $user = auth()->user();
+
+        // 1. Obtener los datos del usuario en este piso (para ver si es coordinador)
+        $miembro = $pisua->inquilinos()->where('users.id', $user->id)->first();
+
+        if (!$miembro) {
+            abort(403, 'Ez zara pisu honetako kidea.');
+        }
+
+        // Guardamos si era el jefe antes de borrarlo
+        $eraCoordinador = $miembro->pivot->mota === 'koordinatzailea';
+
+        // 2. Sacar al usuario del piso (Detach)
+        $pisua->inquilinos()->detach($user->id);
+
+        // 3. Si el que se ha ido era Coordinador, nombrar al heredero
+        if ($eraCoordinador) {
+            // Buscamos el inquilino más antiguo que quede (el pivot created_at más viejo)
+            $nuevoJefe = $pisua->inquilinos()
+                             ->wherePivotNotNull('created_at') // Por seguridad
+                             ->orderByPivot('created_at', 'asc') // Ascendente = el más antiguo primero
+                             ->first();
+
+            // Si queda alguien en el piso, lo ascendemos
+            if ($nuevoJefe) {
+                $pisua->inquilinos()->updateExistingPivot($nuevoJefe->id, ['mota' => 'koordinatzailea']);
+            }
+        }
+
+        if (session('pisua_id') == $pisua->id) {
+            session()->forget('pisua_id');
+            session()->forget('pisua_izena');
+        }
+
+        return redirect()->route('dashboard')->with('message', 'Pisutik ondo atera zara.');
     }
 
 

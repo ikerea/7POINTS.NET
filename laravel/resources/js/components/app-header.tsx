@@ -1,5 +1,5 @@
 import { Breadcrumbs } from '@/components/breadcrumbs';
-import { Icon } from '@/components/icon';
+// Eliminamos la dependencia de Icon para evitar conflictos de tipos y usamos los iconos directamente
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -21,36 +21,8 @@ import { dashboard } from '@/routes';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { Menu, LayoutGrid, Home, ListTodo, Wallet, SearchCheck } from 'lucide-react';
+import { useState } from 'react';
 import AppLogo from './app-logo';
-
-// 1. DEFINIMOS TUS ENLACES DE PISUKIDE
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Sarrera', // Dashboard
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Pisuak ikusi',
-        href: '/pisua/erakutsi', 
-        icon: Home,
-    },
-    {
-        title: 'Zereginak',
-        href: '/zereginak',
-        icon: ListTodo,
-    },
-    {
-        title: 'Gastuak',
-        href: '/gastuak',
-        icon: Wallet,
-    },
-    {
-        title: 'Pisua',
-        href: '/pisua/kideak',
-        icon: SearchCheck,
-    },
-];
 
 // El color verde de tu diseño
 const customGreen = '#00796B';
@@ -59,16 +31,51 @@ interface AppHeaderProps {
     breadcrumbs?: BreadcrumbItem[];
 }
 
-export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
-    const page = usePage<SharedData>();
-    const { auth } = page.props;
+// Usamos 'export default' para arreglar el error del build
+export default function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
+    // 1. OBTENER DATOS (INCLUIDO EL NOMBRE DEL PISO)
+    const page = usePage<SharedData & { pisua_izena?: string }>();
+    const { auth, pisua_izena } = page.props;
+
+    // El hook devuelve una función para calcular iniciales
     const getInitials = useInitials();
+
+    // 2. DEFINIR MENÚ DENTRO PARA PODER USAR 'pisua_izena'
+    const mainNavItems: NavItem[] = [
+        {
+            title: 'Sarrera', // Dashboard
+            href: dashboard(),
+            icon: LayoutGrid,
+        },
+        {
+
+            title:  'Pisuak ikusi',
+            href: '/pisua/erakutsi',
+            icon: Home,
+        },
+        {
+            title: 'Zereginak',
+            href: '/zereginak',
+            icon: ListTodo,
+        },
+        {
+            title: 'Gastuak',
+            href: '/gastuak/ikusi',
+            icon: Wallet,
+        },
+        {
+            title: pisua_izena ||'Pisua',
+            href: '/pisua/kideak',
+            icon: SearchCheck,
+        },
+    ];
 
     return (
         <>
             <div className="w-full shadow-md transition-colors duration-200" style={{ backgroundColor: customGreen }}>
                 <div className="mx-auto flex h-20 items-center justify-between px-4 md:max-w-7xl text-white">
                     <div className="flex items-center gap-4">
+                        {/* Mobile Menu */}
                         <div className="lg:hidden">
                             <Sheet>
                                 <SheetTrigger asChild>
@@ -83,7 +90,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                 <SheetContent side="left" className="w-64 bg-white p-0">
                                     <SheetHeader className="p-4 border-b">
                                         <SheetTitle className="text-left font-bold text-xl text-[#00796B]">
-                                            PISUKIDE
+                                            <AppLogo />
                                         </SheetTitle>
                                     </SheetHeader>
                                     <div className="flex flex-col p-4 space-y-3">
@@ -91,9 +98,12 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                             <Link
                                                 key={item.title}
                                                 href={item.href}
-                                                className="flex items-center space-x-3 text-gray-700 font-medium py-2 px-2 hover:bg-gray-100 rounded-md"
+                                                className={cn(
+                                                    "flex items-center space-x-3 text-gray-700 font-medium py-2 px-2 hover:bg-gray-100 rounded-md",
+                                                     isSameUrl(item.href, page.url) && "bg-gray-100 text-[#00796B]"
+                                                )}
                                             >
-                                                {item.icon && <Icon iconNode={item.icon} className="h-5 w-5" />}
+                                                {item.icon && <item.icon className="h-5 w-5" />}
                                                 <span>{item.title}</span>
                                             </Link>
                                         ))}
@@ -104,11 +114,14 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
 
                         {/* Logo Desktop */}
                         <Link href={dashboard()} className="flex items-center gap-2">
+                             {/* Usamos AppLogo o texto según prefieras, aquí dejo el texto como en tu diseño verde */}
                             <span className="text-xl font-bold tracking-wide text-white">
                                 PISUKIDE
                             </span>
                         </Link>
                     </div>
+
+                    {/* Desktop Navigation */}
                     <div className="hidden lg:flex items-center space-x-6">
                         {mainNavItems.map((item) => {
                             const isActive = isSameUrl(page.url, item.href);
@@ -125,14 +138,17 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                 >
                                     <div className='flex items-center space-x-2'>
                                         <span>{item.title}</span>
+                                        {/* Icono directo sin componente intermedio */}
                                         {item.icon && (
-                                            <Icon iconNode={item.icon} />
+                                            <item.icon className="h-4 w-4" />
                                         )}
                                     </div>
                                 </Link>
                             );
                         })}
                     </div>
+
+                    {/* User Menu */}
                     <div className="flex items-center space-x-3">
                         <span className="hidden sm:block text-sm font-medium text-white opacity-90">
                             {auth.user.name}
@@ -147,6 +163,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                     <Avatar className="size-9 bg-white text-[#00796B]">
                                         <AvatarImage src={auth.user.avatar} alt={auth.user.name} />
                                         <AvatarFallback className="bg-white text-[#00796B] font-bold">
+                                            {/* Llamamos a la función getInitials con el nombre */}
                                             {getInitials(auth.user.name)}
                                         </AvatarFallback>
                                     </Avatar>

@@ -36,9 +36,10 @@ interface Pisua {
 interface Props {
     pisua: Pisua;
     kideak: Kidea[];
+    isCurrentUserAdmin: boolean; // <--- HAU GEHITU DUGU
 }
 
-export default function PisuaIkusi({ pisua, kideak }: Props) {
+export default function PisuaIkusi({ pisua, kideak, isCurrentUserAdmin }: Props) {
     const [copied, setCopied] = useState(false);
 
     const kopiatuKodea = () => {
@@ -48,30 +49,31 @@ export default function PisuaIkusi({ pisua, kideak }: Props) {
     };
 
     // --- EKINTZAK (ACTIONS) ---
-
-    // Pisu osoa ezabatu
     const handleDelete = (id: number) => {
         if (confirm('Ziur zaude pisu hau ezabatu nahi duzula?')) {
             router.delete(`/pisua/${id}`);
         }
     };
 
-    // Erabiltzaile bat koordinatzaile bihurtu
     const handlePromote = (kideaId: number) => {
-        // OHARRA: Ziurtatu zure `web.php` fitxategian URL hau existitzen dela
-        // Adibidez: Route::put('/pisua/{pisua}/kidea/{kidea}/promote', ...)
         router.put(`/pisua/${pisua.id}/kidea/${kideaId}/promote`, {}, {
             preserveScroll: true,
         });
     };
 
-    // Erabiltzailea pisotik kendu
     const handleKick = (kideaId: number) => {
         if (confirm('Ziur zaude erabiltzaile hau pisotik bota nahi duzula?')) {
-            // CORRECCIÓN: Añadido "/remove" al final para coincidir con web.php
             router.delete(`/pisua/${pisua.id}/kidea/${kideaId}/remove`, {
                 preserveScroll: true,
             });
+        }
+    };
+
+    const handleLeave = () => {
+        if (confirm('Ziur zaude pisutik atera nahi duzula? Ekintza hau ezin da desegin.')) {
+            // Llamada al backend para salir del piso.
+            // Asegúrate de tener esta ruta configurada en tu Laravel (web.php)
+            router.delete(`/pisua/${pisua.id}/atera`);
         }
     };
 
@@ -82,31 +84,33 @@ export default function PisuaIkusi({ pisua, kideak }: Props) {
             <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
                <div className="relative bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 border border-gray-100">
 
-                    {/* --- MENÚ DE OPCIONES PISUA --- */}
-                    <div className="absolute top-6 right-6">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-gray-700 rounded-full">
-                                    <MoreVertical className="h-5 w-5" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Pisuaren Aukerak</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem asChild>
-                                    <Link href={`/pisua/${pisua.id}/edit`} className="cursor-pointer flex items-center">
-                                        <Pencil className="mr-2 h-4 w-4 text-blue-500" /> Editatu
-                                    </Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={() => handleDelete(pisua.id)}
-                                    className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
-                                >
-                                    <Trash2 className="mr-2 h-4 w-4" /> Ezabatu
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
+                    {/* --- MENÚ DE OPCIONES PISUA (SOLO COORDINADOR) --- */}
+                    {isCurrentUserAdmin && (
+                        <div className="absolute top-6 right-6">
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-gray-700 rounded-full">
+                                        <MoreVertical className="h-5 w-5" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuLabel>Pisuaren Aukerak</DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem asChild>
+                                        <Link href={`/pisua/${pisua.id}/edit`} className="cursor-pointer flex items-center">
+                                            <Pencil className="mr-2 h-4 w-4 text-blue-500" /> Editatu
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        onClick={() => handleDelete(pisua.id)}
+                                        className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
+                                    >
+                                        <Trash2 className="mr-2 h-4 w-4" /> Ezabatu
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    )}
 
                     {/* TÍTULO */}
                     <div className="text-center mb-10">
@@ -122,51 +126,50 @@ export default function PisuaIkusi({ pisua, kideak }: Props) {
                     {/* GRID DE USUARIOS */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {kideak.map((kidea) => {
-                            const isAdmin = kidea.pivot.mota === 'koordinatzailea';
+                            const isThisUserAdmin = kidea.pivot.mota === 'koordinatzailea';
 
                             return (
                                 <div
                                     key={kidea.id}
                                     className="relative bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex items-center gap-4 hover:shadow-md transition-shadow pr-10"
                                 >
-                                    {/* --- MENÚ DE OPCIONES KIDEA --- */}
-                                    <div className="absolute top-3 right-3">
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" size="icon" className="h-6 w-6 text-gray-400 hover:text-gray-700 rounded-full">
-                                                    <MoreVertical className="h-4 w-4" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                                <DropdownMenuLabel>Kudeaketa</DropdownMenuLabel>
-                                                <DropdownMenuSeparator />
-
-                                                {/* Koordinatzaile egin */}
-                                                {!isAdmin && (
+                                    {/* --- MENÚ DE OPCIONES KIDEA (SOLO SI SOY COORDINADOR) --- */}
+                                    {isCurrentUserAdmin && !isThisUserAdmin &&(
+                                        <div className="absolute top-3 right-3">
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" size="icon" className="h-6 w-6 text-gray-400 hover:text-gray-700 rounded-full">
+                                                        <MoreVertical className="h-4 w-4" />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end">
+                                                    <DropdownMenuLabel>Kudeaketa</DropdownMenuLabel>
+                                                    <DropdownMenuSeparator />
                                                     <DropdownMenuItem
-                                                        onClick={() => handlePromote(kidea.id)}
-                                                        className="cursor-pointer"
-                                                    >
-                                                        <ShieldCheck className="mr-2 h-4 w-4 text-indigo-600" />
-                                                        Koordinatzaile egin
+                                                            onClick={() => handlePromote(kidea.id)}
+                                                            className="cursor-pointer"
+                                                        >
+                                                    <ShieldCheck className="mr-2 h-4 w-4 text-indigo-600" />
+                                                            Koordinatzaile egin
                                                     </DropdownMenuItem>
-                                                )}
 
-                                                {/* Pisotik kendu */}
-                                                <DropdownMenuItem
-                                                    onClick={() => handleKick(kidea.id)}
-                                                    className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
-                                                >
-                                                    <UserMinus className="mr-2 h-4 w-4" />
-                                                    Pisotik kendu
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </div>
+
+                                                    {/* Pisotik kendu */}
+                                                    <DropdownMenuItem
+                                                        onClick={() => handleKick(kidea.id)}
+                                                        className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer"
+                                                    >
+                                                        <UserMinus className="mr-2 h-4 w-4" />
+                                                        Pisotik kendu
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </div>
+                                    )}
 
                                     {/* AVATAR */}
                                     <div className={`w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold flex-shrink-0 ${
-                                        isAdmin ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-600'
+                                        isThisUserAdmin ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-600'
                                     }`}>
                                         {kidea.name.charAt(0).toUpperCase()}
                                     </div>
@@ -175,7 +178,7 @@ export default function PisuaIkusi({ pisua, kideak }: Props) {
                                     <div className="flex-1 min-w-0">
                                         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
                                             <h3 className="text-lg font-semibold text-gray-800 truncate">{kidea.name}</h3>
-                                            {isAdmin ? (
+                                            {isThisUserAdmin ? (
                                                 <span className="inline-flex items-center gap-1 bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full font-medium w-fit">
                                                     <ShieldCheck className="w-3 h-3" />
                                                     Koordinatzailea
@@ -194,7 +197,7 @@ export default function PisuaIkusi({ pisua, kideak }: Props) {
                                         </div>
 
                                         <div className="text-xs text-gray-400 mt-2">
-                                            Sartu zen eguna: {new Date(kidea.pivot.created_at).toLocaleDateString('eu-ES')}
+                                            Sartu zen eguna: {new Date(kidea.pivot.created_at).toISOString().split('T')[0].replace(/-/g, '/')}
                                         </div>
                                     </div>
                                 </div>
@@ -204,7 +207,7 @@ export default function PisuaIkusi({ pisua, kideak }: Props) {
 
                     {/* BEHEKO PARTEA */}
                     <div className="mt-8 pt-6 border-t border-gray-100 flex flex-row items-center justify-between">
-                        <button className="text-sm text-red-600 hover:text-red-800 font-medium transition-colors">
+                        <button className="text-sm text-red-600 hover:text-red-800 font-medium transition-colors" onClick={handleLeave}>
                             Atera pisutik
                         </button>
                         <button
