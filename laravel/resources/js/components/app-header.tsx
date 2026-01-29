@@ -60,7 +60,7 @@ export default function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
         },
         {
             title: 'Gastuak',
-            href: '/gastuak/ikusi',
+            href: '/gastuak',
             icon: Wallet,
         },
         {
