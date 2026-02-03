@@ -33,7 +33,10 @@ class Gasto extends Model
         'IdPiso',
         'Cantidad',
         'Nombre', // Nuevo campo para el nombre o concepto del gasto
-        'Fecha',  // Nuevo campo para el día del gasto
+        'Fecha',
+        'odoo_id',
+        'synced',
+        'sync_error'  // Nuevo campo para el día del gasto
     ];
 
     /**
@@ -49,7 +52,7 @@ class Gasto extends Model
 
     public function usuario()
     {
-        return $this->belongsTo(User::class, 'IdUsuario'); 
+        return $this->belongsTo(User::class, 'IdUsuario');
     }
 
     public function piso()
