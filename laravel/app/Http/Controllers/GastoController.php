@@ -12,7 +12,7 @@ use App\Http\Controllers\PisoController;
 
 class GastoController extends Controller {
 
-public function index(Request $request) { // <--- Inyectamos Request
+public function index(Request $request) {
     $pisuaId = session('pisua_id');
 
     if (!$pisuaId) {
@@ -24,30 +24,23 @@ public function index(Request $request) { // <--- Inyectamos Request
     $piso = Piso::with([
         'inquilinos',
         'gastos' => function ($query) use ($fechaFiltro) {
-
-            // --- CORRECCIÓN DEL FILTRO ---
-            if ($fechaFiltro) {
-                $query->whereDate('Fecha', $fechaFiltro);
-            }
-            // Opcional: Ordenar por fecha descendente
+            // 1. Ordenar siempre (primero lo más reciente)
             $query->orderBy('Fecha', 'desc');
-                // Separamos "2025-01" en Año y Mes
+
+            // 2. Filtrar solo si hay fecha
+            if ($fechaFiltro) {
+                // Intentamos separar Año y Mes (formato YYYY-MM)
                 $partes = explode('-', $fechaFiltro);
 
                 if (count($partes) === 2) {
-                    $year = $partes[0];
-                    $month = $partes[1];
-
-                    // Usamos whereYear y whereMonth
-                    // IMPORTANTE: Asegúrate de que tu columna en la base de datos se llama 'Fecha'.
-                    // Si usas la fecha de creación automática, cambia 'Fecha' por 'created_at'
-                    $query->whereYear('Fecha', $year)
-                          ->whereMonth('Fecha', $month);
+                    // Si viene "2026-02", filtramos por año y mes
+                    $query->whereYear('Fecha', $partes[0])
+                          ->whereMonth('Fecha', $partes[1]);
+                } else {
+                    // Por si acaso viene una fecha completa "2026-02-15", usamos whereDate
+                    $query->whereDate('Fecha', $fechaFiltro);
                 }
             }
-
-            // Ordenar
-            $query->orderBy('Fecha', 'desc');
         },
         'gastos.usuario'
     ])->find($pisuaId);
@@ -74,8 +67,6 @@ public function index(Request $request) { // <--- Inyectamos Request
 
         //Guardamos el gasto creado en el local
         $gasto = Gasto::create($datosProcesados);
-
-        Gasto::create($datosProcesados);
 
         SyncGastoToOdoo::dispatch($gasto);
 
