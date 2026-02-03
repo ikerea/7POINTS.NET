@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import './gastosCSS.css'; 
 import { Gasto, User } from './GastuakPage';
 
 interface ZergakProps {
@@ -21,7 +20,7 @@ interface Transaccion {
 
 function Zergak({ gastos, usuarios }: ZergakProps) {
 
-    // --- CÁLCULOS MATEMÁTICOS ---
+    // --- CÁLCULOS MATEMÁTICOS (Sin cambios en la lógica) ---
     const { transacciones, balances } = useMemo(() => {
         if (usuarios.length === 0) return { transacciones: [], balances: [] };
 
@@ -47,15 +46,7 @@ function Zergak({ gastos, usuarios }: ZergakProps) {
         let acreedores = listaBalances.filter(b => b.balance > 0.01).sort((a, b) => b.balance - a.balance);
 
         const listaTransacciones: Transaccion[] = [];
-        let i = 0; 
-        let j = 0; 
 
-        // Clonamos balances para no mutar el original en el cálculo de transacciones
-        // (Aunque en JS objetos son ref, aquí modificamos solo props numéricas para el algoritmo)
-        // Nota: para visualización usamos 'listaBalances' original intacta, 
-        // pero necesitamos los valores mutables para calcular los pagos.
-        
-        // *Corrección para el algoritmo*: Usamos copias simples de los valores de balance para el loop
         let saldosDeudores = deudores.map(d => ({ ...d }));
         let saldosAcreedores = acreedores.map(a => ({ ...a }));
 
@@ -86,82 +77,117 @@ function Zergak({ gastos, usuarios }: ZergakProps) {
     }, [gastos, usuarios]);
 
     // --- RENDERIZADO ---
-    if (usuarios.length === 0) return <div className="divPadre"><p style={{padding: 20}}>Ez daude erabiltzailerik pisuan.</p></div>;
-    if (gastos.length === 0) return <div className="divPadre"><p style={{padding: 20}}>Ez daude gasturik kalkulatzeko.</p></div>;
+
+    // Mensajes vacíos con estilo limpio
+    if (usuarios.length === 0) return (
+        <div className="p-8 text-center text-gray-500 bg-gray-50 rounded-xl border border-gray-200">
+            Ez daude erabiltzailerik pisuan.
+        </div>
+    );
+    if (gastos.length === 0) return (
+        <div className="p-8 text-center text-gray-500 bg-gray-50 rounded-xl border border-gray-200">
+            Ez daude gasturik kalkulatzeko.
+        </div>
+    );
 
     return (
-        <div className="divPadre">
-            
-            {/* SECCIÓN 1: EGOERA OROKORRA (ACTUALIZADA) */}
-            <div style={{ padding: '0 10px', marginBottom: '10px' }}>
-                <h4 style={{ margin: '0 0 10px 0', borderBottom: '1px solid #ccc' }}>Egoera Orokorra</h4>
-            </div>
+        <div className="flex flex-col gap-10 max-w-4xl mx-auto p-2 sm:p-4">
 
-            {balances.map((b) => {
-                const esPositivo = b.balance >= 0;
-                // Definimos color y texto según el estado
-                const colorEstado = esPositivo ? '#16655D' : '#d9534f'; // Verde Teal o Rojo
-                const textoEstado = esPositivo ? 'Jasotzeko' : 'Ordaintzeko';
+            {/* SECCIÓN 1: EGOERA OROKORRA */}
+            <section>
+                <div className="mb-6 pb-2 border-b border-gray-200">
+                    <h4 className="text-2xl font-bold text-gray-800">Egoera Orokorra</h4>
+                    <p className="text-sm text-gray-500 mt-1">Norberaren balantzea gastu totalen arabera</p>
+                </div>
 
-                return (
-                    <div className="divHijos" key={`bal-${b.usuario.id}`} style={{ backgroundColor: '#f9f9f9' }}>
-                        
-                        {/* Izquierda: Nombre y lo pagado */}
-                        <div className="divNombreYGastoNombre">
-                            <h6>{b.usuario.name}</h6>
-                            <p style={{ fontSize: '0.8rem', color: '#666' }}>
-                                Jarritakoa: {b.pagado.toFixed(2)}€
-                            </p>
-                        </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                    {balances.map((b) => {
+                        const esPositivo = b.balance >= 0;
+                        // Colores: Verde Teal para positivo, Rojo para negativo
+                        const colorClase = esPositivo ? 'text-teal-700' : 'text-red-600';
+                        const bgClase = esPositivo ? 'bg-teal-50 border-teal-100' : 'bg-red-50 border-red-100';
+                        const textoEstado = esPositivo ? 'Jasotzeko' : 'Ordaintzeko';
+                        const icono = esPositivo ? '+' : '-';
 
-                        {/* Derecha: Estado explícito */}
-                        {/* Usamos flexDirection column para poner texto encima del número */}
-                        <div className="divDerecha" style={{ flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
-                            <span style={{ 
-                                fontSize: '0.8rem', 
-                                fontWeight: 'bold', 
-                                color: colorEstado,
-                                textTransform: 'uppercase'
-                            }}>
-                                {textoEstado}
-                            </span>
-                            <h3 style={{ color: colorEstado, margin: 0 }}>
-                                {Math.abs(b.balance).toFixed(2)} €
-                            </h3>
-                        </div>
-                    </div>
-                );
-            })}
+                        return (
+                            <div
+                                key={`bal-${b.usuario.id}`}
+                                className={`relative p-5 rounded-2xl border ${bgClase} shadow-sm flex justify-between items-center transition-transform hover:-translate-y-1`}
+                            >
+
+                                {/* Izquierda: Info Usuario */}
+                                <div>
+                                    <h6 className="text-lg font-bold text-gray-800">{b.usuario.name}</h6>
+                                    <p className="text-sm text-gray-500 mt-1">
+                                        Jarritakoa: <span className="font-medium text-gray-700">{b.pagado.toFixed(2)}€</span>
+                                    </p>
+                                </div>
+
+                                {/* Derecha: Balance */}
+                                <div className="text-right">
+                                    <span className={`text-xs font-bold uppercase tracking-wider ${colorClase} opacity-80`}>
+                                        {textoEstado}
+                                    </span>
+                                    <h3 className={`text-2xl font-extrabold ${colorClase}`}>
+                                        {Math.abs(b.balance).toFixed(2)} €
+                                    </h3>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </section>
 
             {/* SECCIÓN 2: ORDAINKETAK */}
-            <div style={{ padding: '10px', marginTop: '10px' }}>
-                <h4 style={{ margin: '0 0 10px 0', borderBottom: '1px solid #ccc' }}>Ordainketak</h4>
-            </div>
+            <section>
+                <div className="mb-6 pb-2 border-b border-gray-200">
+                    <h4 className="text-2xl font-bold text-gray-800">Ordainketak</h4>
+                    <p className="text-sm text-gray-500 mt-1">Zorrak kitatzeko egin beharreko transferentziak</p>
+                </div>
 
-            {transacciones.length === 0 ? (
-                <p style={{ textAlign: 'center', color: '#16655D', padding: '10px', fontWeight: 'bold' }}>
-                    Dena koadratuta dago! 
-                </p>
-            ) : (
-                transacciones.map((t, index) => (
-                    <div className="divHijos" key={index} style={{ borderColor: '#16655D', borderLeftWidth: '5px' }}>
-                        
-                        <div className="divNombreYGastoNombre">
-                            <h6 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1rem' }}>
-                                <span style={{color: '#d9534f', fontWeight: 'bold'}}>{t.deudor.name}</span>
-                                <span style={{fontSize: '1.2rem'}}>➝</span>
-                                <span style={{color: '#16655D', fontWeight: 'bold'}}>{t.acreedor.name}</span>
-                            </h6>
-                            <p style={{fontSize: '0.8rem'}}>Zorren kitatzea</p>
-                        </div>
-                        
-                        <div className="divDerecha">
-                            <h3>{t.cantidad.toFixed(2)} €</h3>
-                        </div>
-
+                {transacciones.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center p-10 bg-white rounded-2xl border border-dashed border-teal-200 text-teal-700 shadow-sm">
+                        <svg className="w-12 h-12 mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <p className="text-lg font-bold">Dena koadratuta dago!</p>
+                        <p className="text-sm opacity-75">Ez dago zorrik erabiltzaileen artean.</p>
                     </div>
-                ))
-            )}
+                ) : (
+                    <div className="flex flex-col gap-3">
+                        {transacciones.map((t, index) => (
+                            <div
+                                key={index}
+                                className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 border-l-[6px] border-l-teal-700"
+                            >
+
+                                {/* Detalle Transacción */}
+                                <div className="flex items-center gap-4 text-lg">
+                                    <span className="font-bold text-red-600 bg-red-50 px-3 py-1 rounded-lg">
+                                        {t.deudor.name}
+                                    </span>
+
+                                    {/* Flecha animada */}
+                                    <div className="flex flex-col items-center text-gray-300">
+                                        <span className="text-xs font-medium text-gray-400 mb-[-5px]">Ordaindu</span>
+                                        <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                                    </div>
+
+                                    <span className="font-bold text-teal-700 bg-teal-50 px-3 py-1 rounded-lg">
+                                        {t.acreedor.name}
+                                    </span>
+                                </div>
+
+                                {/* Cantidad */}
+                                <div className="flex items-center gap-2">
+                                    <h3 className="text-2xl font-bold text-gray-800">
+                                        {t.cantidad.toFixed(2)} €
+                                    </h3>
+                                </div>
+
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </section>
         </div>
     );
 }

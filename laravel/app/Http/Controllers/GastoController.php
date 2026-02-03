@@ -10,34 +10,45 @@ use App\Models\User;
 use App\Http\Controllers\PisoController;
 
 class GastoController extends Controller {
-    
-public function index(Request $request) { // <--- Inyectamos Request
+
+public function index(Request $request) {
     $pisuaId = session('pisua_id');
 
     if (!$pisuaId) {
         return redirect()->route('pisua.show');
     }
 
-    // Recogemos la fecha del filtro (si existe)
-    $fechaFiltro = $request->input('fecha');
+    $fechaFiltro = $request->input('fecha'); // Ejemplo: "2025-01"
 
-    // Cargamos el piso y filtramos la relación 'gastos' si hay fecha
     $piso = Piso::with([
         'inquilinos',
         'gastos' => function ($query) use ($fechaFiltro) {
-            // Si hay fecha, filtramos por el campo 'Fecha'
+
+            // --- CORRECCIÓN DEL FILTRO ---
             if ($fechaFiltro) {
-                $query->whereDate('Fecha', $fechaFiltro);
+                // Separamos "2025-01" en Año y Mes
+                $partes = explode('-', $fechaFiltro);
+
+                if (count($partes) === 2) {
+                    $year = $partes[0];
+                    $month = $partes[1];
+
+                    // Usamos whereYear y whereMonth
+                    // IMPORTANTE: Asegúrate de que tu columna en la base de datos se llama 'Fecha'.
+                    // Si usas la fecha de creación automática, cambia 'Fecha' por 'created_at'
+                    $query->whereYear('Fecha', $year)
+                          ->whereMonth('Fecha', $month);
+                }
             }
-            // Opcional: Ordenar por fecha descendente
-            $query->orderBy('Fecha', 'desc'); 
+
+            // Ordenar
+            $query->orderBy('Fecha', 'desc');
         },
         'gastos.usuario'
     ])->find($pisuaId);
-    
-    return Inertia::render('Gastuak/GastuakPage', [ 
+
+    return Inertia::render('Gastuak/GastuakPage', [
         'piso' => $piso,
-        // Pasamos el filtro actual a la vista para que el calendario no se resetee
         'filters' => [
             'fecha' => $fechaFiltro
         ]
@@ -47,10 +58,10 @@ public function index(Request $request) { // <--- Inyectamos Request
     public function addGasto(Request $request){
 
         $datosProcesados = $request->validate([
-        'Nombre' => 'required|string|max:255',    
-        'Cantidad' => 'required|numeric|min:0',  
-        'Fecha'  => 'required|date',            
-        'IdUsuario' => 'required|numeric',                 
+        'Nombre' => 'required|string|max:255',
+        'Cantidad' => 'required|numeric|min:0',
+        'Fecha'  => 'required|date',
+        'IdUsuario' => 'required|numeric',
         ]);
 
         $pisuaId = session('pisua_id');
@@ -58,7 +69,7 @@ public function index(Request $request) { // <--- Inyectamos Request
 
 
         Gasto::create($datosProcesados);
-        
+
         return redirect('/gastuak');
     }
 
@@ -67,22 +78,22 @@ public function index(Request $request) { // <--- Inyectamos Request
         $gasto = Gasto::where('IdGasto', $id)->firstOrFail();
 
         $datosProcesados = $request->validate([
-        'Nombre' => 'required|string|max:255',    
-        'Cantidad' => 'required|numeric|min:0',  
-        'Fecha'  => 'required|date',            
-        'IdUsuario' => 'required|exists:users,id',                 
+        'Nombre' => 'required|string|max:255',
+        'Cantidad' => 'required|numeric|min:0',
+        'Fecha'  => 'required|date',
+        'IdUsuario' => 'required|exists:users,id',
         ]);
 
         $pisuaId = session('pisua_id');
         $datosProcesados['IdPiso'] = $pisuaId;
-        
+
         $gasto->update($datosProcesados);
         //dd($gasto);
         return redirect("/gastuak");
     }
 
     public function eliminarGasto($id) {
-        
+
         $gasto = Gasto::where('IdGasto', $id)->firstOrFail();
         $gasto->delete();
         return redirect("/gastuak");
