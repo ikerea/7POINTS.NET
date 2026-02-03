@@ -1,0 +1,71 @@
+<odoo>
+  <data>
+
+    <record model="ir.ui.view" id="zereginak_form_view">
+      <field name="name">zereginak.form</field>
+      <field name="model">zereginak.zereginak</field>
+      <field name="arch" type="xml">
+        <form string="Zeregina">
+          <header>
+            <field name="state" widget="statusbar" options="{'clickable': '1'}"/>
+          </header>
+          <sheet>
+            <div class="oe_title">
+              <label for="name" class="oe_edit_only"/>
+              <h1><field name="name" placeholder="Adib: Sukaldea garbitu"/></h1>
+            </div>
+            <group>
+              <group>
+                <field name="pisua_id"/>
+              </group>
+              <group>
+                </group>
+            </group>
+
+            <notebook>
+              <page string="Erabiltzaileak">
+                <field name="egin_ids">
+                  <tree editable="bottom">
+                    <field name="erabiltzailea_id"/>
+                    <field name="hasiera_data"/>
+                    <field name="amaiera_data"/>
+                  </tree>
+                </field>
+              </page>
+              
+              <page string="Deskripzioa">
+                <field name="deskripzioa" placeholder="Idatzi hemen zereginaren xehetasunak..."/>
+              </page>
+            </notebook>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="zereginak_tree_view">
+      <field name="name">zereginak.tree</field>
+      <field name="model">zereginak.zereginak</field>
+      <field name="arch" type="xml">
+        <tree string="Zereginak List">
+          <field name="name"/>
+          <field name="pisua_id"/>
+          <field name="state" widget="badge" decoration-success="state == 'eginda'" decoration-info="state == 'prozesuan'"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="zereginak_action_window">
+      <field name="name">Zereginak</field>
+      <field name="res_model">zereginak.zereginak</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="Zereginak" id="zereginak_menu_root"/>
+
+    <menuitem name="Kudeaketa" id="zereginak_menu_1" parent="zereginak_menu_root"/>
+
+    <menuitem name="Zereginak" id="zereginak_menu_act" parent="zereginak_menu_1"
+              action="zereginak_action_window"/>
+
+  </data>
+</odoo>
