@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SyncGastoToOdoo;
 use Illuminate\Http\Request;
 use App\Models\Gasto;
 use App\Models\Piso;
@@ -11,7 +12,7 @@ use App\Http\Controllers\PisoController;
 
 class GastoController extends Controller {
 
-public function index(Request $request) {
+public function index(Request $request) { // <--- Inyectamos Request
     $pisuaId = session('pisua_id');
 
     if (!$pisuaId) {
@@ -26,6 +27,10 @@ public function index(Request $request) {
 
             // --- CORRECCIÓN DEL FILTRO ---
             if ($fechaFiltro) {
+                $query->whereDate('Fecha', $fechaFiltro);
+            }
+            // Opcional: Ordenar por fecha descendente
+            $query->orderBy('Fecha', 'desc');
                 // Separamos "2025-01" en Año y Mes
                 $partes = explode('-', $fechaFiltro);
 
@@ -67,8 +72,12 @@ public function index(Request $request) {
         $pisuaId = session('pisua_id');
         $datosProcesados['IdPiso'] = $pisuaId;
 
+        //Guardamos el gasto creado en el local
+        $gasto = Gasto::create($datosProcesados);
 
         Gasto::create($datosProcesados);
+
+        SyncGastoToOdoo::dispatch($gasto);
 
         return redirect('/gastuak');
     }
