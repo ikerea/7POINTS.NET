@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SyncGastoToOdoo;
 use Illuminate\Http\Request;
 use App\Models\Gasto;
 use App\Models\Piso;
@@ -10,7 +11,7 @@ use App\Models\User;
 use App\Http\Controllers\PisoController;
 
 class GastoController extends Controller {
-    
+
 public function index(Request $request) { // <--- Inyectamos Request
     $pisuaId = session('pisua_id');
 
@@ -30,12 +31,12 @@ public function index(Request $request) { // <--- Inyectamos Request
                 $query->whereDate('Fecha', $fechaFiltro);
             }
             // Opcional: Ordenar por fecha descendente
-            $query->orderBy('Fecha', 'desc'); 
+            $query->orderBy('Fecha', 'desc');
         },
         'gastos.usuario'
     ])->find($pisuaId);
-    
-    return Inertia::render('Gastuak/GastuakPage', [ 
+
+    return Inertia::render('Gastuak/GastuakPage', [
         'piso' => $piso,
         // Pasamos el filtro actual a la vista para que el calendario no se resetee
         'filters' => [
@@ -47,18 +48,20 @@ public function index(Request $request) { // <--- Inyectamos Request
     public function addGasto(Request $request){
 
         $datosProcesados = $request->validate([
-        'Nombre' => 'required|string|max:255',    
-        'Cantidad' => 'required|numeric|min:0',  
-        'Fecha'  => 'required|date',            
-        'IdUsuario' => 'required|numeric',                 
+        'Nombre' => 'required|string|max:255',
+        'Cantidad' => 'required|numeric|min:0',
+        'Fecha'  => 'required|date',
+        'IdUsuario' => 'required|numeric',
         ]);
 
         $pisuaId = session('pisua_id');
         $datosProcesados['IdPiso'] = $pisuaId;
 
+        //Guardamos el gasto creado en el local
+        $gasto = Gasto::create($datosProcesados);
 
-        Gasto::create($datosProcesados);
-        
+        SyncGastoToOdoo::dispatch($gasto);
+
         return redirect('/gastuak');
     }
 
@@ -67,22 +70,22 @@ public function index(Request $request) { // <--- Inyectamos Request
         $gasto = Gasto::where('IdGasto', $id)->firstOrFail();
 
         $datosProcesados = $request->validate([
-        'Nombre' => 'required|string|max:255',    
-        'Cantidad' => 'required|numeric|min:0',  
-        'Fecha'  => 'required|date',            
-        'IdUsuario' => 'required|exists:users,id',                 
+        'Nombre' => 'required|string|max:255',
+        'Cantidad' => 'required|numeric|min:0',
+        'Fecha'  => 'required|date',
+        'IdUsuario' => 'required|exists:users,id',
         ]);
 
         $pisuaId = session('pisua_id');
         $datosProcesados['IdPiso'] = $pisuaId;
-        
+
         $gasto->update($datosProcesados);
         //dd($gasto);
         return redirect("/gastuak");
     }
 
     public function eliminarGasto($id) {
-        
+
         $gasto = Gasto::where('IdGasto', $id)->firstOrFail();
         $gasto->delete();
         return redirect("/gastuak");
