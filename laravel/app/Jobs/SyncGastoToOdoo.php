@@ -63,15 +63,34 @@ class SyncGastoToOdoo implements ShouldQueue
 
             Log::info("Enviando datos a Odoo...", $data);
 
-            $odooGastoId = $odoo->create('hr.expense', $data);
+            if($this->gasto->odoo_id){
+                Log::info("🔄 Actualizando Gasto existente. Odoo ID: " . $this->gasto->odoo_id);
 
-            $this->gasto->updateQuietly([
-                'odoo_id' => $odooGastoId,
-                'synced' => true,
-                'sync_error' => null
-            ]);
+                //La función write necesita [[ID], [DATOS]]
+                $odoo->write('hr.expense', [
+                    [$this->gasto->odoo_id],
+                    $data
+                ]);
+            }else{
+                Log::info("🆕 Creando nuevo Gasto en Odoo...");
 
-            Log::info("Gasto sincronizado con exito. Odoo ID: " . $odooGastoId);
+                $odooGastoId = $odoo->create('hr.expense', $data);
+
+                // Guardamos el ID nuevo en Laravel
+                $this->gasto->updateQuietly([
+                    'odoo_id' => $odooGastoId,
+                    'synced' => true,
+                    'sync_error' => null
+                ]);
+
+                Log::info("✅ Gasto creado con exito. Odoo ID: " . $odooGastoId);
+            }
+
+            // Si hemos editado, nos aseguramos de marcarlo como sincronizado también
+            if ($this->gasto->odoo_id) {
+                $this->gasto->updateQuietly(['synced' => true, 'sync_error' => null]);
+            }
+            
         } catch (Exception $e) {
             Log::error("Error sincronizando el gasto: " . $e->getMessage());
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SyncDeleteGastoFromOdoo;
 use App\Jobs\SyncGastoToOdoo;
 use Illuminate\Http\Request;
 use App\Models\Gasto;
@@ -89,13 +90,23 @@ public function index(Request $request) {
 
         $gasto->update($datosProcesados);
         //dd($gasto);
+        //VOLVEMOS A EJECUTAR EL SyncGastosToOdoo para 
+        SyncGastoToOdoo::dispatch($gasto);
+
         return redirect("/gastuak");
     }
 
     public function eliminarGasto($id) {
 
         $gasto = Gasto::where('IdGasto', $id)->firstOrFail();
+
+        $odooId = $gasto->odoo_id;
+
         $gasto->delete();
+
+        if($odooId){
+            SyncDeleteGastoFromOdoo::dispatch((int) $odooId);
+        }
         return redirect("/gastuak");
     }
 
