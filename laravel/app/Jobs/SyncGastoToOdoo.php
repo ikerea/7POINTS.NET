@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Gasto;
 use App\Services\OdooService;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -30,11 +31,11 @@ class SyncGastoToOdoo implements ShouldQueue
     {
         Log::info("INICIANDO SINCRONIZACION DE GASTO ID: " . $this->gasto->IdGasto);
 
-        try{
+        try {
             //CARGAR RELACIONES NECESARIAS
             $this->gasto->load(['usuario', 'piso']);
 
-            if(!$this->gasto->piso->odoo_id){
+            if (!$this->gasto->piso->odoo_id) {
                 throw new Exception("El piso no esta sincronizado con Odoo (Falta el odoo_id)");
             }
 
@@ -49,11 +50,14 @@ class SyncGastoToOdoo implements ShouldQueue
             //Preparacion de datos
             $data = [
                 'name' => $this->gasto->Nombre,
-                'date' => $this->gasto->Fecha,
+                //Transformamos a formato fecha para Odoo
+                'date' => Carbon::parse($this->gasto->Fecha)->format('Y-m-d'),
                 'total_amount' => (float) $this->gasto->Cantidad,
-
                 //CAMPOS NATIVOS DE ODOO OBLIGATORIOS (Aunque para el usuario esta oculto)
-                'product_id' => (int) $this->gasto->piso->odoo_id,
+                'product_id' => $categoriaOdooId,
+                'payment_mode' => 'own_account',
+                //CAMPOS PERSONALIZADOS
+                'pisua_id' => (int) $this->gasto->piso->odoo_id,
                 'partner_id' => (int) $partnerOdooId,
             ];
 
@@ -68,7 +72,7 @@ class SyncGastoToOdoo implements ShouldQueue
             ]);
 
             Log::info("Gasto sincronizado con exito. Odoo ID: " . $odooGastoId);
-        }catch(Exception $e){
+        } catch (Exception $e) {
             Log::error("Error sincronizando el gasto: " . $e->getMessage());
 
             $this->gasto->updateQuietly([
