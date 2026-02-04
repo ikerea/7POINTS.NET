@@ -165,9 +165,7 @@ function Zergak({ gastos, usuarios, pagos = [] }: ZergakProps) { // Valor por de
                 cantidad: cantidad
             }, {
                 preserveScroll: true,
-                onSuccess: () => {
-                    // Opcional: Mostrar notificación de éxito
-                }
+               
             });
         }
     };
