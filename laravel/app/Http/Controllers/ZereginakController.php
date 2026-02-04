@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SyncDeleteZereginakFromOdoo;
+use App\Jobs\SyncZereginakToOdoo;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Zereginak;
@@ -64,7 +66,7 @@ class ZereginakController extends Controller
 
         // Seguridad extra: si caducó la sesión
         if (!$pisuaId) {
-             return redirect()->route('pisua.show');
+            return redirect()->route('pisua.show');
         }
 
         $validated = $request->validate([
@@ -84,6 +86,8 @@ class ZereginakController extends Controller
             'hasiera_data' => $validated['hasiera_data']
         ]);
 
+        SyncZereginakToOdoo::dispatch($zeregina);
+
         return redirect()->route('zereginak.index');
     }
 
@@ -102,7 +106,7 @@ class ZereginakController extends Controller
     {
         // Opcional: Verificar que la tarea pertenece al piso actual para evitar que editen tareas de otros pisos por URL
         if ($zeregina->pisua_id != session('pisua_id')) {
-             abort(403, 'Ez duzu baimenik zeregin hau editatzeko.');
+            abort(403, 'Ez duzu baimenik zeregin hau editatzeko.');
         }
 
         $zeregina->load('erabiltzaileak');
@@ -111,7 +115,7 @@ class ZereginakController extends Controller
         $pisua = Piso::with('inquilinos')->findOrFail($pisuaId);
 
         // Tampoco enviamos 'pisuak' aquí, no se debe cambiar una tarea de piso
-       return Inertia::render('Zereginak/Edit', [
+        return Inertia::render('Zereginak/Edit', [
             'zereginak' => $zeregina,
             'kideak' => $pisua->inquilinos
         ]);
@@ -142,6 +146,8 @@ class ZereginakController extends Controller
             $request->erabiltzailea_id => ['hasiera_data' => $request->hasiera_data]
         ]);
 
+        SyncZereginakToOdoo::dispatch($zeregina);
+
         return redirect()->route('zereginak.index');
     }
 
@@ -152,10 +158,18 @@ class ZereginakController extends Controller
     {
         // Seguridad: verificar que pertenece al piso actual
         if ($zeregina->pisua_id != session('pisua_id')) {
-             abort(403);
+            abort(403);
         }
 
+        $odooId = $zeregina->odoo_id;
+
         $zeregina->delete();
+
+        if ($odooId) {
+            SyncDeleteZereginakFromOdoo::dispatch((int) $odooId);
+        }
+
+
         return redirect()->route('zereginak.index');
     }
 }
