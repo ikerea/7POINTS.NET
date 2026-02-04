@@ -4,6 +4,9 @@ import { useForm, Head, Link } from '@inertiajs/react';
 // El mismo color verde que en el Login/Welcome
 const customGreen = '#00796B';
 
+
+const MAX_CHARS_PISUA = 25;
+
 export default function Sortu() {
     // useForm hook-ak formularioaren egoera, erroreak eta bidalketa kudeatzen ditu
     const { data, setData, post, processing, errors } = useForm({
@@ -47,11 +50,18 @@ export default function Sortu() {
                                     type="text"
                                     name="pisuaren_izena"
                                     id="izena"
+                                    maxLength={MAX_CHARS_PISUA}
                                     value={data.pisuaren_izena}
                                     onChange={(e) => setData('pisuaren_izena', e.target.value)}
                                     required
                                     className="flex w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50 text-black shadow-sm"
                                 />
+
+                                {/* CONTADOR DE CARACTERES */}
+                                <div className="text-right text-xs text-gray-500 mt-1">
+                                    {data.pisuaren_izena.length}/{MAX_CHARS_PISUA}
+                                </div>
+
                                 {errors.pisuaren_izena && (
                                     <p className="text-red-500 text-sm mt-1">{errors.pisuaren_izena}</p>
                                 )}

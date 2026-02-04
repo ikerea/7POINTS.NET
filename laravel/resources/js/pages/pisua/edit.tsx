@@ -13,6 +13,8 @@ interface EditProps {
 }
 
 const customGreen = '#00796B';
+const MAX_CHARS_PISUA = 25;
+
 
 export default function Edit({ pisua }: EditProps) {
     // Inertia useForm datuak kudeatzeko
@@ -59,10 +61,15 @@ export default function Edit({ pisua }: EditProps) {
                                 <input
                                     id="izena"
                                     type="text"
+                                    maxLength={MAX_CHARS_PISUA}
                                     value={data.pisuaren_izena}
                                     onChange={e => setData('pisuaren_izena', e.target.value)}
                                     className="flex w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent text-black shadow-sm"
                                 />
+                                {/* CONTADOR DE CARACTERES */}
+                                <div className="text-right text-xs text-gray-500 mt-1">
+                                    {data.pisuaren_izena.length}/{MAX_CHARS_PISUA}
+                                </div>
                                 {errors.pisuaren_izena && (
                                     <p className="text-red-500 text-sm mt-1">{errors.pisuaren_izena}</p>
                                 )}

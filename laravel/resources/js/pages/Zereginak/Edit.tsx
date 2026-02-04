@@ -6,6 +6,8 @@ import AppLayout from '@/layouts/app-layout';
 const customGreen = '#00796B';
 const backgroundColor = '#f3f4f6';
 
+const MAX_CHARS_IZENA = 50;
+const MAX_CHARS_DESKRIPZIOA = 255;
 
 // --- INTERFAZEAK (DATU MOTAK) ---
 interface Kidea {
@@ -95,11 +97,16 @@ export default function Edit({ zereginak,kideak  }: Props) {
                                 <input
                                     id="izena"
                                     type="text"
+                                    maxLength={MAX_CHARS_IZENA}
                                     value={data.izena}
                                     onChange={(e) => setData('izena', e.target.value)}
                                     className="border-gray-300 focus:border-teal-700 focus:ring-teal-700 rounded-xl w-full py-3 px-4 text-gray-800 shadow-sm transition-all"
                                     placeholder="Zereginaren izena..."
                                 />
+                                {/* CONTADOR */}
+                                <div className="text-right text-xs text-gray-500 mt-1">
+                                    {data.izena.length}/{MAX_CHARS_IZENA}
+                                </div>
                                 {/* Errore mezua */}
                                 {errors.izena && <div className="text-red-500 text-sm mt-1 ml-1">{errors.izena}</div>}
                             </div>
@@ -112,10 +119,15 @@ export default function Edit({ zereginak,kideak  }: Props) {
                                 <textarea
                                     id="deskripzioa"
                                     value={data.deskripzioa}
+                                    maxLength={MAX_CHARS_DESKRIPZIOA}
                                     onChange={(e) => setData('deskripzioa', e.target.value)}
                                     className="border-gray-300 focus:border-teal-700 focus:ring-teal-700 rounded-xl w-full py-3 px-4 text-gray-800 shadow-sm min-h-[100px] transition-all"
                                     placeholder="Zereginaren azalpena..."
                                 />
+                                {/* CONTADOR */}
+                                <div className="text-right text-xs text-gray-500 mt-1">
+                                    {data.deskripzioa.length}/{MAX_CHARS_DESKRIPZIOA}
+                                </div>
                                 {errors.deskripzioa && <div className="text-red-500 text-sm mt-1 ml-1">{errors.deskripzioa}</div>}
                             </div>
 
