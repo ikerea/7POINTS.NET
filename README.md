@@ -90,13 +90,15 @@ Guztia egokiago ulertzeko eta azaltzeko, ona hemen gure 2 hilabeteen kronograma.
 ### Materialak
   **Kasu hontan, gure taldean, proiektu honi aurre egiteko, hainbat baliabide erabili ditugu.**
 - **Baliabide material fisikoak:**
-   Windows 11 SE-dun ordenagailuak. Saguak eta monitoreak.
+   Windows ordenagailuak, saguak eta monitoreak.
 - **GitHub:**
-  Kodea partekatzeko eta talde bezala lan egiteko, oso erabilgarria izan da. Proiektuaren hasieratik erabili dugu tresna baliotsu hau, eta bertsioen kontrola eramatea baliatu digu.
+  Kodea partekatzeko eta talde bezala lan egiteko ezinbestekoa izan da. Bertsioen kontrola eramateko erabili dugu.
 - **Markdown:**
   GitHub barruko fitxategi mota bat da, bertan dokumentazioa eta estilo gida egin ditugu.
 - **GitBash:**
   Git-eko aldaketak egiteko: Merge-ak eta Adar berriak sortzeko erabili izan dugu proiektu hau garatzean.
+- **Docker:**
+  Garapen ingurune bateratu eta errepikagarri bat lortzeko. Horri esker, taldekide guztiok konfigurazio berarekin lan egin ahal izan dugu.
 - **VisualStudio Code:**
   Web Aplikazioa garatzeko erabili dugu IDE hau.
 - **Momentu batzuetan, AI erabili dugu, zehazki hauek:**
@@ -106,20 +108,25 @@ Guztia egokiago ulertzeko eta azaltzeko, ona hemen gure 2 hilabeteen kronograma.
      Garatzen ikasteko eta batez ere erroeak konpontzeko.
 - **W3 Schools:**
    Zalantzak argitzeko..
-- **Laravel Documentazioa:**
-   Iturri ofiziala, oso erabilgarria instalaziorako eta kodea ulertu edo garatzeko.
+- **Dokumentazio ofizialak::**
+   Laravel, React eta Odoo-ren dokumentazio ofizialak etengabe kontsultatu ditugu funtzionalitateak zuzen inplementatzeko.
 - **Google Paketea:**
    Dokumentu guztiak partekatzeko, elkar komunikazioa hobetzeko, planifikazioa egiteko.
 - **Datu basea:**
    SQL Lite
 - **Webgunearen garapenerako, haibat baliabide erabili ditugu:**
   - **Laravel:** Framework bezala, profesionaltasuna, ordena eta segurtasuna mantentzeko.
+  - **Odoo:** Sistemaren bihotza. Datuak kudeatzeko, zereginak gordetzeko eta finantza-kudeaketarako erabili dugu.
   - **React:** Webgunearen estiloak egoki egiteko.
   - **Kode lengoaiak:** hainbat erabili ditugu, laravelek dituenetaz gain, ala nola;
-    - **Backend-erako:** PHP eta SQL.
+    - **Backend-erako:** PHP eta Python.
     - **Frontend-erako:** Tailwind CSS eta TypeScipt.
     - **Konfiguraziorako:** Shell edo Bash.
-  - **Scriptak:** JSON.
+    - **EqualWeb:** Webgunearen irisgarritasuna bermatzeko eta WCAG gidalerroak betetzen laguntzeko.
+  - **Scriptak:** JSON eta YAML.
+  - **Datu basea:** PostgreSQL.
+- **AWS:**
+  Proiektuaren hedapenerako eta azpiegitura kudeatzeko. Bertan ostatatu dugu gure aplikazioa, eskalagarritasuna bermatuz.
 - **Canva eta Figma:**
   Prototipo eta maketazioak egiteko.
 - **Moodle:**
@@ -328,18 +335,21 @@ Guzti hau baduzu, jada Laravelekin lan egin dezakezu. Proiektu honetan lan egite
 
 ## Bibliografia
 
-### Konpetentzia aztertzeko
-- Bergarako antzokia. [Esteka](https://www.bergara.eus/es)
-- Donostiko kultur etxea. [Esteka](https://www.donostiakultura.eus/eu/bisita-gaitzazu/antzokiak-aretoak/antzoki-zaharra/agenda)
-- Durangoko san agustin antzokia. [Esteka](https://www.durango.eus/es/sanagustin)
+### Konpetentzia aztertzeko:
+Gure aplikazioa garatzeko, merkatuan dauden antzeko irtenbideak aztertu ditugu:
+- OurHome (Zereginak kudeatzeko). [Esteka](https://play.google.com/store/apps/details?id=com.elusios.ourhome&hl=eu)
+- Flatastic (Pisu partekatuen antolakuntzarako). [Esteka](https://www.flatastic-app.com/en/)
+- Splitwise (Gastuak partekatzeko eta kudeatzeko). [Esteka](https://www.splitwise.com/)
 
 ### Software eta tresnak
 - **Laravel Frameworka instalatzeko prozezua eta laguntza**. [Esteka](https://laravel.com/docs/12.x/installation)
-- **React erabiltzeko informazioa**. [Esteka](https://es.react.dev/)   
+- **React liburutegiaren informazio ofiziala**. [Esteka](https://es.react.dev/)
+- **Docker Dokumentazioa, inguruneak kudeatzeko dokuentazioa**.  [Esteka](https://docs.docker.com/)
+- **AWS hedapenerako informazioa**.  [Esteka](https://aws.amazon.com/es/documentation//)
 - **GitHub, proiektuarekin lan egiteko**. [Esteka](https://github.com/Luken1919/Maltuna_Tech)  
 - **GitBash, Git erabiltzeko**. [Esteka](https://git-scm.com/book/es/v2/Ap%C3%A9ndice-A:-Git-en-otros-entornos-Git-con-Bash)  
 - **Moodle**. [Esteka](https://moodle.imaltuna.com/?redirect=0)
-- **Isard VDI**. [Esteka](https://bergara.zeu.eus/login)
+- **EqualWeb, irisgarritasuna tresna eta gida**. [Esteka](https://www.equalweb.com/)
 - **Adimen Artifiziala**:  
   - Deepseek: [Esteka](https://deepseek.com)  
   - ChatGPT: [Esteka](https://chat.openai.com)  
@@ -347,7 +357,7 @@ Guzti hau baduzu, jada Laravelekin lan egin dezakezu. Proiektu honetan lan egite
 - **W3Schools**. [Esteka](https://www.w3schools.com/)
 - **Laravel Dokumentazioa**. [Esteka](https://laravel.com/)  
 - **Stack Overflow**. [Esteka](https://stackoverflow.com)
-- **Atal asko ulertzeko, youtubeko tutorialak erabili ditugu**.[Esteka](https://www.youtube.com/)
+- **Atal batzuk ulertzeko, youtubeko tutorialak erabili ditugu**.[Esteka](https://www.youtube.com/)
 
 ---
 
@@ -380,13 +390,13 @@ Proiektu hau garatzerakoan, hainbat arazo edo oztopo izan ditugu.
 ## Ondorioak (etorkizuneko aldaketak)
 <div align="justify"
   
-- **Nola aritu gara talde-lanean:** Talde bezala oso ondo moldatu gara. Hirurok lan asko egin dugu, eta gorabeherak izan arren talde moduan oso pozik geratu gara, prozezuarekin eta baita emaitzarekin ere.
+- **Nola aritu gara talde-lanean:** Talde bezala oso ondo moldatu gara eta komunikazioa etengabea izan da. Hirurok lan karga handia izan dugu, batez ere arkitektura konplexua delako (Frontend, Backend eta ERP), baina gorabeherak izan arren, elkar lagunduz aurrera atera dugu. Oso pozik geratu gara prozesuarekin eta lortutako emaitzarekin.
 
-- **Nola aritu gara Erronkan:** Erronka oso zaila izan da hasiera batean. Teknologia berriak ikasteak zailatasun puntu handi bat eman du lehenengo bi asteetarako. Hala ere, informatu ahal eta praktikatuz, erronka aurrera eraman dugu beharrezko premisei erantzun, gure uztez, onenak emanik.
+- **Nola aritu gara Erronkan:** Erronka tekniko handia izan da. Bereziki, Odoo-rekin lan egitea aurreikusi genuen baino askoz konplexuagoa egin zaigu. Hasieran uste genuen integrazioa errazagoa izango zela, baina sistemaren konfigurazioak eta React zein Laravel-ekin lotzeak lan-karga handia eta zailtasun ugari ekarri dizkigu. Hala ere, dokumentazioa sakon aztertuz eta ordu asko sartuz, oztopo horiek gainditu eta eskatutako premisa guztiak betetzen dituen aplikazioa garatzea lortu dugu.
 
-- **Nola aritu gara denbora kudeaketarekin:** Denboralizazioaren aldetik, amaieran oso ondo aritu gara, baina lehen bi asteetan pixka bat atzeratu ginen, eta nabaria izan da erronkaren erdialdetik, izan ere asko egin behar izan dugu guztia garaiz eramateko. Amaieran, ordea, hobeto aritu ginen, eta denbora limitea gainean izan arren, dena garaiz egin genuen, betebehar eta ataza guztiak amaituz.
+- **Nola aritu gara denbora kudeaketarekin:** Denboralizazioaren aldetik, gorabeherak izan ditugu. Hasierako fasean, azpiegitura prestatzen eta Odoo ulertzen uste baino denbora gehiago eman genuen. Izan ere, Laravel eta Odooren arteko konexioa egitea guztiz berria zen guretzat, eta prozesu hori ikasteak eta gauzatzeak garapeneko denbora estutu zuen erronkaren erdialdean. Hala ere, azken txanpan erritmoa bizkortu genuen, eta epeak gainean izan arren, entregak garaiz eta forma egokian egitea lortu dugu.
 
-- **Etorkizunerako aldaketak:** Etorkizunera begira, batez ere, denbora hasieran hobeto aprobetxatzea beharrezkoa dela esango genuke. Horrela, denborarekin ez genuke arazorik izango, eta lasaiago arituko ginateke, emaitza hoberenak lortuz. Gainera, hasieran teoriaren aldetik lehenago ikasten hastea nabarigarria izango litzateke, proiektua modu errazagoan garatzeko aukera emango lukeelako
+- **Etorkizunerako aldaketak:** Etorkizunera begira, denbora hasieran hobeto aprobetxatzea beharrezkoa dela esango genuke. Bereziki, Odoo-ren kasuan, uste genuen baino askoz erronka handiagoa izan da; hasieran erraza izango zela pentsatu arren, guretzat oso konplexua suertatu da. Hori dela eta, etorkizunean teknologia berri hauek sakontzeko denbora gehiago eskainiko genuke hasieratik. Horrela, teoria hobeto barneratuz, proiektua lasaiago eta modu eraginkorragoan garatzeko aukera izango genuke, azken uneko estutasunak saihestuz.
 
 </div>
 ---
@@ -399,7 +409,7 @@ Lan hau **Creative Commons Atribuzioa-Ez Komertziala-Partekatu Berdin 4.0 Nazioa
 - **Ez Komertziala (NC):** Ezin da erabili helburu komertzialetarako.  
 - **Partekatu Berdin (SA):** Deribatutako lanek lizentzia bera mantendu behar dute.
 
-**© Maltuna Tech.**
+**© 7POINT.net.**
 
 [Ikusi lizentzia osoa](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.eu)
 
