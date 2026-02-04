@@ -33,10 +33,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/pisua/{pisuaId}/kidea/{memberId}/remove', [PisoController::class, 'removeMember']);
     Route::delete('/pisua/{pisua}/atera', [PisoController::class, 'atera'])->name('pisua.atera');
 
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
-
 
     Route::get('/zereginak', [ZereginakController::class, 'index'])
         ->name('zereginak.index');
