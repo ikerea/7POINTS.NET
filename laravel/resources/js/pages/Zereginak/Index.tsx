@@ -323,8 +323,8 @@ export default function Index({ zereginak }: Props) {
                                             agenda: "Agenda",
                                             date: "Data",
                                             time: "Ordua",
-                                            event: "Ekitaldia",
-                                            noEventsInRange: "Ez dago ekitaldirik tarte honetan.",
+                                            event: "Zeregina",
+                                            noEventsInRange: "Ez dago zereginik tarte honetan.",
                                             showMore: (total) => `+${total} gehiago`
                                         }}
                                         onSelectEvent={(event: any) => router.get(`/zereginak/${event.id}/editatu`)}
