@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SyncDeleteGastoFromOdoo;
+use App\Jobs\SyncGastoToOdoo;
 use Illuminate\Http\Request;
 use App\Models\Gasto;
 use App\Models\Piso;
 use Inertia\Inertia;
 use App\Models\User;
+use App\Models\Ordainketa;
 use App\Http\Controllers\PisoController;
 
 class GastoController extends Controller {
@@ -23,28 +26,26 @@ public function index(Request $request) {
     $piso = Piso::with([
         'inquilinos',
         'gastos' => function ($query) use ($fechaFiltro) {
+            // 1. Ordenar siempre (primero lo más reciente)
+            $query->orderBy('Fecha', 'desc');
 
-            // --- CORRECCIÓN DEL FILTRO ---
+            // 2. Filtrar solo si hay fecha
             if ($fechaFiltro) {
-                // Separamos "2025-01" en Año y Mes
+                // Intentamos separar Año y Mes (formato YYYY-MM)
                 $partes = explode('-', $fechaFiltro);
 
                 if (count($partes) === 2) {
-                    $year = $partes[0];
-                    $month = $partes[1];
-
-                    // Usamos whereYear y whereMonth
-                    // IMPORTANTE: Asegúrate de que tu columna en la base de datos se llama 'Fecha'.
-                    // Si usas la fecha de creación automática, cambia 'Fecha' por 'created_at'
-                    $query->whereYear('Fecha', $year)
-                          ->whereMonth('Fecha', $month);
+                    // Si viene "2026-02", filtramos por año y mes
+                    $query->whereYear('Fecha', $partes[0])
+                          ->whereMonth('Fecha', $partes[1]);
+                } else {
+                    // Por si acaso viene una fecha completa "2026-02-15", usamos whereDate
+                    $query->whereDate('Fecha', $fechaFiltro);
                 }
             }
-
-            // Ordenar
-            $query->orderBy('Fecha', 'desc');
         },
-        'gastos.usuario'
+        'gastos.usuario',
+        'ordainketak'
     ])->find($pisuaId);
 
     return Inertia::render('Gastuak/GastuakPage', [
@@ -67,8 +68,10 @@ public function index(Request $request) {
         $pisuaId = session('pisua_id');
         $datosProcesados['IdPiso'] = $pisuaId;
 
+        //Guardamos el gasto creado en el local
+        $gasto = Gasto::create($datosProcesados);
 
-        Gasto::create($datosProcesados);
+        SyncGastoToOdoo::dispatch($gasto);
 
         return redirect('/gastuak');
     }
@@ -89,13 +92,23 @@ public function index(Request $request) {
 
         $gasto->update($datosProcesados);
         //dd($gasto);
+        //VOLVEMOS A EJECUTAR EL SyncGastosToOdoo para 
+        SyncGastoToOdoo::dispatch($gasto);
+
         return redirect("/gastuak");
     }
 
     public function eliminarGasto($id) {
 
         $gasto = Gasto::where('IdGasto', $id)->firstOrFail();
+
+        $odooId = $gasto->odoo_id;
+
         $gasto->delete();
+
+        if($odooId){
+            SyncDeleteGastoFromOdoo::dispatch((int) $odooId);
+        }
         return redirect("/gastuak");
     }
 
@@ -138,4 +151,26 @@ public function index(Request $request) {
         'usuarios' => $usuariosDelPiso
     ]);
     }
+
+
+    public function saldarDeuda(Request $request) {
+        // 1. Validamos que los datos sean correctos
+        $validated = $request->validate([
+            'deudor_id' => 'required|exists:users,id',
+            'acreedor_id' => 'required|exists:users,id',
+            'cantidad' => 'required|numeric|min:0.01',
+        ]);
+
+        // 2. Guardamos el pago en la base de datos
+        Ordainketa::create([
+            'piso_id' => session('pisua_id'), // Usamos el piso de la sesión
+            'deudor_id' => $validated['deudor_id'],
+            'acreedor_id' => $validated['acreedor_id'],
+            'cantidad' => $validated['cantidad'],
+        ]);
+
+        // 3. Volvemos atrás para que se actualice la página
+        return redirect()->back();
+    }
 }
+

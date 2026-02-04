@@ -1,0 +1,28 @@
+<odoo>
+    <record id="view_pisua_form_zereginak_inherit" model="ir.ui.view">
+        <field name="name">pisua.form.zereginak.inherit</field>
+        <field name="model">pisua</field>
+        <field name="inherit_id" ref="pisua.view_pisua_form" />
+        <field name="arch" type="xml">
+
+            <xpath expr="//notebook" position="inside">
+                <page string="Zereginak (Tareas)">
+                    <field name="zereginak_ids">
+                        <tree editable="bottom"
+                            decoration-success="state == 'eginda'"
+                            decoration-warning="state == 'egiten'">
+                            <field name="date" />
+                            <field name="name" />
+                            <field name="asignado_ids" widget="many2many_tags" />
+                            <field name="state" widget="badge"
+                                decoration-success="state == 'eginda'"
+                                decoration-warning="state == 'egiten'"
+                                decoration-info="state == 'egiteko'" />
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

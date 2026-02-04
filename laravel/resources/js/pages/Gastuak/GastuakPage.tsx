@@ -23,6 +23,7 @@ export interface User {
         piso_id: number;
         user_id: number;
         mota: string;
+        created_at: string;
     };
 }
 
@@ -44,6 +45,7 @@ export interface Piso {
     user_id: number;
     inquilinos?: User[];
     gastos?: Gasto[];
+    ordainketak?: any[];
 }
 
 interface Props {
@@ -202,6 +204,7 @@ const GastuakPage = ({ piso, auth, filters }: Props) => {
                                         <Zergak
                                             gastos={listaGastos}
                                             usuarios={listaInquilinos}
+                                            pagos={piso.ordainketak || []}
                                         />
                                     </div>
                                 )}

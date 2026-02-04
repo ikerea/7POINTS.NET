@@ -1,5 +1,5 @@
 import React, { FormEventHandler } from 'react';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, Link } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 
 // --- CONST ETA ESTILOAK  ---
@@ -189,12 +189,12 @@ export default function Edit({ zereginak,kideak  }: Props) {
                                 </button>
 
                                 {/* EZEZTATU ESTEKA */}
-                                <a
-                                    href="/zereginak"
-                                    className="text-center text-gray-500 hover:text-gray-800 transition py-2 text-sm"
-                                >
-                                    Ezeztatu eta itzuli
-                                </a>
+                                <Link
+                                href="/zereginak"
+                                className="text-center text-gray-500 hover:text-gray-800 transition py-2 text-sm inline-block"
+                            >
+                                Ezeztatu eta itzuli
+                            </Link>
                             </div>
                         </form>
 

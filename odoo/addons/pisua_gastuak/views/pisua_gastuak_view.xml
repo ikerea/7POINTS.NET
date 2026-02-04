@@ -4,20 +4,27 @@
         <field name="model">hr.expense</field>
         <field name="inherit_id" ref="hr_expense.hr_expense_view_form" />
         <field name="arch" type="xml">
+            
             <xpath expr="//field[@name='product_id']" position="attributes">
                 <attribute name="invisible">1</attribute>
                 <attribute name="required">0</attribute>
             </xpath>
+            
             <xpath expr="//field[@name='employee_id']" position="attributes">
                 <attribute name="invisible">1</attribute>
                 <attribute name="required">0</attribute>
             </xpath>
+
+            <xpath expr="//field[@name='payment_mode']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
             <xpath expr="//field[@name='name']" position="after">
                 <group string="Información Pisukide">
                     <field name="pisua_id" />
-                    <field name="partner_id" />
-                </group>
+                    <field name="partner_id" /> </group>
             </xpath>
+            
         </field>
     </record>
 </odoo>

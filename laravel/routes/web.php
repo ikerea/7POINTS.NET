@@ -33,10 +33,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/pisua/{pisuaId}/kidea/{memberId}/remove', [PisoController::class, 'removeMember']);
     Route::delete('/pisua/{pisua}/atera', [PisoController::class, 'atera'])->name('pisua.atera');
 
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
-
 
     Route::get('/zereginak', [ZereginakController::class, 'index'])
         ->name('zereginak.index');
@@ -61,10 +57,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/gastuak/ikusi', [GastoController::class, 'gastuakGehituCargar']);
     Route::post('/gastuak/addGastua', [GastoController::class, 'addGasto'])->name('gastuak.gehitu');
     Route::get('/gastos/{idPisua}/{idErabiltzailea}', [GastoController::class, 'index'])->name('gastuak.ikusi');
-    
+
     Route::delete('/gastos/deleteGasto/{id}', [GastoController::class, 'eliminarGasto'])->name('gastuak.kendu');
     Route::get('/gastuak/{idGasto}/edit', [GastoController::class, 'cargarPaginaEditar'])->name('gastuak.cargaEdit');
     Route::put('/gastuak/editar/{id}', [GastoController::class, 'editGasto'])->name('gastuak.editar');
+    Route::post('/pagos/saldar', [GastoController::class, 'saldarDeuda'])->name('pagos.saldar');
 });
 
 
