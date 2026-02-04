@@ -7,6 +7,7 @@ use App\Models\Gasto;
 use App\Models\Piso;
 use Inertia\Inertia;
 use App\Models\User;
+use App\Models\Ordainketa;
 use App\Http\Controllers\PisoController;
 
 class GastoController extends Controller {
@@ -44,7 +45,8 @@ public function index(Request $request) {
             // Ordenar
             $query->orderBy('Fecha', 'desc');
         },
-        'gastos.usuario'
+        'gastos.usuario',
+        'ordainketak'
     ])->find($pisuaId);
 
     return Inertia::render('Gastuak/GastuakPage', [
@@ -138,4 +140,26 @@ public function index(Request $request) {
         'usuarios' => $usuariosDelPiso
     ]);
     }
+
+
+    public function saldarDeuda(Request $request) {
+        // 1. Validamos que los datos sean correctos
+        $validated = $request->validate([
+            'deudor_id' => 'required|exists:users,id',
+            'acreedor_id' => 'required|exists:users,id',
+            'cantidad' => 'required|numeric|min:0.01',
+        ]);
+
+        // 2. Guardamos el pago en la base de datos
+        Ordainketa::create([
+            'piso_id' => session('pisua_id'), // Usamos el piso de la sesión
+            'deudor_id' => $validated['deudor_id'],
+            'acreedor_id' => $validated['acreedor_id'],
+            'cantidad' => $validated['cantidad'],
+        ]);
+
+        // 3. Volvemos atrás para que se actualice la página
+        return redirect()->back();
+    }
 }
+
