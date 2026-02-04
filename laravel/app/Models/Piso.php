@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Gasto; // Importante tener esto
+use App\Models\Ordainketa;
 
 class Piso extends Model
 {
@@ -37,6 +38,13 @@ class Piso extends Model
     public function gastos(){
         // Busca gastos donde la columna 'IdPiso' coincida con el id de este piso
         return $this->hasMany(Gasto::class, 'IdPiso', 'id');
+    }
+
+    public function ordainketak()
+    {
+        // Relación 1 a N: Un piso tiene muchos pagos (ordainketak)
+        // Laravel buscará automáticamente la columna 'piso_id' en la tabla 'ordainketas'
+        return $this->hasMany(Ordainketa::class);
     }
 
 }
