@@ -6,7 +6,6 @@
     'category': 'Accounting',
     'depends': ['base', 'hr_expense', 'pisua'],
     'data': [
-        'security/ir_rule.xml',
         'views/pisua_gastuak_view.xml',
     ],
     'installable': True,
