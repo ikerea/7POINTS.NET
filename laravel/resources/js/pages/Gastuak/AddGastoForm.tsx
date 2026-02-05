@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import { Link, router, Head } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 
-// Estilos extraídos de Create.tsx
+// Estilos
 const customGreen = '#00796B';
 const backgroundColor = '#f3f4f6';
+
+// LÍMITES
+const MAX_CHARS_GASTO = 50;
+const MAX_CHARS_CANTIDAD = 6; // Límite para el precio (ej: 1234567.99)
 
 // Interfaces
 interface UserProps {
@@ -28,6 +32,13 @@ const AddGastoForm = ({ usuarios }: Usuarios) => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const key = e.target.name;
         const value = e.target.value;
+
+        // --- VALIDACIÓN DE LONGITUD PARA EL PRECIO ---
+        // Si es el campo 'Cantidad' y supera el límite, no actualizamos el estado.
+        if (key === 'Cantidad' && value.length > MAX_CHARS_CANTIDAD) {
+            return;
+        }
+
         setValues(values => ({
             ...values,
             [key]: value,
@@ -43,17 +54,14 @@ const AddGastoForm = ({ usuarios }: Usuarios) => {
         <AppLayout>
             <Head title="Gastu Berria" />
 
-            {/* Contenedor principal con el color de fondo de Create */}
             <div
                 className="py-12 flex justify-center min-h-screen"
                 style={{ backgroundColor: backgroundColor }}
             >
                 <div className="w-full max-w-lg sm:px-6 lg:px-8">
 
-                    {/* Tarjeta blanca con sombra y bordes redondeados */}
                     <div className="bg-white overflow-hidden shadow-xl rounded-3xl p-8 md:p-10 border border-gray-100">
 
-                        {/* Título y Línea decorativa */}
                         <h2 className="text-3xl font-bold mb-2 text-center text-gray-800">
                             Gastu Berria
                         </h2>
@@ -61,15 +69,21 @@ const AddGastoForm = ({ usuarios }: Usuarios) => {
 
                         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
 
-                            {/* CAMPO: IZENBURUA (Nombre) */}
+                            {/* CAMPO: IZENBURUA (Con contador) */}
                             <div className="grid gap-2">
-                                <label className="block text-gray-600 font-medium ml-1" htmlFor="Nombre">
-                                    Izenburua
-                                </label>
+                                <div className="flex justify-between items-center ml-1">
+                                    <label className="block text-gray-600 font-medium" htmlFor="Nombre">
+                                        Izenburua
+                                    </label>
+                                    <span className={`text-xs ${values.Nombre.length === MAX_CHARS_GASTO ? 'text-red-500 font-bold' : 'text-gray-400'}`}>
+                                        {values.Nombre.length}/{MAX_CHARS_GASTO}
+                                    </span>
+                                </div>
                                 <input
                                     type="text"
                                     id="Nombre"
                                     name="Nombre"
+                                    maxLength={MAX_CHARS_GASTO}
                                     value={values.Nombre}
                                     onChange={handleChange}
                                     className="border-gray-300 focus:border-teal-700 focus:ring-teal-700 rounded-xl w-full py-3 px-4 text-gray-800 shadow-sm transition-all"
@@ -78,7 +92,7 @@ const AddGastoForm = ({ usuarios }: Usuarios) => {
                                 />
                             </div>
 
-                            {/* CAMPO: ZENBATEKOA (Cantidad) */}
+                            {/* CAMPO: ZENBATEKOA (Precio Controlado) */}
                             <div className="grid gap-2">
                                 <label className="block text-gray-600 font-medium ml-1" htmlFor="Cantidad">
                                     Zenbatekoa (€)
@@ -89,15 +103,21 @@ const AddGastoForm = ({ usuarios }: Usuarios) => {
                                     name="Cantidad"
                                     value={values.Cantidad}
                                     onChange={handleChange}
+                                    // Evitamos escribir la 'e' (exponencial) u otros símbolos no deseados
+                                    onKeyDown={(e) => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()}
                                     className="border-gray-300 focus:border-teal-700 focus:ring-teal-700 rounded-xl w-full py-3 px-4 text-gray-800 shadow-sm transition-all"
                                     placeholder="0.00"
                                     step="0.01"
                                     min="0"
                                     required
                                 />
+                                {/* Mensaje de ayuda discreto si se acerca al límite (opcional) */}
+                                {values.Cantidad.length >= MAX_CHARS_CANTIDAD && (
+                                    <p className="text-xs text-red-500 ml-1">Gehienez {MAX_CHARS_CANTIDAD} zenbaki.</p>
+                                )}
                             </div>
 
-                            {/* CAMPO: DATA (Fecha) */}
+                            {/* CAMPO: DATA */}
                             <div className="grid gap-2">
                                 <label className="block text-gray-600 font-medium ml-1" htmlFor="Fecha">
                                     Data
@@ -113,7 +133,7 @@ const AddGastoForm = ({ usuarios }: Usuarios) => {
                                 />
                             </div>
 
-                            {/* SELECT: ORDAINDUTA (Usuario) */}
+                            {/* SELECT: ORDAINDUTA */}
                             <div className="grid gap-2">
                                 <label className="block text-gray-600 font-medium ml-1" htmlFor="IdUsuario">
                                     Ordainduta

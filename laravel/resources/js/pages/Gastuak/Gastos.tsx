@@ -79,10 +79,10 @@ function Gastos(props: GastosProps) {
                             </div>
 
                             {/* ZONA 2: Derecha (Precio y Botones) */}
-                            <div className="flex flex-row sm:flex-col justify-between sm:justify-center items-center sm:items-end w-full sm:w-auto border-t sm:border-t-0 border-gray-100 pt-3 sm:pt-0 gap-2 sm:gap-2 flex-shrink-0">
+                            <div className="flex flex-row flex-wrap sm:flex-nowrap sm:flex-col justify-between sm:justify-center items-center sm:items-end w-full sm:w-auto border-t sm:border-t-0 border-gray-100 pt-3 sm:pt-0 gap-2 sm:gap-2 flex-shrink-0">
 
                                 {/* Precio */}
-                                <h3 className="text-xl font-bold text-emerald-500">
+                                <h3 className="text-lg sm:text-xl font-bold text-emerald-500 whitespace-nowrap">
                                     {gasto.Cantidad} €
                                 </h3>
 

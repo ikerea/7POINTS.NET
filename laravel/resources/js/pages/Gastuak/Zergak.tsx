@@ -165,7 +165,7 @@ function Zergak({ gastos, usuarios, pagos = [] }: ZergakProps) { // Valor por de
                 cantidad: cantidad
             }, {
                 preserveScroll: true,
-               
+
             });
         }
     };
@@ -210,24 +210,39 @@ function Zergak({ gastos, usuarios, pagos = [] }: ZergakProps) { // Valor por de
                         return (
                             <div
                                 key={`bal-${b.usuario.id}`}
-                                className={`relative p-5 rounded-2xl border ${bgClase} shadow-sm flex justify-between items-center transition-transform hover:-translate-y-1`}
+                                className={`relative p-5 rounded-2xl border ${bgClase} shadow-sm flex flex-col gap-4 transition-transform hover:-translate-y-1`}
                             >
-                                {/* Izquierda: Info Usuario */}
-                                <div>
+                                {/* FILA SUPERIOR: Nombre y Estado */}
+                                <div className="flex justify-between items-start border-b border-gray-200/50 pb-2">
                                     <h6 className="text-lg font-bold text-gray-800">{b.usuario.name}</h6>
-                                    <p className="text-sm text-gray-500 mt-1">
-                                        Gastua erosketetan: <span className="font-medium text-gray-700">{b.pagado.toFixed(2)}€</span>
-                                    </p>
-                                </div>
-
-                                {/* Derecha: Balance */}
-                                <div className="text-right">
-                                    <span className={`text-xs font-bold uppercase tracking-wider ${colorClase} opacity-80`}>
+                                    <span className={`text-xs font-bold uppercase tracking-wider ${colorClase} opacity-80 bg-white/50 px-2 py-1 rounded`}>
                                         {textoEstado}
                                     </span>
-                                    <h3 className={`text-2xl font-extrabold ${colorClase}`}>
-                                        {Math.abs(balanceMostrado).toFixed(2)} €
-                                    </h3>
+                                </div>
+
+                                {/* FILA INFERIOR: Datos numéricos alineados */}
+                                <div className="flex justify-between items-end">
+
+                                    {/* Izquierda: Gastado */}
+                                    <div className="flex flex-col">
+                                        <span className="text-xs text-gray-500 uppercase font-semibold mb-1">
+                                            Gastua
+                                        </span>
+                                        <span className="font-bold text-gray-700 text-lg">
+                                            {new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(b.pagado)}
+                                        </span>
+                                    </div>
+
+                                    {/* Derecha: Balance (Total) */}
+                                    <div className="text-right flex flex-col items-end">
+                                        <span className="text-xs text-gray-400 mb-1">
+                                            {esPositivo ? 'Jaso behar duzu:' : 'Ordaindu behar duzu:'}
+                                        </span>
+                                        <h3 className={`text-xl sm:text-2xl font-extrabold ${colorClase} whitespace-nowrap`}>
+                                            {/* APLICAMOS EL MISMO FORMATO DE PUNTOS AQUÍ TAMBIÉN */}
+                                            {new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(Math.abs(balanceMostrado))}
+                                        </h3>
+                                    </div>
                                 </div>
                             </div>
                         );

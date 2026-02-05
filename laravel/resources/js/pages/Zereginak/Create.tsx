@@ -6,6 +6,9 @@ import AppLayout from '@/layouts/app-layout';
 const customGreen = '#00796B';
 const backgroundColor = '#f3f4f6';
 
+const MAX_CHARS_IZENA = 50;
+const MAX_CHARS_DESKRIPZIOA = 255;
+
 interface Kidea {
     id: number;
     name: string;
@@ -59,10 +62,15 @@ export default function Create({ auth,kideak }: Props) {
                                     type="text"
                                     value={data.izena}
                                     onChange={(e) => setData('izena', e.target.value)}
+                                    maxLength={MAX_CHARS_IZENA}
                                     // Nuevo estilo de inputs
                                     className="border-gray-300 focus:border-teal-700 focus:ring-teal-700 rounded-xl w-full py-3 px-4 text-gray-800 shadow-sm transition-all"
                                     placeholder="Adb: Komuna garbitu"
                                 />
+                                {/* CONTADOR */}
+                                <div className="text-right text-xs text-gray-500 mt-1">
+                                    {data.izena.length}/{MAX_CHARS_IZENA}
+                                </div>
                                 {errors.izena && <div className="text-red-500 text-sm mt-1 ml-1">{errors.izena}</div>}
                             </div>
 
@@ -73,11 +81,17 @@ export default function Create({ auth,kideak }: Props) {
                                 </label>
                                 <textarea
                                     id="deskripzioa"
+                                    maxLength={MAX_CHARS_DESKRIPZIOA}
                                     value={data.deskripzioa}
                                     onChange={(e) => setData('deskripzioa', e.target.value)}
                                     className="border-gray-300 focus:border-teal-700 focus:ring-teal-700 rounded-xl w-full py-3 px-4 text-gray-800 shadow-sm min-h-[100px] transition-all"
                                     placeholder="Zereginaren xehetasunak..."
                                 />
+
+                                {/* CONTADOR */}
+                                <div className="text-right text-xs text-gray-500 mt-1">
+                                    {data.deskripzioa.length}/{MAX_CHARS_DESKRIPZIOA}
+                                </div>
                                 {errors.deskripzioa && <div className="text-red-500 text-sm mt-1 ml-1">{errors.deskripzioa}</div>}
                             </div>
 

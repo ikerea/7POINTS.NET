@@ -5,6 +5,8 @@ import AppLayout from '@/layouts/app-layout';
 // Estilos extraídos de Create.tsx para mantener consistencia
 const customGreen = '#00796B';
 const backgroundColor = '#f3f4f6';
+const MAX_CHARS_GASTO = 50;
+const MAX_CHARS_CANTIDAD = 6;
 
 // Interfaces
 interface UserProps {
@@ -32,7 +34,8 @@ const EditGastoForm = ({ gasto, usuarios }: EditGastoProps) => {
 
     const [values, setValues] = useState({
         Nombre: gasto.Nombre || '',
-        Cantidad: gasto.Cantidad || '',
+        // IMPORTANTE: Convertimos a String para poder usar .length sin errores
+        Cantidad: gasto.Cantidad ? String(gasto.Cantidad) : '',
         Fecha: formattedDate,
         IdUsuario: gasto.IdUsuario || '',
     });
@@ -40,6 +43,13 @@ const EditGastoForm = ({ gasto, usuarios }: EditGastoProps) => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const key = e.target.name;
         const value = e.target.value;
+
+        // --- VALIDACIÓN DE LONGITUD PARA EL PRECIO ---
+        // Si es el campo 'Cantidad' y supera el límite, no actualizamos el estado.
+        if (key === 'Cantidad' && value.length > MAX_CHARS_CANTIDAD) {
+            return;
+        }
+
         setValues(values => ({
             ...values,
             [key]: value,
@@ -73,15 +83,21 @@ const EditGastoForm = ({ gasto, usuarios }: EditGastoProps) => {
 
                         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
 
-                            {/* CAMPO: IZENBURUA */}
+                            {/* CAMPO: IZENBURUA (Con contador) */}
                             <div className="grid gap-2">
-                                <label className="block text-gray-600 font-medium ml-1" htmlFor="Nombre">
-                                    Izenburua
-                                </label>
+                                <div className="flex justify-between items-center ml-1">
+                                    <label className="block text-gray-600 font-medium" htmlFor="Nombre">
+                                        Izenburua
+                                    </label>
+                                    <span className={`text-xs ${values.Nombre.length === MAX_CHARS_GASTO ? 'text-red-500 font-bold' : 'text-gray-400'}`}>
+                                        {values.Nombre.length}/{MAX_CHARS_GASTO}
+                                    </span>
+                                </div>
                                 <input
                                     type="text"
                                     id="Nombre"
                                     name="Nombre"
+                                    maxLength={MAX_CHARS_GASTO}
                                     value={values.Nombre}
                                     onChange={handleChange}
                                     className="border-gray-300 focus:border-teal-700 focus:ring-teal-700 rounded-xl w-full py-3 px-4 text-gray-800 shadow-sm transition-all"
@@ -90,7 +106,7 @@ const EditGastoForm = ({ gasto, usuarios }: EditGastoProps) => {
                                 />
                             </div>
 
-                            {/* CAMPO: ZENBATEKOA */}
+                            {/* CAMPO: ZENBATEKOA (Con bloqueo de caracteres y longitud) */}
                             <div className="grid gap-2">
                                 <label className="block text-gray-600 font-medium ml-1" htmlFor="Cantidad">
                                     Zenbatekoa (€)
@@ -101,12 +117,18 @@ const EditGastoForm = ({ gasto, usuarios }: EditGastoProps) => {
                                     name="Cantidad"
                                     value={values.Cantidad}
                                     onChange={handleChange}
+                                    // Evitamos escribir la 'e', 'E', '+', '-'
+                                    onKeyDown={(e) => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()}
                                     className="border-gray-300 focus:border-teal-700 focus:ring-teal-700 rounded-xl w-full py-3 px-4 text-gray-800 shadow-sm transition-all"
                                     placeholder="0.00"
                                     step="0.01"
                                     min="0"
                                     required
                                 />
+                                {/* Mensaje de ayuda discreto si se acerca al límite */}
+                                {String(values.Cantidad).length >= MAX_CHARS_CANTIDAD && (
+                                    <p className="text-xs text-red-500 ml-1">Gehienez {MAX_CHARS_CANTIDAD} zenbaki.</p>
+                                )}
                             </div>
 
                             {/* CAMPO: DATA */}
