@@ -1,5 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_pisua_pisua_manager,pisua.pisua.manager,model_pisua_pisua,pisua.group_pisua_manager,1,1,1,1
-access_pisua_zeregina_manager,pisua.zeregina.manager,model_pisua_zeregina,pisua.group_pisua_manager,1,1,1,1
-access_pisua_pisua_user,pisua.pisua.user,model_pisua_pisua,pisua.group_pisua_user,1,0,0,0
-access_pisua_zeregina_user,pisua.zeregina.user,model_pisua_zeregina,pisua.group_pisua_user,1,0,0,0
+access_pisua_manager,pisua.manager,model_pisua,pisua.group_pisua_manager,1,1,1,1
+access_zeregina_manager,zeregina.manager,model_pisua_zeregina,pisua.group_pisua_manager,1,1,1,1
+access_pisua_user,pisua.user,model_pisua,pisua.group_pisua_user,1,0,0,0
+access_zeregina_user,zeregina.user,model_pisua_zeregina,pisua.group_pisua_user,1,0,0,0
