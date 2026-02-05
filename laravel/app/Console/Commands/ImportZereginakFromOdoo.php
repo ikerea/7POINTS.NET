@@ -31,7 +31,7 @@ class ImportZereginakFromOdoo extends Command
                 'description'
             ]);
 
-            // --- TRAMPA VISUAL ---
+
             $total = count($odooTareas);
             $this->warn("Odoo ha respondido con $total tareas en total.");
 
@@ -45,7 +45,8 @@ class ImportZereginakFromOdoo extends Command
             foreach ($odooTareas as $remoteTask) {
 
                 $odooPisoId = $remoteTask['pisua_id'] ? $remoteTask['pisua_id'][0] : null;
-                if (!$odooPisoId) continue;
+                if (!$odooPisoId)
+                    continue;
 
                 $localPiso = Piso::where('odoo_id', $odooPisoId)->first();
                 if (!$localPiso) {
@@ -68,7 +69,7 @@ class ImportZereginakFromOdoo extends Command
                     $usuariosIds = User::whereIn('odoo_id', $remoteTask['asignado_ids'])->pluck('id');
 
                     $pivotData = [];
-                    foreach($usuariosIds as $uid) {
+                    foreach ($usuariosIds as $uid) {
                         $pivotData[$uid] = ['hasiera_data' => $remoteTask['date']];
                     }
 
