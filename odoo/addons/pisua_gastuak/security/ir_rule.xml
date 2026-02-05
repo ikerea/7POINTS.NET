@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="1">
-        
+    <data noupdate="0">
+
         <record id="rule_pisua_gasto_access_dynamic" model="ir.rule">
             <field name="name">Acceso Dinámico a Gastos de Piso</field>
-            <field name="model_id" ref="hr_expense.model_hr_expense"/>
-            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
-            
-            <field name="domain_force">['|', ('pisua_id.coordinator_id', '=', user.id), ('partner_id', '=', user.partner_id.id)]</field>
-            
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>
+            <field name="model_id" ref="hr_expense.model_hr_expense" />
+            <field name="groups" eval="[(4, ref('base.group_user'))]" />
+            <field name="domain_force">['|', ('pisua_id.coordinator_id', '=', user.id),
+                ('partner_id', '=', user.partner_id.id)]</field>
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_unlink" eval="True" />
+        </record>
+
+        <record id="hr_expense.ir_rule_hr_expense_employee" model="ir.rule">
+            <field name="active" eval="False" />
         </record>
 
     </data>
