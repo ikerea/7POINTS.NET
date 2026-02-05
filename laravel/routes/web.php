@@ -65,24 +65,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/pagos/saldar', [GastoController::class, 'saldarDeuda'])->name('pagos.saldar');
 });
 
-Route::get('/debug-log', function () {
-    try {
-        // 1. Intentamos escribir en el log de Laravel
-        Log::info('Test de escritura en log exitoso desde Elastic Beanstalk ' . now());
-        
-        // 2. Verificamos si el archivo físico existe
-        $path = storage_path('logs/laravel.log');
-        
-        if (file_exists($path)) {
-            return "✅ ÉXITO: Log escrito correctamente. El archivo existe en: " . $path;
-        } else {
-            return "⚠️ AVISO: Laravel no dio error, pero no encuentro el archivo laravel.log. Revisa permisos.";
-        }
-    } catch (\Exception $e) {
-        return "❌ ERROR CRÍTICO: No se puede escribir en logs. Mensaje: " . $e->getMessage();
-    }
-});
-
-
-
 require __DIR__ . '/settings.php';
