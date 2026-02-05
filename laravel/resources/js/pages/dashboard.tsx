@@ -169,9 +169,6 @@ export default function Dashboard({ zereginakEgiteko = [], zereginakEgiten = [] 
                         </div>
                     )}
                 </div>
-                <footer className="w-full py-6 text-center text-white text-sm font-medium mt-auto" style={{ backgroundColor: customGreen }}>
-                    © 2026 Pisukide. Eskubide guztiak erreserbatuta
-                </footer>
             </div>
         </AppLayout>
     );

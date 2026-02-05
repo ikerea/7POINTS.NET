@@ -55,5 +55,10 @@
                 body? body.appendChild(coreCall) : head.appendChild(coreCall);
             })(document, document.head, document.body);
         </script>
+        <footer class="w-full py-6 text-center text-white text-sm font-medium mt-auto"
+        style="background-color: {{ $customGreen ?? '#0f766e' }};">
+    © 2026 Pisukide. — Edukia Creative Commons Atribuzioa–Ez Komertziala–Partekatu Berdin 4.0
+    Nazioartekoa (CC BY-NC-SA 4.0) lizentziapean dago.
+        </footer>
     </body>
 </html>

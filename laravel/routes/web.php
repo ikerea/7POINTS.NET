@@ -7,6 +7,7 @@ use Laravel\Fortify\Features;
 use App\Http\Controllers\ZereginakController;
 use App\Http\Controllers\GastoController;
 use App\Http\Controllers\DashboadController;
+use Illuminate\Support\Facades\Log;
 
 Route::get('/', function () {
     return Inertia::render('welcome', [
@@ -62,6 +63,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/gastuak/{idGasto}/edit', [GastoController::class, 'cargarPaginaEditar'])->name('gastuak.cargaEdit');
     Route::put('/gastuak/editar/{id}', [GastoController::class, 'editGasto'])->name('gastuak.editar');
     Route::post('/pagos/saldar', [GastoController::class, 'saldarDeuda'])->name('pagos.saldar');
+});
+
+Route::get('/debug-log', function () {
+    try {
+        // 1. Intentamos escribir en el log de Laravel
+        Log::info('Test de escritura en log exitoso desde Elastic Beanstalk ' . now());
+        
+        // 2. Verificamos si el archivo físico existe
+        $path = storage_path('logs/laravel.log');
+        
+        if (file_exists($path)) {
+            return "✅ ÉXITO: Log escrito correctamente. El archivo existe en: " . $path;
+        } else {
+            return "⚠️ AVISO: Laravel no dio error, pero no encuentro el archivo laravel.log. Revisa permisos.";
+        }
+    } catch (\Exception $e) {
+        return "❌ ERROR CRÍTICO: No se puede escribir en logs. Mensaje: " . $e->getMessage();
+    }
 });
 
 
