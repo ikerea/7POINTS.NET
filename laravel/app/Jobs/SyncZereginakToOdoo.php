@@ -52,7 +52,6 @@ class SyncZereginakToOdoo implements ShouldQueue
                 'state' => $this->zeregina->egoera,
                 'date' => Carbon::parse($this->zeregina->created_at)->format('Y-m-d'),
                 'pisua_id' => (int) $this->zeregina->pisua->odoo_id,
-
                 // SINTAXIS ESPECIAL ODOO PARA MANY2MANY: [[6, 0, [IDs]]]
                 // El comando 6 significa "Reemplazar toda la lista por estos IDs"
                 'asignado_ids' => [[6, 0, $asignadosOdooIds]],
